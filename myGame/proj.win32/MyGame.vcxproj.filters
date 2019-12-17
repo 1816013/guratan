@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{54c997b5-78ed-4b27-a2b3-ade315044363}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="action">
+      <UniqueIdentifier>{d3427ddc-f4f4-4fcc-8ec5-c5063ef808dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="action\check">
+      <UniqueIdentifier>{584d16a7-df8e-4583-a779-b7a19cabf8c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unit">
+      <UniqueIdentifier>{a545f225-08fb-4c0f-a91e-57a9d5198bfc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\CricketJni.cpp" />
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\input\OPRT_key.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\input\OPRT_state.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\input\OPRT_touch.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\CheckKey.cpp">
+      <Filter>action\check</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\CheckList.cpp">
+      <Filter>action\check</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\Colision.cpp">
+      <Filter>action\check</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\ActionMng.cpp">
+      <Filter>action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\ChangeLR.cpp">
+      <Filter>action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\action\Shot.cpp">
+      <Filter>action</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="..\Classes\action\Move.cpp">
+      <Filter>action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Unit\Player.cpp">
+      <Filter>unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Unit\Enemy.cpp">
+      <Filter>unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Unit\Obj.cpp">
+      <Filter>unit</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\CricketJni.h" />
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="..\Classes\input\OPRT_key.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\input\OPRT_state.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\input\OPRT_touch.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\CheckKey.h">
+      <Filter>action\check</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\CheckList.h">
+      <Filter>action\check</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\ActionMng.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\ChangeLR.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\Shot.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\Colision.h">
+      <Filter>action\check</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\Move.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Unit\Player.h">
+      <Filter>unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Unit\Enemy.h">
+      <Filter>unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Unit\Obj.h">
+      <Filter>unit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
