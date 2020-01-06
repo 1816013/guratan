@@ -1,8 +1,7 @@
 #pragma once
-#include "ActionMng.h"
-
-struct Shot
+#include "action/ActionMng.h"
+struct Attack
 {
-	// shot 
 	bool operator()(cocos2d::Sprite& sp, actModule& module);
 };
+

@@ -69,6 +69,16 @@ list(APPEND GAME_SOURCE
      Classes/input/OPRT_state.cpp
      Classes/input/OPRT_key.cpp
      Classes/input/OPRT_touch.cpp
+     Classes/Unit/Obj.cpp
+     Classes/Unit/Player.cpp
+     Classes/Unit/Enemy.cpp
+     Classes/action/ActionMng.cpp
+     Classes/action/ChangeLR.cpp
+     Classes/action/CheckKey.cpp
+     Classes/action/CheckList.cpp
+     Classes/action/Colision.cpp
+     Classes/action/Move.cpp
+     Classes/action/Shot.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
@@ -77,6 +87,16 @@ list(APPEND GAME_HEADER
      Classes/input/OPRT_state.h
      Classes/input/OPRT_key.h
      Classes/input/OPRT_touch.h
+     Classes/Unit/Obj.h
+     Classes/Unit/Player.h
+     Classes/Unit/Enemy.h
+     Classes/action/ActionMng.cpp
+     Classes/action/ChangeLR.cpp
+     Classes/action/CheckKey.cpp
+     Classes/action/CheckList.cpp
+     Classes/action/Colision.cpp
+     Classes/action/Move.cpp
+     Classes/action/Shot.cpp
      )
 
 if(ANDROID)

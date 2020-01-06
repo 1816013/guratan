@@ -4,7 +4,7 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite * Player::createSprite()
+cocos2d::Sprite* Player::createPlayer()
 {
 	return Player::create();
 }
@@ -16,6 +16,16 @@ Player::Player()
 
 Player::~Player()
 {
+}
+
+int Player::GetHP()
+{
+	return _hp;
+}
+
+void Player::SetHP(int hp)
+{
+	_hp = hp;
 }
 
 bool Player::init()
@@ -57,6 +67,7 @@ bool Player::init()
 	this->addChild(line);
 
 	_dir = DIR::UP;
+	_hp = 5;
 	changeF = false;
 
 	// ±¸¼®Ý¾¯Ä @csvo—Í‚É‚µ‚½‚¢
@@ -110,7 +121,7 @@ bool Player::init()
 		module.actID = ACT_STATE::ATACK;
 		module.white.emplace_back(ACT_STATE::IDLE);
 		module.inputID = INPUT_ID::ATACK;
-		module.keyTiming = Timing::ON;
+		module.keyTiming = Timing::ON_MOM;
 		_actMng->AddActModule("Œ•UŒ‚", module);
 	}
 	
@@ -120,45 +131,17 @@ bool Player::init()
 
 void Player::update(float delta)
 {
-	
 	_inputState->update();
 	_actMng->update(*this);
-	/*if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::UP))
-	{
-		this->setPositionY(this->getPositionY() + 5);
-		if (checkinput(INPUT_ID::UP))
-		{
-			_dir = DIR::UP;
-		}
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::RIGHT))
-	{
-		this->setPositionX(this->getPositionX() + 5);
-		if (checkinput(INPUT_ID::RIGHT))
-		{
-			_dir = DIR::RIGHT;
-		}
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::DOWN))
-	{
-		this->setPositionY(this->getPositionY() - 5);
-		if (checkinput(INPUT_ID::DOWN))
-		{
-			_dir = DIR::DOWN;
-		}
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT))
-	{
-		this->setPositionX(this->getPositionX() - 5);
-		if (checkinput(INPUT_ID::LEFT))
-		{
-			_dir = DIR::LEFT;
-		}
-	}*/
-	
+	auto nowScene = Director::getInstance()->getRunningScene();
 }
 
 DIR Player::GetDIR()
 {
 	return _dir;
+}
+
+void Player::SetDIR(DIR dir)
+{
+	_dir = dir;
 }

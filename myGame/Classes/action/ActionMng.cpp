@@ -6,6 +6,8 @@
 #include "Move.h"
 #include "ChangeLR.h"
 #include "Shot.h"
+#include "Attack.h"
+
 
 USING_NS_CC;
 
@@ -37,12 +39,12 @@ void ActionMng::AddActModule(const std::string & actName, actModule & module)
 			_moduleMap[actName].act.emplace_back(CheckKey());
 			_moduleMap[actName].runAction = ChangeLR();
 		}
-		if (actName == "ºÆØƒ")
+		if (actName == "åïçUåÇ")
 		{
 			_moduleMap.emplace(actName, std::move(module));
 			_moduleMap[actName].act.emplace_back(CheckList());
 			_moduleMap[actName].act.emplace_back(CheckKey());
-			_moduleMap[actName].runAction = Shot();
+			_moduleMap[actName].runAction = Attack();
 		}
 	}
 }

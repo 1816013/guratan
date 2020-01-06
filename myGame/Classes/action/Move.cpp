@@ -5,7 +5,6 @@
 
 bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
-
 	sp.setPosition(sp.getPosition() + module.speed);
 
 	auto checkinput = [](INPUT_ID input, cocos2d::Sprite& sp)
@@ -26,6 +25,7 @@ bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 	if (checkinput(module.inputID, sp))
 	{
 		dir = module.dir;
+		((Obj&)sp).SetDIR(dir);
 	}
 	
 	if (dir == DIR::UP)

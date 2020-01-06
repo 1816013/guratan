@@ -27,13 +27,14 @@
 
 #include "cocos2d.h"
 #include <input/OPRT_state.h>
+#include <Unit/Obj.h>
 
 enum class Z_ORDER_TYPE
 {
-	UI,
-	FLONT,
-	CHAR,
 	BACK,
+	CHAR,
+	FLONT,
+	UI,
 	MAX
 };
 
@@ -47,25 +48,29 @@ public:
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
-    
-    // implement the "static create()" method manually
-    CREATE_FUNC(GameScene);
-private:
-	cocos2d::Sprite* sprite;
-	cocos2d::Size mapChipSize;
-	int mapData[32][18];
 
 	cocos2d::Layer* uiBglayer;
 	cocos2d::Layer* charBglayer;
 	cocos2d::Layer* flontBglayer;
 	cocos2d::Layer* backBglayer;
+    
+    // implement the "static create()" method manually
+    CREATE_FUNC(GameScene);
+private:
+	void ScrollUI();
 
+	cocos2d::Sprite* sprite;
+	
 	int _zOrderUI;		// UI‚ÌLayer
 	int _zOrderBack;		// ˆê”ÔŒã‚ë‚Ìzorder
 	int _zOrderChar;		// ·¬×‚Ìzorder
 	int _zOrderFlont;	// ˆê”Ô‘O‚Ìzorder
 
 	int count = 0;
+
+	void ColTest();
+
+	Obj* obj;
 
 	std::unique_ptr<OPRT_state>_inputState;
 };

@@ -28,6 +28,8 @@
 #include <action/CheckKey.h>
 #include <Unit/Player.h>
 #include <Unit/Enemy.h>
+#include <GameMap.h>
+#include "GameOverScene.h"
 
 USING_NS_CC;
 
@@ -105,6 +107,8 @@ bool GameScene::init()
     menu->setPosition(Vec2::ZERO);
 	uiBglayer->addChild(menu, 0);
 
+
+
     /////////////////////////////
     // 3. add your codes below...
 
@@ -126,14 +130,40 @@ bool GameScene::init()
 		uiBglayer->addChild(label, 0);
     }
 
+	/*//auto _scrollView = ui::ScrollView::create();
+	//_scrollView->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	//_scrollView->setDirection(ui::ScrollView::Direction::VERTICAL);
+	//_scrollView->setBounceEnabled(true);
+	//this->addChild(_scrollView);
+
+
+	////スクロールする中身を追加（LayerやSpriteなど）
+	//_scrollView->addChild(uiBglayer);
+
+	////中身のサイズを指定
+	//_scrollView->setInnerContainerSize(Size(uiBglayer->getContentSize().width, uiBglayer->getContentSize().height));
+
+	////実際に表示される領域（これ以外は隠れる)
+	//auto inveSize = Size(uiBglayer->getContentSize().width, visibleSize.height / 2);
+	//_scrollView->setContentSize(inveSize);*/
+	this->runAction(Follow::create(uiBglayer, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	// プレイヤー
-	auto player = Player::createSprite();
-	player->setName("player");
+	auto player = Player::createPlayer();
+	player->setTag(static_cast<int>(objTag::PLAYER));
+	this->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
+
+	auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
+	enemy->setTag(static_cast<int>(objTag::ENEMY));
+	enemy->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 50));
+	charBglayer->addChild(enemy);
 
 	
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
-	mapChipSize = Size( 32.0f, 32.0f );
+	auto map = GameMap::createMap();
+	map->setTag(3);
+	backBglayer->addChild(map);
+	/*mapChipSize = Size( 32.0f, 32.0f );
 	for (int y = 0; y < 18; y++)
 	{
 		for (int x = 0; x < 32; x++)
@@ -151,15 +181,13 @@ bool GameScene::init()
 				square->setGlobalZOrder(10);
 			}
 		}
-	}
+	}*/
 	
 	// ｼｰﾝにぶら下げる
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(flontBglayer, _zOrderFlont);
-
-
 
 	this->scheduleUpdate();
     return true;
@@ -168,12 +196,32 @@ bool GameScene::init()
 void GameScene::update(float delta)
 {
 	_inputState->update();
+
+	//ScrollUI();
+	ColTest();
+	
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATACK) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATACK))
 	{
 		count++;
-		auto enemy = Enemy::createSprite();
+		auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
+		enemy->setTag(1);
 		enemy->setPosition(Vec2(count * 32 + 32, 32 + 32));
 		charBglayer->addChild(enemy);
+	}
+	obj->IsCheckedHP();
+	int count = 0;
+	for (auto eRect : this->charBglayer->getChildren())
+	{
+		int tag = eRect->getTag();
+		if (static_cast<int>(objTag::PLAYER) == tag)
+		{
+			count++;
+		}
+	}
+	if (count <= 0)
+	{
+		Scene *scene = GameOverScene::createScene();
+		Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 	}
 }
 
@@ -189,4 +237,49 @@ void GameScene::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
 
 
+}
+
+void GameScene::ScrollUI()
+{
+	//auto player = this->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+	//uiBglayer->setPosition({0, 0});
+}
+
+void GameScene::ColTest()
+{
+	bool flag = false;
+	Rect rectA;
+	Rect rectE;
+	for (auto eRect : this->charBglayer->getChildren())
+	{
+		int tag = eRect->getTag();
+		/*if (tag == 1)
+		{*/
+		Obj* obj = (Obj*)eRect;
+		for (auto pRect : this->charBglayer->getChildren())
+		{
+			if (eRect == pRect)
+			{
+				continue;
+			}
+			Obj* obj2 = (Obj*)pRect;
+
+			int tag2 = pRect->getTag();
+			if (tag2 != tag)
+			{
+				rectA = eRect->getBoundingBox();
+				rectE = pRect->getBoundingBox();
+
+				if (rectA.intersectsRect(rectE))
+				{
+					obj->SetHP(obj->GetHP() - 1);
+					obj2->SetHP(obj2->GetHP() - 1);
+
+					//eRect->removeFromParent();
+					flag = true;
+					return;
+				}
+			}		
+		}
+	}
 }
