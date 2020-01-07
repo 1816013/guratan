@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include <Unit/Player.h>
+#include "Weapon.h"
 #include <GameScene.h>
 
 USING_NS_CC;
@@ -18,21 +19,6 @@ Enemy::Enemy()
 
 Enemy::~Enemy()
 {
-}
-
-int Enemy::GetHP()
-{
-	return _hp;
-}
-
-void Enemy::SetHP(int hp)
-{
-	_hp = hp;
-}
-
-void Enemy::SetEnemyAI(EnemyAI enemyAI)
-{
-	_enemyAI = enemyAI;
 }
 
 bool Enemy::init()
@@ -86,8 +72,60 @@ void Enemy::update(float delta)
 		}
 	}
 	//this->setPosition(this->getPosition() + _speedTbl[dir]);
-	
+
 }
+
+int Enemy::GetHP()
+{
+	return _hp;
+}
+
+void Enemy::SetHP(int hp)
+{
+	_hp = hp;
+}
+
+int Enemy::GetPower()
+{
+	return _power;
+}
+
+bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+{
+	bool col = false;
+
+	Rect myRect = this->getBoundingBox();
+	Rect hitRect = hitObj->getBoundingBox();
+	if (myRect.intersectsRect(hitRect))
+	{
+		int hitTag = hitObj->getTag();
+		if (hitTag == static_cast<int>(objTag::PLAYER))
+		{
+			Player* player = (Player*)hitObj;
+			player->SetHP(player->GetHP() -_power);
+			//if (/*後ろが移動できるなら*/)
+			{
+				player->setPosition(player->getPosition() + Vec2(0, -32));		// ノックバック処理
+			}
+		}
+		else if(hitTag == static_cast<int>(objTag::ATTACK))
+		{
+			Weapon* weapon = (Weapon*)hitObj;
+			_hp -= weapon->GetPower();
+			this->setPosition(this->getPosition() + Vec2(0, 32));
+			hitObj->removeFromParent();
+		}
+		col = true;
+	}
+	return col;
+}
+
+void Enemy::SetEnemyAI(EnemyAI enemyAI)
+{
+	_enemyAI = enemyAI;
+}
+
+
 
 DIR Enemy::GetDIR()
 {

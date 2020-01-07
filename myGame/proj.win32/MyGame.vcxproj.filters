@@ -76,9 +76,6 @@
     <ClCompile Include="..\Classes\action\Attack.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Weapon.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\GameMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\TitleScene.cpp">
       <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Weapon.cpp">
+      <Filter>src\unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +142,6 @@
     <ClInclude Include="..\Classes\action\Attack.h">
       <Filter>src\action</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Weapon.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\GameMap.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\TitleScene.h">
       <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Weapon.h">
+      <Filter>src\unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

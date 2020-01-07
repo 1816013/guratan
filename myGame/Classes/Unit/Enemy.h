@@ -21,6 +21,9 @@ public:
 
 	int GetHP();
 	void SetHP(int hp);
+	int GetPower();
+
+	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 	
 
 	std::unique_ptr<OPRT_state>_inputState;

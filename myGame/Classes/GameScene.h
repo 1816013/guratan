@@ -57,8 +57,12 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(GameScene);
 private:
+	// ä÷êî
 	void ScrollUI();
+	void SetEnemy();
+	void ColTest();
 
+	// ïœêî
 	cocos2d::Sprite* sprite;
 	
 	int _zOrderUI;		// UIÇÃLayer
@@ -68,7 +72,7 @@ private:
 
 	int count = 0;
 
-	void ColTest();
+	
 
 	Obj* obj;
 

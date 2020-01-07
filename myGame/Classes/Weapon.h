@@ -8,6 +8,7 @@ public:
 	~Weapon();
 	int GetHP();
 	void SetHP(int hp);
+	int GetPower();
 	void update(float delta)override;
 
 	CREATE_FUNC(Weapon);

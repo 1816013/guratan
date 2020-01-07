@@ -20,10 +20,13 @@ public:
 
 	virtual DIR GetDIR();
 	virtual void SetDIR(DIR dir);
+	virtual bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 	virtual int GetHP() = 0;
 	virtual void SetHP(int hp) = 0;
+	virtual int GetPower() = 0;
 
 	bool IsCheckedHP();
+
 
 
 protected:

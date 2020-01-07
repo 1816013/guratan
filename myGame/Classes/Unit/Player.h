@@ -12,6 +12,7 @@ public:
 
 	int GetHP();
 	void SetHP(int hp);
+	int GetPower();
 
 	std::unique_ptr<OPRT_state>_inputState;
 

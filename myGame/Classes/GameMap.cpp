@@ -114,22 +114,6 @@ void GameMap::update(float delta)
 			}
 		}
 	}*/
-	/*if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::UP))
-	{
-
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::RIGHT))
-	{
-
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::DOWN))
-	{
-
-	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT))
-	{
-
-	}*/
 	
 }
 

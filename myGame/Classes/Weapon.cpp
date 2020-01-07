@@ -24,6 +24,11 @@ void Weapon::SetHP(int hp)
 	_hp = hp;
 }
 
+int Weapon::GetPower()
+{
+	return _power;
+}
+
 bool Weapon::init()
 {
 	_remainCnt = 0;
@@ -38,6 +43,7 @@ bool Weapon::init()
 	this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(0, 255, 0));
 	_hp = 1;
+	_power = 1;
 	//this->setPosition(100, 100);
 	this->scheduleUpdate();
 

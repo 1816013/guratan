@@ -28,6 +28,11 @@ void Player::SetHP(int hp)
 	_hp = hp;
 }
 
+int Player::GetPower()
+{
+	return _power;
+}
+
 bool Player::init()
 {
 	// ½Ìß×²Ä¸×½‚Ì‰Šú‰»@init‚ğ©ì‚µ‚½‚½‚ß•K—v

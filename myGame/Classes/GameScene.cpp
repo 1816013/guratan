@@ -153,12 +153,8 @@ bool GameScene::init()
 	this->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
 
-	auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
-	enemy->setTag(static_cast<int>(objTag::ENEMY));
-	enemy->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 50));
-	charBglayer->addChild(enemy);
+	SetEnemy();
 
-	
 	// Ï¯Ìß(‰¼) @ÏÈ°¼Þ¬°—\’è
 	auto map = GameMap::createMap();
 	map->setTag(3);
@@ -203,10 +199,7 @@ void GameScene::update(float delta)
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATACK) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATACK))
 	{
 		count++;
-		auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
-		enemy->setTag(1);
-		enemy->setPosition(Vec2(count * 32 + 32, 32 + 32));
-		charBglayer->addChild(enemy);
+		SetEnemy();
 	}
 	obj->IsCheckedHP();
 	int count = 0;
@@ -245,41 +238,72 @@ void GameScene::ScrollUI()
 	//uiBglayer->setPosition({0, 0});
 }
 
+void GameScene::SetEnemy()
+{
+	auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
+	enemy->setTag(static_cast<int>(objTag::ENEMY));
+	enemy->setPosition(Vec2(rand() % 500 + 48, rand() % 500 + 48));
+	charBglayer->addChild(enemy);
+}
+
 void GameScene::ColTest()
 {
-	bool flag = false;
+	/*bool flag = false;
 	Rect rectA;
-	Rect rectE;
+	Rect rectE;*/
 	for (auto eRect : this->charBglayer->getChildren())
 	{
 		int tag = eRect->getTag();
-		/*if (tag == 1)
-		{*/
-		Obj* obj = (Obj*)eRect;
-		for (auto pRect : this->charBglayer->getChildren())
+		// enemy“–‚½‚è”»’è
+		if (tag == static_cast<int>(objTag::ENEMY))
 		{
-			if (eRect == pRect)
+			Enemy* enemy = (Enemy*)eRect;
+			for (auto pRect : this->charBglayer->getChildren())
 			{
-				continue;
-			}
-			Obj* obj2 = (Obj*)pRect;
-
-			int tag2 = pRect->getTag();
-			if (tag2 != tag)
-			{
-				rectA = eRect->getBoundingBox();
-				rectE = pRect->getBoundingBox();
-
-				if (rectA.intersectsRect(rectE))
+				if (eRect == pRect)
 				{
-					obj->SetHP(obj->GetHP() - 1);
-					obj2->SetHP(obj2->GetHP() - 1);
-
-					//eRect->removeFromParent();
-					flag = true;
-					return;
+					continue;
 				}
-			}		
+				Obj* hitObj = (Obj*)pRect;
+				int tag2 = pRect->getTag();
+				if (tag2 != tag)
+				{
+					if (enemy->ColisionObj(hitObj, this->charBglayer))
+					{
+						return;
+					}
+				}
+			}
 		}
+		//if (tag == static_cast<int>(objTag::PLAYER))
+		//{
+		//	Player* player = (Player*)eRect;
+		//	for (auto pRect : this->charBglayer->getChildren())
+		//	{
+
+		//		if (eRect == pRect)
+		//		{
+		//			continue;
+		//		}
+		//		Obj* obj2 = (Obj*)pRect;
+
+		//		int tag2 = pRect->getTag();
+		//		if (tag2 != tag)
+		//		{
+		//			rectA = eRect->getBoundingBox();
+		//			rectE = pRect->getBoundingBox();
+
+		//			if (rectA.intersectsRect(rectE))
+		//			{
+		//				player->SetHP(player->GetHP() - 1);
+		//				obj2->SetHP(obj2->GetHP() - 1);
+
+		//				//eRect->removeFromParent();
+		//				flag = true;
+		//				return;
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }
