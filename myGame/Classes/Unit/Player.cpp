@@ -44,15 +44,6 @@ bool Player::init()
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();		// ³²ÝÄÞ³»²½Þ	
 
-	auto uiBglayer = Layer::create();
-	uiBglayer->setName("uiLayer");
-	auto charBglayer = Layer::create();
-	charBglayer->setName("charLayer");
-	auto flontBglayer = Layer::create();
-	flontBglayer->setName("flontLayer");
-	auto backBglayer = Layer::create();
-	backBglayer->setName("backLayer");
-	
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
 	this->setPosition(visibleSize.width / 2, visibleSize.height / 2);
@@ -66,6 +57,10 @@ bool Player::init()
 	
 	this->addChild(line);
 
+	// ÌßÚ²Ô°½Ã°À½
+	_level = 1;
+	_exp = 0;
+	_expMax = 5;
 	_dir = DIR::UP;
 	_hp = 5;
 	changeF = false;
@@ -131,9 +126,40 @@ bool Player::init()
 
 void Player::update(float delta)
 {
+	// HP•\‹L(‰¼)
+	auto gameScene = Director::getInstance()->getRunningScene();
+	gameScene->removeChildByTag(10);
+	gameScene->removeChildByTag(11);
+	gameScene->removeChildByTag(12);
+	gameScene->removeChildByTag(13);
+	auto text = Label::createWithSystemFont("HP" + StringUtils::toString(this->GetHP()), "ueten-1c-medium.ttf", 24);
+	text->setPosition(Point(100, 400));
+	text->setTag(10);
+	gameScene->addChild(text);
+	auto text2 = Label::createWithSystemFont("exp" + StringUtils::toString(_exp), "ueten-1c-medium.ttf", 24);
+	text2->setPosition(Point(100, 370));
+	text2->setTag(11);
+	gameScene->addChild(text2);
+	auto text3 = Label::createWithSystemFont("expMax" + StringUtils::toString(_expMax), "ueten-1c-medium.ttf", 24);
+	text3->setPosition(Point(100, 340));
+	text3->setTag(12);
+	gameScene->addChild(text3);
+	auto text4 = Label::createWithSystemFont("level"+ StringUtils::toString(_level), "ueten-1c-medium.ttf", 24);
+	text4->setPosition(Point(100, 310));
+	text4->setTag(13);
+	gameScene->addChild(text4);
 	_inputState->update();
 	_actMng->update(*this);
-	auto nowScene = Director::getInstance()->getRunningScene();
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::UP))
+	{
+		_exp++;
+	}
+	if (_exp >= _expMax)
+	{
+		LevelUp();
+	}
+
+
 }
 
 DIR Player::GetDIR()
@@ -144,4 +170,12 @@ DIR Player::GetDIR()
 void Player::SetDIR(DIR dir)
 {
 	_dir = dir;
+}
+
+void Player::LevelUp(void)
+{
+	_level++;
+	_hp += 2;
+	_exp = 0;
+	_expMax *= 2;
 }

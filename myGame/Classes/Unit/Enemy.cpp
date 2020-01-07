@@ -49,6 +49,7 @@ bool Enemy::init()
 	this->setColor(cocos2d::Color3B(255, 0, 0));
 	_speedTbl = { Vec2(0, 5),Vec2(5, 0), Vec2(0, -5), Vec2(-5, 0) };
 	_hp = 1;
+	_power = 1;
 
 	this->scheduleUpdate();
 	return true;

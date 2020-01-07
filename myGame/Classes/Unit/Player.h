@@ -1,6 +1,5 @@
 #pragma once
 #include"Obj.h"
-#include <array>
 
 class Player : public Obj
 {
@@ -24,8 +23,15 @@ private:
 	DIR GetDIR();
 	void SetDIR(DIR dir);
 
+	void LevelUp(void);
+
 	// ïœêî
 	cocos2d::DrawNode* line;
 	bool changeF;
+	int _exp;
+	int _expMax;
+	int _level;
+
+	std::vector<int>_ability;
 };
 
