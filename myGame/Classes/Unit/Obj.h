@@ -31,6 +31,7 @@ protected:
 	cocos2d::Vec2 _pos;				// À•W	
 	cocos2d::Size _size;				//‘å‚«‚³
 	int _hp;
+	int _power;
 	DIR _dir;
 
 	std::shared_ptr<ActionMng>_actMng;
