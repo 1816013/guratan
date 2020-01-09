@@ -152,7 +152,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\action\ActionMng.cpp" />
     <ClCompile Include="..\Classes\action\Attack.cpp" />
     <ClCompile Include="..\Classes\action\ChangeLR.cpp" />
-    <ClCompile Include="..\Classes\action\CheckKey.cpp" />
+    <ClCompile Include="..\Classes\action\CheckCtr.cpp" />
     <ClCompile Include="..\Classes\action\CheckList.cpp" />
     <ClCompile Include="..\Classes\action\Colision.cpp" />
     <ClCompile Include="..\Classes\action\Move.cpp" />
@@ -176,7 +176,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\action\ActionMng.h" />
     <ClInclude Include="..\Classes\action\Attack.h" />
     <ClInclude Include="..\Classes\action\ChangeLR.h" />
-    <ClInclude Include="..\Classes\action\CheckKey.h" />
+    <ClInclude Include="..\Classes\action\CheckCtr.h" />
     <ClInclude Include="..\Classes\action\CheckList.h" />
     <ClInclude Include="..\Classes\action\Colision.h" />
     <ClInclude Include="..\Classes\action\Move.h" />

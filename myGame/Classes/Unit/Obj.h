@@ -11,6 +11,13 @@ enum class objTag
 	MAX
 };
 
+enum class EnemyAI
+{
+	IDLE,
+	FORROW,
+	MAX
+};
+
 
 class Obj : public cocos2d::Sprite
 {
@@ -18,8 +25,8 @@ public:
 	Obj();
 	virtual ~Obj();
 
-	virtual DIR GetDIR();
-	virtual void SetDIR(DIR dir);
+	virtual DIR GetDIR() = 0;
+	virtual void SetDIR(DIR dir) = 0;
 	virtual bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 	virtual int GetHP() = 0;
 	virtual void SetHP(int hp) = 0;

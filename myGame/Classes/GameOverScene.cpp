@@ -22,6 +22,9 @@ bool GameOverScene::init()
 	{
 		return false;
 	}
+	// ƒV[ƒ“–¼‘OÝ’è
+	this->setName("GameOverScene");
+
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 

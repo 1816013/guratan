@@ -1,8 +1,13 @@
 #include "Weapon.h"
+#include "Unit/Player.h"
 
-cocos2d::Sprite* Weapon::createWeapon()
+USING_NS_CC;
+
+cocos2d::Sprite* Weapon::createWeapon(Sprite& sp)
 {
-	return Weapon::create();
+	auto weapon = Weapon::create();
+	weapon->SetDIR(((Player&)sp).GetDIR());
+	return weapon;
 }
 
 Weapon::Weapon()
@@ -24,6 +29,16 @@ void Weapon::SetHP(int hp)
 	_hp = hp;
 }
 
+DIR Weapon::GetDIR()
+{
+	return _dir;
+}
+
+void Weapon::SetDIR(DIR dir)
+{
+	_dir = dir;
+}
+
 int Weapon::GetPower()
 {
 	return _power;
@@ -37,7 +52,6 @@ bool Weapon::init()
 	{
 		return false;
 	}
-
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 32, 32);
 
 	this->setTextureRect(rect);

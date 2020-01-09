@@ -1,5 +1,6 @@
 #pragma once
 #include "cocos2d.h"
+#include "input/OPRT_state.h"
 class TitleScene : public cocos2d::Scene
 {
 public:
@@ -16,6 +17,6 @@ public:
 
 private:
 	int count;
-
+	std::unique_ptr<OPRT_state>_inputState;
 };
 

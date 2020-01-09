@@ -31,7 +31,7 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 	/*auto enemy = Enemy::createEnemy();
 	enemy->setPosition(Vec2(32, 32 + 32));
 	nowScene->getChildByName("charLayer")->addChild(enemy);*/
-	auto weapon = Weapon::createWeapon();
+	auto weapon = Weapon::createWeapon(sp);
 	weapon->setPosition(sp.getPositionX() + dirOffset.x, sp.getPositionY() + dirOffset.y);
 	weapon->setTag(static_cast<int>(objTag::ATTACK));
 	//nowScene->addChild(weapon);

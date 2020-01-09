@@ -9,30 +9,26 @@ Obj::~Obj()
 {
 }
 
-DIR Obj::GetDIR()
-{
-	return DIR::MAX;
-}
-
-void Obj::SetDIR(DIR dir)
-{
-}
-
 bool Obj::IsCheckedHP()
 {
-	auto charLayer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName("charLayer");
-	if (charLayer != nullptr)
+	auto followLayer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName("followLayer");
+	if (followLayer != nullptr)
 	{
-		for (auto itr : charLayer->getChildren())
+		auto charLayer = (Obj*)followLayer->getChildByName("charLayer");
+		if (charLayer != nullptr)
 		{
-			Obj* obj = (Obj*)itr;
-			if (obj->GetHP() <= 0)
+			for (auto itr : charLayer->getChildren())
 			{
-				obj->removeFromParent();
-				return true;
+				Obj* obj = (Obj*)itr;
+				if (obj->GetHP() <= 0)
+				{
+					obj->removeFromParent();
+					return true;
+				}
 			}
 		}
 	}
+
 	return false;
 }
 

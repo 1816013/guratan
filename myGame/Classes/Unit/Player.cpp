@@ -76,7 +76,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(-5, 0);
-		module.colSize = { Size(-30, 45), Size(-30, -60) };
+		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::LEFT;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::LEFT;
@@ -87,7 +87,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(5, 0);
-		module.colSize = { Size(30, 45), Size(30, -60) };
+		module.colSize = { Size(16, 16), Size(16, -16) };
 		module.inputID = INPUT_ID::RIGHT;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::RIGHT;
@@ -98,7 +98,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, 5);
-		module.colSize = { Size(-30, 45), Size(-30, -60) };
+		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::UP;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::UP;
@@ -109,7 +109,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, -5);
-		module.colSize = { Size(-30, 45), Size(-30, -60) };
+		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::DOWN;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::DOWN;
@@ -133,6 +133,10 @@ void Player::update(float delta)
 {
 	// HP•\‹L(‰¼)
 	auto gameScene = Director::getInstance()->getRunningScene();
+	if (gameScene->getName() != "GameScene")
+	{
+		return;
+	}
 	gameScene->removeChildByTag(10);
 	gameScene->removeChildByTag(11);
 	gameScene->removeChildByTag(12);

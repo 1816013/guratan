@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include <Unit/Player.h>
 #include "Weapon.h"
-#include <GameScene.h>
+
 
 USING_NS_CC;
 
@@ -11,6 +11,11 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyAI enemyAI)
 
 	enemy->SetEnemyAI(enemyAI);
 	return enemy;
+}
+
+EnemyAI Enemy::GetEnemyAI()
+{
+	return _enemyAI;
 }
 
 Enemy::Enemy()
@@ -33,9 +38,56 @@ bool Enemy::init()
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(255, 0, 0));
-	_speedTbl = { Vec2(0, 5),Vec2(5, 0), Vec2(0, -5), Vec2(-5, 0) };
-	_hp = 1;
+	_speedTbl = { Vec2(0, 2),Vec2(2, 0), Vec2(0, -2), Vec2(-2, 0) };
+	_hp = 3;
 	_power = 1;
+
+	//// 左移動
+	//{
+	//	actModule module;
+	//	module.actID = ACT_STATE::RUN;
+	//	module.speed = Vec2(-2, 0);
+	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
+	//	module.inputID = INPUT_ID::LEFT;
+	//	module.keyTiming = Timing::ON;
+	//	module.dir = DIR::LEFT;
+	//	_actMng->AddActModule("左移動", module);
+	//}
+	//// 右移動
+	//{
+	//	actModule module;
+	//	module.actID = ACT_STATE::RUN;
+	//	module.speed = Vec2(2, 0);
+	//	module.colSize = { Size(16, 16), Size(16, -16) };
+	//	module.inputID = INPUT_ID::RIGHT;
+	//	module.keyTiming = Timing::ON;
+	//	module.dir = DIR::RIGHT;
+	//	_actMng->AddActModule("右移動", module);
+	//}
+	//// 上移動
+	//{
+	//	actModule module;
+	//	module.actID = ACT_STATE::RUN;
+	//	module.speed = Vec2(0, 2);
+	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
+	//	module.inputID = INPUT_ID::UP;
+	//	module.keyTiming = Timing::ON;
+	//	module.dir = DIR::UP;
+	//	_actMng->AddActModule("上移動", module);
+	//}
+	//// 下移動
+	//{
+	//	actModule module;
+	//	module.actID = ACT_STATE::RUN;
+	//	module.speed = Vec2(0, -2);
+	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
+	//	module.inputID = INPUT_ID::DOWN;
+	//	module.keyTiming = Timing::ON;
+	//	module.dir = DIR::DOWN;
+	//	_actMng->AddActModule("下移動", module);
+	//}
+
+
 
 	this->scheduleUpdate();
 	return true;
@@ -43,34 +95,41 @@ bool Enemy::init()
 
 void Enemy::update(float delta)
 {
-	auto charLayer = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer");
-	if (charLayer != nullptr)
+	auto GameScene = Director::getInstance()->getRunningScene();
+	if (GameScene->getName() != "GameScene")
 	{
-		auto player = charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
+		return;
+	}
+	auto charLayer = GameScene->getChildByName("charLayer");
+
+	auto player = (Player*)charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
+	if (player != nullptr)
+	{
 		//int dir = rand() % static_cast<int>(DIR::MAX);
+		if (this->getPositionX() < player->getPositionX())
+		{
+			_dir = DIR::RIGHT;
+		}
+		else
+		{
+			_dir = DIR::LEFT;
+		}
+		if (this->getPositionY() < player->getPositionY())
+		{
+			_dir = DIR::UP;
+		}
+		else
+		{
+			_dir = DIR::DOWN;
+		}
 		if (_enemyAI == EnemyAI::FORROW)
 		{
-			if (player != nullptr)
-			{
-				if (this->getPositionX() < player->getPositionX())
-				{
-					this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(DIR::RIGHT)]);
-				}
-				else
-				{
-					this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(DIR::LEFT)]);
-				}
-				if (this->getPositionY() < player->getPositionY())
-				{
-					this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(DIR::UP)]);
-				}
-				else
-				{
-					this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(DIR::DOWN)]);
-				}
-			}
+			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)]);
 		}
 	}
+		
+	
+	_actMng->update(*this);
 	//this->setPosition(this->getPosition() + _speedTbl[dir]);
 
 }
@@ -105,14 +164,15 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			player->SetHP(player->GetHP() -_power);
 			//if (/*後ろが移動できるなら*/)
 			{
-				player->setPosition(player->getPosition() + Vec2(0, -32));		// ノックバック処理
+				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 16);		// ノックバック処理
 			}
 		}
 		else if(hitTag == static_cast<int>(objTag::ATTACK))
 		{
 			Weapon* weapon = (Weapon*)hitObj;
 			_hp -= weapon->GetPower();
-			this->setPosition(this->getPosition() + Vec2(0, 32));
+			auto dir = weapon->GetDIR();
+			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
 			hitObj->removeFromParent();
 		}
 		col = true;

@@ -1,5 +1,6 @@
 #include "Move.h"
 #include <Unit/Player.h>
+#include <Unit/Enemy.h>
 //#include "EffectMng.h"
 //#include "_debug/_DebugConOut.h"
 
@@ -7,45 +8,53 @@ bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
 	sp.setPosition(sp.getPosition() + module.speed);
 
-	auto checkinput = [](INPUT_ID input, cocos2d::Sprite& sp)
+	if (sp.getTag() == static_cast<int>(objTag::PLAYER))
 	{
-		for (auto inputID : INPUT_ID())
+		auto checkinput = [](INPUT_ID input, cocos2d::Sprite& sp)
 		{
-			if (((Player&)sp)._inputState->GetInput(TRG_STATE::NOW, inputID) == true)
+			for (auto inputID : INPUT_ID())
 			{
-				if (input != inputID)
+				if (((Player&)sp)._inputState->GetInput(TRG_STATE::NOW, inputID) == true)
 				{
-					return false;
+					if (input != inputID)
+					{
+						return false;
+					}
 				}
 			}
+			return true;
+		};
+		DIR dir = ((Obj&)sp).GetDIR();
+		if (checkinput(module.inputID, sp))
+		{
+			dir = module.dir;
+			((Obj&)sp).SetDIR(dir);
 		}
-		return true;
-	};
-	DIR dir = DIR::MAX;
-	if (checkinput(module.inputID, sp))
-	{
-		dir = module.dir;
-		((Obj&)sp).SetDIR(dir);
+		// ﾃﾞﾊﾞｯｸﾞ用　@キャラ絵が出来たらいらなくなる
+		if (dir == DIR::UP)
+		{
+			sp.setRotation(0.0f);
+		}
+		if (dir == DIR::RIGHT)
+		{
+			sp.setRotation(90.0f);
+		}
+		if (dir == DIR::DOWN)
+		{
+			sp.setRotation(180.0f);
+		}
+		if (dir == DIR::LEFT)
+		{
+			sp.setRotation(270.0f);
+		}
 	}
-	
-	if (dir == DIR::UP)
+	else
 	{
-		sp.setRotation(0.0f);
-	}
-	if (dir == DIR::RIGHT)
-	{
-		sp.setRotation(90.0f);
-	}
-	if (dir == DIR::DOWN)
-	{
-		sp.setRotation(180.0f);
-	}
-	if (dir == DIR::LEFT)
-	{
-		sp.setRotation(270.0f);
+		((Enemy&)sp).SetDIR( module.dir);
 	}
 	
 	
 	//TRACE("moveLR\n");
 	return true;
 }
+

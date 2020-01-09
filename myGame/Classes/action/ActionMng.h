@@ -13,6 +13,8 @@ enum class ACT_STATE
 	SHOT
 };
 
+
+
 struct actModule;
 using funcActModule = std::function<bool(cocos2d::Sprite&, actModule&)>;
 

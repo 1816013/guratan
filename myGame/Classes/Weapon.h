@@ -3,11 +3,13 @@
 class Weapon : public Obj
 {
 public:
-	static cocos2d::Sprite* createWeapon();
+	static cocos2d::Sprite* createWeapon(Sprite& sp);
 	Weapon();
 	~Weapon();
 	int GetHP();
 	void SetHP(int hp);
+	DIR GetDIR();
+	void SetDIR(DIR dir);
 	int GetPower();
 	void update(float delta)override;
 

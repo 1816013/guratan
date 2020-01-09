@@ -25,7 +25,6 @@
 #include "GameScene.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
-#include <action/CheckKey.h>
 #include <Unit/Player.h>
 #include <Unit/Enemy.h>
 #include <GameMap.h>
@@ -54,6 +53,9 @@ bool GameScene::init()
     {
         return false;
     }
+	// シーン名前設定
+	this->setName("GameScene");
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
 #else
@@ -75,7 +77,8 @@ bool GameScene::init()
 	flontBglayer->setName("flontLayer");
 	backBglayer = Layer::create();
 	backBglayer->setName("backLayer");
-
+	/*Layer* followLayer = Layer::create();
+	followLayer->setName("followLayer");*/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -146,14 +149,13 @@ bool GameScene::init()
 	////実際に表示される領域（これ以外は隠れる)
 	//auto inveSize = Size(uiBglayer->getContentSize().width, visibleSize.height / 2);
 	//_scrollView->setContentSize(inveSize);*/
-	this->runAction(Follow::create(uiBglayer, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	// プレイヤー
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
-	this->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
+	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
 
-	SetEnemy();
+	SetEnemy(EnemyAI::IDLE);
 
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	auto map = GameMap::createMap();
@@ -179,10 +181,11 @@ bool GameScene::init()
 		}
 	}*/
 	
+
 	// ｼｰﾝにぶら下げる
 	this->addChild(uiBglayer, _zOrderUI);
-	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(charBglayer, _zOrderChar);
+	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
 
 	this->scheduleUpdate();
@@ -196,10 +199,11 @@ void GameScene::update(float delta)
 	//ScrollUI();
 	ColTest();
 	
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATACK) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATACK))
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 	{
-		count++;
-		SetEnemy();
+ 		count++;
+		int Rand = rand() % static_cast<int>(EnemyAI::MAX);
+		SetEnemy(static_cast<EnemyAI>(Rand));
 	}
 	obj->IsCheckedHP();
 	int count = 0;
@@ -232,15 +236,10 @@ void GameScene::menuCloseCallback(Ref* pSender)
 
 }
 
-void GameScene::ScrollUI()
-{
-	//auto player = this->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-	//uiBglayer->setPosition({0, 0});
-}
 
-void GameScene::SetEnemy()
+void GameScene::SetEnemy(EnemyAI ai)
 {
-	auto enemy = Enemy::createEnemy(EnemyAI::IDLE);
+	auto enemy = Enemy::createEnemy(ai);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
 	enemy->setPosition(Vec2(rand() % 500 + 48, rand() % 500 + 48));
 	charBglayer->addChild(enemy);
