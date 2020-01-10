@@ -124,7 +124,7 @@ void Enemy::update(float delta)
 		}
 		if (_enemyAI == EnemyAI::FORROW)
 		{
-			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)]);
+			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * delta);
 		}
 	}
 		
