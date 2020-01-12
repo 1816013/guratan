@@ -7,9 +7,9 @@
 class Enemy : public Obj
 {
 public:
-	static cocos2d::Sprite* createEnemy(EnemyAI enemyAI);
-	EnemyAI GetEnemyAI();
-	void SetEnemyAI(EnemyAI enemyAI);
+	static cocos2d::Sprite* createEnemy(EnemyMoveAI enemyAI);
+	EnemyMoveAI GetEnemyAI();
+	void SetEnemyAI(EnemyMoveAI enemyAI);
 
 	// ŠÖ”
 	Enemy();
@@ -28,7 +28,10 @@ public:
 
 	CREATE_FUNC(Enemy);
 private:
-	EnemyAI _enemyAI;
+	EnemyMoveAI _enemyMoveAI;
+	EnemyAttackAI _enemyAttackAI;
+	int _attackIntarval;
+	float time;
 
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—

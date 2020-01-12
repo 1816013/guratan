@@ -11,11 +11,12 @@ public:
 	DIR GetDIR();
 	void SetDIR(DIR dir);
 	int GetPower();
-	void update(float delta)override;
+	
 
 	CREATE_FUNC(Weapon);
 private:
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
+	void update(float delta)override;
 	cocos2d::Vec2 _pos;
 	int _remainCnt;
 };

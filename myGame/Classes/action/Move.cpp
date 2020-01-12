@@ -6,10 +6,11 @@
 
 bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
-	sp.setPosition(sp.getPosition() + module.speed);
+	sp.setPosition(sp.getPosition() + module.speed * ((Player&)sp).GetMovePower());
 
 	if (sp.getTag() == static_cast<int>(objTag::PLAYER))
 	{
+		
 		auto checkinput = [](INPUT_ID input, cocos2d::Sprite& sp)
 		{
 			for (auto inputID : INPUT_ID())

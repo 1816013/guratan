@@ -15,6 +15,7 @@ public:
 	int GetHP();
 	void SetHP(int hp);
 	int GetPower();
+	float GetMovePower();
 
 	std::unique_ptr<OPRT_state>_inputState;
 
@@ -22,9 +23,6 @@ public:
 private:
 	bool init()override;				// 初期化　ｽﾌﾟﾗｲﾄ作成
 	void update(float delta)override;	// ﾌﾟﾚｲﾔｰの移動とｱﾆﾒｰｼｮﾝ処理
-
-	
-
 	void LevelUp(void);
 
 	// 変数
@@ -33,6 +31,8 @@ private:
 	int _exp;
 	int _expMax;
 	int _level;
+
+	float _movePower;	// 移動速度アビリティ補正用
 
 	std::vector<int>_ability;
 };

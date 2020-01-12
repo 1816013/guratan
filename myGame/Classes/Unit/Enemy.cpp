@@ -1,11 +1,12 @@
 #include "Enemy.h"
 #include <Unit/Player.h>
 #include "Weapon.h"
+#include "E_Attack.h"
 
 
 USING_NS_CC;
 
-cocos2d::Sprite * Enemy::createEnemy(EnemyAI enemyAI)
+cocos2d::Sprite * Enemy::createEnemy(EnemyMoveAI enemyAI)
 {
 	auto enemy = Enemy::create();
 
@@ -13,9 +14,9 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyAI enemyAI)
 	return enemy;
 }
 
-EnemyAI Enemy::GetEnemyAI()
+EnemyMoveAI Enemy::GetEnemyAI()
 {
-	return _enemyAI;
+	return _enemyMoveAI;
 }
 
 Enemy::Enemy()
@@ -41,6 +42,9 @@ bool Enemy::init()
 	_speedTbl = { Vec2(0, 2),Vec2(2, 0), Vec2(0, -2), Vec2(-2, 0) };
 	_hp = 3;
 	_power = 1;
+	_attackIntarval = 1;
+	_enemyAttackAI = EnemyAttackAI::AIMING;
+	time = 0.0f;
 
 	//// ç∂à⁄ìÆ
 	//{
@@ -106,25 +110,43 @@ void Enemy::update(float delta)
 	if (player != nullptr)
 	{
 		//int dir = rand() % static_cast<int>(DIR::MAX);
-		if (this->getPositionX() < player->getPositionX())
+		if (abs(this->getPositionX() - player->getPositionX()) > abs(this->getPositionY() - player->getPositionY()))
 		{
-			_dir = DIR::RIGHT;
+			if (this->getPositionX() < player->getPositionX())
+			{
+				_dir = DIR::RIGHT;
+			}
+			else
+			{
+				_dir = DIR::LEFT;
+			}
 		}
 		else
 		{
-			_dir = DIR::LEFT;
+			if (this->getPositionY() < player->getPositionY())
+			{
+				_dir = DIR::UP;
+			}
+			else
+			{
+				_dir = DIR::DOWN;
+			}
 		}
-		if (this->getPositionY() < player->getPositionY())
+		if (_enemyMoveAI == EnemyMoveAI::FORROW)
 		{
-			_dir = DIR::UP;
+			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] /** delta * 60*/);
 		}
-		else
+	}
+	time += delta;
+	if (_enemyAttackAI == EnemyAttackAI::AIMING)
+	{
+		if (time > _attackIntarval)
 		{
-			_dir = DIR::DOWN;
-		}
-		if (_enemyAI == EnemyAI::FORROW)
-		{
-			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * delta);
+			time = 0;
+			auto e_Attack = E_Attack::createE_Attack(*this);
+			e_Attack->setPosition(this->getPosition());
+			e_Attack->setTag(static_cast<int>(objTag::E_ATTACK));
+			charLayer->addChild(e_Attack);
 		}
 	}
 		
@@ -155,6 +177,11 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 
 	Rect myRect = this->getBoundingBox();
 	Rect hitRect = hitObj->getBoundingBox();
+	int hitTag = hitObj->getTag();
+	if (hitTag == static_cast<int>(objTag::E_ATTACK))
+	{
+		return false;
+	}
 	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj->getTag();
@@ -180,9 +207,9 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 	return col;
 }
 
-void Enemy::SetEnemyAI(EnemyAI enemyAI)
+void Enemy::SetEnemyAI(EnemyMoveAI enemyAI)
 {
-	_enemyAI = enemyAI;
+	_enemyMoveAI = enemyAI;
 }
 
 

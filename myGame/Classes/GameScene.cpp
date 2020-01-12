@@ -27,6 +27,7 @@
 #include <input/OPRT_touch.h>
 #include <Unit/Player.h>
 #include <Unit/Enemy.h>
+#include <E_Attack.h>
 #include <GameMap.h>
 #include "GameOverScene.h"
 
@@ -133,55 +134,18 @@ bool GameScene::init()
 		uiBglayer->addChild(label, 0);
     }
 
-	/*//auto _scrollView = ui::ScrollView::create();
-	//_scrollView->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
-	//_scrollView->setDirection(ui::ScrollView::Direction::VERTICAL);
-	//_scrollView->setBounceEnabled(true);
-	//this->addChild(_scrollView);
-
-
-	////スクロールする中身を追加（LayerやSpriteなど）
-	//_scrollView->addChild(uiBglayer);
-
-	////中身のサイズを指定
-	//_scrollView->setInnerContainerSize(Size(uiBglayer->getContentSize().width, uiBglayer->getContentSize().height));
-
-	////実際に表示される領域（これ以外は隠れる)
-	//auto inveSize = Size(uiBglayer->getContentSize().width, visibleSize.height / 2);
-	//_scrollView->setContentSize(inveSize);*/
 	// プレイヤー
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
+
 	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
-
-	SetEnemy(EnemyAI::IDLE);
-
+	SetEnemy(EnemyMoveAI::IDLE);
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	auto map = GameMap::createMap();
 	map->setTag(3);
 	backBglayer->addChild(map);
-	/*mapChipSize = Size( 32.0f, 32.0f );
-	for (int y = 0; y < 18; y++)
-	{
-		for (int x = 0; x < 32; x++)
-		{
-			mapData[y][x] = 0;
-			if (y == 0 || y == 17 || x == 0 || x == 31)
-			{
-				mapData[y][x] = 1;
-				Rect rect = Rect(0, 0, 32, 32);
-				Sprite* square = Sprite::create();
-				square->setTextureRect(rect);
-				square->setPosition(x * 32 + 16, y * 32 + 16);
-				
-				backBglayer->addChild(square);
-				square->setGlobalZOrder(10);
-			}
-		}
-	}*/
 	
-
 	// ｼｰﾝにぶら下げる
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
@@ -202,8 +166,8 @@ void GameScene::update(float delta)
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 	{
  		count++;
-		int Rand = rand() % static_cast<int>(EnemyAI::MAX);
-		SetEnemy(static_cast<EnemyAI>(Rand));
+		int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
+		SetEnemy(static_cast<EnemyMoveAI>(Rand));
 	}
 	obj->IsCheckedHP();
 	int count = 0;
@@ -237,7 +201,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
 }
 
 
-void GameScene::SetEnemy(EnemyAI ai)
+void GameScene::SetEnemy(EnemyMoveAI ai)
 {
 	auto enemy = Enemy::createEnemy(ai);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));

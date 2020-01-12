@@ -52,7 +52,7 @@ bool TitleScene::init()
 	
 	count = 0;
 	this->addChild(titleLayer);
-	this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 10.0f);
+	this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 1.0f);
 	return true;
 }
 

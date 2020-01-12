@@ -58,7 +58,7 @@ public:
     CREATE_FUNC(GameScene);
 private:
 	// ŠÖ”
-	void SetEnemy(EnemyAI);
+	void SetEnemy(EnemyMoveAI);
 	void ColTest();
 
 	// •Ï”

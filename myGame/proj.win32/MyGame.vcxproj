@@ -14,7 +14,7 @@
     <ProjectGuid>{76A39BB2-9B84-4C65-98A5-654D86B86F2A}</ProjectGuid>
     <RootNamespace>test_win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -152,13 +152,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\action\ActionMng.cpp" />
     <ClCompile Include="..\Classes\action\Attack.cpp" />
     <ClCompile Include="..\Classes\action\ChangeLR.cpp" />
-    <ClCompile Include="..\Classes\action\CheckCtr.cpp" />
+    <ClCompile Include="..\Classes\action\CheckKey.cpp" />
     <ClCompile Include="..\Classes\action\CheckList.cpp" />
     <ClCompile Include="..\Classes\action\Colision.cpp" />
     <ClCompile Include="..\Classes\action\Move.cpp" />
     <ClCompile Include="..\Classes\action\Shot.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\CricketJni.cpp" />
+    <ClCompile Include="..\Classes\E_Attack.cpp" />
     <ClCompile Include="..\Classes\GameOverScene.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_key.cpp" />
@@ -176,13 +177,14 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\action\ActionMng.h" />
     <ClInclude Include="..\Classes\action\Attack.h" />
     <ClInclude Include="..\Classes\action\ChangeLR.h" />
-    <ClInclude Include="..\Classes\action\CheckCtr.h" />
+    <ClInclude Include="..\Classes\action\CheckKey.h" />
     <ClInclude Include="..\Classes\action\CheckList.h" />
     <ClInclude Include="..\Classes\action\Colision.h" />
     <ClInclude Include="..\Classes\action\Move.h" />
     <ClInclude Include="..\Classes\action\Shot.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\CricketJni.h" />
+    <ClInclude Include="..\Classes\E_Attack.h" />
     <ClInclude Include="..\Classes\GameOverScene.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\input\OPRT_key.h" />

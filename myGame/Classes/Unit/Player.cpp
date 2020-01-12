@@ -33,6 +33,11 @@ int Player::GetPower()
 	return _power;
 }
 
+float Player::GetMovePower()
+{
+	return _movePower;
+}
+
 bool Player::init()
 {
 	// ½Ìß×²Ä¸×½‚Ì‰Šú‰»@init‚ğ©ì‚µ‚½‚½‚ß•K—v
@@ -69,6 +74,7 @@ bool Player::init()
 	_dir = DIR::UP;
 	_hp = 5;
 	changeF = false;
+	_movePower = 1.0f;
 
 	// ±¸¼®İ¾¯Ä @csvo—Í‚É‚µ‚½‚¢
 	// ¶ˆÚ“®

@@ -1,6 +1,6 @@
 #include "ActionMng.h"
 #include "CheckList.h"
-#include "CheckCtr.h"
+#include "CheckKey.h"
 #include "Colision.h"
 #include "Move.h"
 #include "ChangeLR.h"

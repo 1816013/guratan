@@ -88,8 +88,11 @@
     <ClCompile Include="..\Classes\Weapon.cpp">
       <Filter>src\unit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\action\CheckCtr.cpp">
+    <ClCompile Include="..\Classes\action\CheckKey.cpp">
       <Filter>src\action\check</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\E_Attack.cpp">
+      <Filter>src\unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,8 +157,11 @@
     <ClInclude Include="..\Classes\Weapon.h">
       <Filter>src\unit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\action\CheckCtr.h">
+    <ClInclude Include="..\Classes\action\CheckKey.h">
       <Filter>src\action\check</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\E_Attack.h">
+      <Filter>src\unit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,13 +8,21 @@ enum class objTag
 	PLAYER,
 	ENEMY,
 	ATTACK,
+	E_ATTACK,
 	MAX
 };
 
-enum class EnemyAI
+enum class EnemyMoveAI
 {
 	IDLE,
 	FORROW,
+	MAX
+};
+
+enum class EnemyAttackAI
+{
+	NONE,
+	AIMING,
 	MAX
 };
 
@@ -28,8 +36,8 @@ public:
 	virtual DIR GetDIR() = 0;
 	virtual void SetDIR(DIR dir) = 0;
 	virtual bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
-	virtual int GetHP() = 0;
-	virtual void SetHP(int hp) = 0;
+	virtual int GetHP();
+	virtual void SetHP(int hp);
 	virtual int GetPower() = 0;
 
 	bool IsCheckedHP();
