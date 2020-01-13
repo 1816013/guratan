@@ -146,6 +146,7 @@ void Enemy::update(float delta)
 			auto e_Attack = E_Attack::createE_Attack(*this);
 			e_Attack->setPosition(this->getPosition());
 			e_Attack->setTag(static_cast<int>(objTag::E_ATTACK));
+			e_Attack->setCameraMask(static_cast<int>(CameraFlag::USER1));
 			charLayer->addChild(e_Attack);
 		}
 	}

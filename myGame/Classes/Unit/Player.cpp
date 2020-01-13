@@ -38,6 +38,16 @@ float Player::GetMovePower()
 	return _movePower;
 }
 
+void Player::SetAbility(Ability ability)
+{
+	_ability.emplace_back(ability);
+}
+
+std::vector<Ability> Player::GetAbilityList()
+{
+	return _ability;
+}
+
 bool Player::init()
 {
 	// ½Ìß×²Ä¸×½‚Ì‰Šú‰»@init‚ðŽ©ì‚µ‚½‚½‚ß•K—v
@@ -173,7 +183,8 @@ void Player::update(float delta)
 	{
 		LevelUp();
 	}
-
+	
+	gameScene->getChildByName("charLayer")->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 

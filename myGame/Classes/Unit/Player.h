@@ -1,6 +1,15 @@
 #pragma once
 #include"Obj.h"
 
+enum class Ability
+{
+	PowerUp,
+	SpeedUp,
+	RangeAttack,
+	MAX
+};
+
+
 class Player : public Obj
 {
 public:
@@ -16,6 +25,8 @@ public:
 	void SetHP(int hp);
 	int GetPower();
 	float GetMovePower();
+	void SetAbility(Ability ability);
+	std::vector<Ability> GetAbilityList();
 
 	std::unique_ptr<OPRT_state>_inputState;
 
@@ -34,6 +45,6 @@ private:
 
 	float _movePower;	// 移動速度アビリティ補正用
 
-	std::vector<int>_ability;
+	std::vector<Ability>_ability;
 };
 

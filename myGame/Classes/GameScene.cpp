@@ -137,6 +137,7 @@ bool GameScene::init()
 	// プレイヤー
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
+	
 
 	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
@@ -144,13 +145,33 @@ bool GameScene::init()
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	auto map = GameMap::createMap();
 	map->setTag(3);
+	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	backBglayer->addChild(map);
+
+	// カメラ
+	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
+	this->addChild(camera);
+	camera->setPosition3D({ 0, 0, 0 });
+	camera->setRotation3D({ 0, 0, 0 });
+	camera->setDepth(1.0f);
+	camera->setCameraFlag(CameraFlag::DEFAULT);
+	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
+
+	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
+	camera1->setName("playerCamera");
+	charBglayer->addChild(camera1);
+	camera1->setPosition3D({ player->getPositionX() - visibleSize.width / 2, player->getPositionY() - visibleSize.height / 2, 0 });
+	camera1->setRotation3D({ 0, 0, 0 });
+	camera1->setDepth(0.0f);
+	camera1->setCameraFlag(CameraFlag::USER1);	
+	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	
 	// ｼｰﾝにぶら下げる
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
+
 
 	this->scheduleUpdate();
     return true;
@@ -165,25 +186,38 @@ void GameScene::update(float delta)
 	
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 	{
- 		count++;
 		int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
 		SetEnemy(static_cast<EnemyMoveAI>(Rand));
 	}
 	obj->IsCheckedHP();
-	int count = 0;
+	int pCount = 0;
 	for (auto eRect : this->charBglayer->getChildren())
 	{
 		int tag = eRect->getTag();
 		if (static_cast<int>(objTag::PLAYER) == tag)
 		{
-			count++;
+			pCount++;
 		}
 	}
-	if (count <= 0)
+	if (pCount <= 0)
 	{
 		Scene *scene = GameOverScene::createScene();
 		Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 	}
+	if (count > 180)
+	{
+		charBglayer->pause();
+
+		for (cocos2d::Node* _node : charBglayer->getChildren())
+		{
+			_node->pause();
+		}
+	}
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+	{
+		
+	}
+	count++;
 }
 
 

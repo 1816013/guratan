@@ -21,12 +21,12 @@ bool Obj::IsCheckedHP()
 	{
 		for (auto itr : charLayer->getChildren())
 		{
-			Obj* obj = (Obj*)itr;
+			/*Obj* obj = (Obj*)itr;
 			if (obj->GetHP() <= 0)
 			{
 				obj->removeFromParent();
 				return true;
-			}
+			}*/
 		}
 	}
 	return false;

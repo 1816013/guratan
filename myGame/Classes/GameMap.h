@@ -2,8 +2,8 @@
 #include "cocos2d.h"
 #include <input/OPRT_state.h>
 
-#define MAP_X 40
-#define MAP_Y 40
+#define MAP_X 32
+#define MAP_Y 32
 
 
 struct _rect 

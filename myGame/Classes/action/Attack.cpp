@@ -34,6 +34,7 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 	auto weapon = Weapon::createWeapon(sp);
 	weapon->setPosition(sp.getPositionX() + dirOffset.x, sp.getPositionY() + dirOffset.y);
 	weapon->setTag(static_cast<int>(objTag::ATTACK));
+	weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	//nowScene->addChild(weapon);
 	nowScene->getChildByName("charLayer")->addChild(weapon);
 	return true;

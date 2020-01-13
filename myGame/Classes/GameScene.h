@@ -71,8 +71,6 @@ private:
 
 	int count = 0;
 
-	
-
 	Obj* obj;
 
 	std::unique_ptr<OPRT_state>_inputState;

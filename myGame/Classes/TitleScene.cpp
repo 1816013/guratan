@@ -43,12 +43,14 @@ bool TitleScene::init()
 	titleLayer->addChild(label, 0);
 
 	// ƒJƒƒ‰Ý’è
-	auto camera1 = Camera::create();
+	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
+	this->addChild(camera1);
+	camera1->setPosition3D({ 0, 0, 0 });
+	camera1->setRotation3D({ 0, 0, 0 });
+	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::DEFAULT);
-	camera1->setPosition3D({ 500, 0, 50 });
-	camera1->lookAt({ 500, 0, 0 });
-	titleLayer->addChild(camera1);
-	titleLayer->setCameraMask((unsigned short)CameraFlag::DEFAULT);
+
+	titleLayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	
 	count = 0;
 	this->addChild(titleLayer);
