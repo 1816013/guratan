@@ -58,6 +58,12 @@ bool Weapon::init()
 	this->setColor(cocos2d::Color3B(0, 255, 0));
 	_hp = 1;
 	_power = 1;
+
+	auto size = this->getContentSize() / 2;
+	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
+	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 	//this->setPosition(100, 100);
 	this->scheduleUpdate();
 

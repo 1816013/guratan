@@ -18,6 +18,7 @@ public:
 	GameMap();
 	~GameMap();
 	std::unique_ptr<OPRT_state>_inputState;
+	bool mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<cocos2d::Size, 2> colSize);
 
 	CREATE_FUNC(GameMap);
 
@@ -27,6 +28,8 @@ private:
 
 	void rectSplit(struct _rect rect_parent);
 	struct _rect addRect(int sX, int sY, int eX, int eY);
+
+	
 
 	
 	std::vector<struct _rect>_rectList;

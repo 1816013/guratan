@@ -2,6 +2,7 @@
 #include <Unit/Player.h>
 #include "Weapon.h"
 #include "E_Attack.h"
+#include "action/Colision.h"
 
 
 USING_NS_CC;
@@ -43,9 +44,13 @@ bool Enemy::init()
 	_hp = 3;
 	_power = 1;
 	_attackIntarval = 1;
-	_enemyAttackAI = EnemyAttackAI::AIMING;
+	_enemyAttackAI = EnemyAttackAI::NONE;
 	time = 0.0f;
-
+	auto size = this->getContentSize() / 2;
+	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
+	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 	//// 左移動
 	//{
 	//	actModule module;
@@ -188,7 +193,7 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			col = true;
 			Player* player = (Player*)hitObj;
 			player->SetHP(player->GetHP() -_power);
-			//if (/*後ろが移動できるなら*/)
+			if (_gameMap->mapColision(*player, _speedTbl[static_cast<int>(_dir)] * 16, player->_colSize[static_cast<int>(_dir)]))
 			{
 				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 16);		// ノックバック処理
 			}
@@ -199,7 +204,10 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			Weapon* weapon = (Weapon*)hitObj;
 			_hp -= weapon->GetPower();
 			auto dir = weapon->GetDIR();
-			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 16, weapon->_colSize[static_cast<int>(_dir)]))
+			{
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
+			}
 			hitObj->removeFromParent();
 		}
 		

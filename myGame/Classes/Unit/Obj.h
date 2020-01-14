@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include <input/OPRT_state.h>
 #include <action/ActionMng.h>
+#include "GameMap.h"
 #include <array>
 
 enum class objTag
@@ -42,13 +43,15 @@ public:
 	virtual int GetPower() = 0;
 
 	bool IsCheckedHP();
+	std::array<std::array<cocos2d::Size, 2>, static_cast<int>(DIR::MAX)>_colSize;
 
-
+	std::shared_ptr<GameMap>_gameMap;
 
 protected:
 	// •Ï”
 	cocos2d::Vec2 _pos;				// À•W	
 	cocos2d::Size _size;				//‘å‚«‚³
+	
 	int _hp;
 	int _power;
 	DIR _dir;

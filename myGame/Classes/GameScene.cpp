@@ -153,7 +153,7 @@ bool GameScene::init()
 
 	// Ï¯Ìß(‰¼) @ÏÈ°¼Ş¬°—\’è
 	auto map = GameMap::createMap();
-	map->setTag(3);
+	map->setName("mapMng");
 	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	backBglayer->addChild(map);
 
@@ -264,6 +264,7 @@ void GameScene::SetEnemy(EnemyMoveAI ai)
 {
 	auto enemy = Enemy::createEnemy(ai);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
+	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	enemy->setPosition(Vec2(rand() % 500 + 48, rand() % 500 + 48));
 	charBglayer->addChild(enemy);
 }

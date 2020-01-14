@@ -88,6 +88,11 @@ bool E_Attack::init()
 	_hp = 1;
 	_power = 1;
 	_remainCnt = 0;
+	auto size = this->getContentSize() / 2;
+	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
+	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 	//this->setPosition(100, 100);
 	this->scheduleUpdate();
 	return true;

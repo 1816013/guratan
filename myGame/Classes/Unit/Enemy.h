@@ -22,7 +22,6 @@ public:
 
 	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 	
-
 	std::unique_ptr<OPRT_state>_inputState;
 
 	CREATE_FUNC(Enemy);
@@ -33,9 +32,6 @@ private:
 	float time;
 
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
-	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—
-
-
-	
+	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—	
 };
 

@@ -5,6 +5,7 @@ USING_NS_CC;
 Obj::Obj()
 {
 	_actMng.reset(new ActionMng);
+	_gameMap.reset(new GameMap);
 	_speedTbl = { Vec2(0, 2),Vec2(2, 0), Vec2(0, -2), Vec2(-2, 0) };
 }
 

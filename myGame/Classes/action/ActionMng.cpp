@@ -28,7 +28,7 @@ void ActionMng::AddActModule(const std::string & actName, actModule & module)
 			_moduleMap.emplace(actName, std::move(module));
 			_moduleMap[actName].act.emplace_back(CheckList());
 			_moduleMap[actName].act.emplace_back(CheckKey());
-			_moduleMap[actName].act.emplace_back(Colision());
+			_moduleMap[actName].act.emplace_back(actColision());
 			_moduleMap[actName].runAction = Move();
 		}
 		if (actName == "‰EŒü‚«" || actName == "¶Œü‚«")

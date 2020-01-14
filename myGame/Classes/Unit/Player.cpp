@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
+#include "action/Colision.h"
 
 USING_NS_CC;
 
@@ -76,7 +77,7 @@ bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 		{
 			col = true;
 			_hp -= hitObj->GetPower();
-			//if (/*後ろが移動できるなら*/)
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 16, this->_colSize[static_cast<int>(_dir)]))
 			{
 				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 16);		// ノックバック処理
 			}
@@ -120,9 +121,14 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 5;
 	_dir = DIR::UP;
-	_hp = 5;
+	_hp = 1000000000;
 	changeF = false;
 	_movePower = 1.0f;
+	auto size = this->getContentSize() / 2;
+	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
+	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
 	// ｱｸｼｮﾝｾｯﾄ @csv出力にしたい
 	// 左移動
@@ -152,7 +158,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, 5);
-		module.colSize = { Size(-16, 16), Size(-16, -16) };
+		module.colSize = { Size(-16, 16), Size(16, 16) };
 		module.inputID = INPUT_ID::UP;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::UP;
@@ -163,7 +169,7 @@ bool Player::init()
 		actModule module;
 		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, -5);
-		module.colSize = { Size(-16, 16), Size(-16, -16) };
+		module.colSize = { Size(-16, -16), Size(16, -16) };
 		module.inputID = INPUT_ID::DOWN;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::DOWN;
