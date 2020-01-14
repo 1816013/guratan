@@ -40,12 +40,50 @@ float Player::GetMovePower()
 
 void Player::SetAbility(Ability ability)
 {
-	_ability.emplace_back(ability);
+	_abilityList.emplace_back(ability);
 }
 
 std::vector<Ability> Player::GetAbilityList()
 {
-	return _ability;
+	return _abilityList;
+}
+
+bool Player::FindAbility(Ability ability)
+{
+	bool find = false;
+	for (auto abilityItr : _abilityList)
+	{
+		if (abilityItr == ability)
+		{
+			find = true;
+		}
+	}
+	return find;
+}
+
+bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+{
+	bool col = false;
+
+	Rect myRect = this->getBoundingBox();
+	Rect hitRect = hitObj->getBoundingBox();
+	int hitTag = hitObj->getTag();
+
+	if (myRect.intersectsRect(hitRect))
+	{
+		int hitTag = hitObj->getTag();
+		if (hitTag == static_cast<int>(objTag::E_ATTACK))
+		{
+			col = true;
+			_hp -= hitObj->GetPower();
+			//if (/*後ろが移動できるなら*/)
+			{
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 16);		// ノックバック処理
+			}
+			hitObj->removeFromParent();
+		}
+	}
+	return col;
 }
 
 bool Player::init()
@@ -184,7 +222,7 @@ void Player::update(float delta)
 		LevelUp();
 	}
 	
-	gameScene->getChildByName("charLayer")->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 

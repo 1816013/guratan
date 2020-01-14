@@ -48,6 +48,28 @@ void E_Attack::SetTargetMove(Sprite & sp)
 
 		_move.x = cos(_radian) * speed.x;
 		_move.y = sin(_radian) * speed.y;
+		if (abs(_move.x) > abs(_move.y))
+		{
+			if (_move.x >= 0.0f)
+			{
+				_dir = DIR::RIGHT;
+			}
+			else if(_move.x < 0.0f)
+			{
+				_dir = DIR::LEFT;
+			}
+		}
+		else
+		{
+			if (_move.y >= 0.0f)
+			{
+				_dir = DIR::UP;
+			}
+			else if (_move.y < 0.0f)
+			{
+				_dir = DIR::DOWN;
+			}
+		}
 	}
 
 }
@@ -62,7 +84,7 @@ bool E_Attack::init()
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 16, 16);
 	
 	this->setTextureRect(rect);
-	this->setColor(cocos2d::Color3B(0, 255, 0));
+	this->setColor(cocos2d::Color3B(228, 0, 127));
 	_hp = 1;
 	_power = 1;
 	_remainCnt = 0;

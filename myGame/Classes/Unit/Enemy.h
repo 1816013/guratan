@@ -1,5 +1,4 @@
 #include"Obj.h"
-#include <array>
 #include "input/OPRT_state.h"
 
 
@@ -37,6 +36,6 @@ private:
 	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—
 
 
-	std::array<cocos2d::Vec2, static_cast<int>(DIR::MAX)> _speedTbl;
+	
 };
 

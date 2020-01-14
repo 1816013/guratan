@@ -27,6 +27,9 @@ public:
 	float GetMovePower();
 	void SetAbility(Ability ability);
 	std::vector<Ability> GetAbilityList();
+	bool FindAbility(Ability ability);
+
+	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 
 	std::unique_ptr<OPRT_state>_inputState;
 
@@ -45,6 +48,6 @@ private:
 
 	float _movePower;	// 移動速度アビリティ補正用
 
-	std::vector<Ability>_ability;
+	std::vector<Ability>_abilityList;
 };
 

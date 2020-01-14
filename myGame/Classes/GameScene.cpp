@@ -54,8 +54,12 @@ bool GameScene::init()
     {
         return false;
     }
-	// シーン名前設定
+	// シーン設定
 	this->setName("GameScene");
+	_sceneType = SceneType::GAME;
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
@@ -65,11 +69,15 @@ bool GameScene::init()
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
 
+	// レイヤー設定
+	_zOrderMenu = static_cast<int>(Z_ORDER_TYPE::MENU);
 	_zOrderUI = static_cast<int>(Z_ORDER_TYPE::UI);	
 	_zOrderFlont = static_cast<int>(Z_ORDER_TYPE::FLONT);
 	_zOrderChar = static_cast<int>(Z_ORDER_TYPE::CHAR);	
 	_zOrderBack = static_cast<int>(Z_ORDER_TYPE::BACK);
 	
+	MenuBglayer = Layer::create();
+	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
 	uiBglayer->setName("uiLayer");
 	charBglayer = Layer::create();
@@ -78,11 +86,14 @@ bool GameScene::init()
 	flontBglayer->setName("flontLayer");
 	backBglayer = Layer::create();
 	backBglayer->setName("backLayer");
-	/*Layer* followLayer = Layer::create();
-	followLayer->setName("followLayer");*/
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	//Menu
+	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
+	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height - levelupText->getContentSize().height));
+
+	MenuBglayer->addChild(levelupText, 0);
+	// UI
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
@@ -111,8 +122,6 @@ bool GameScene::init()
     menu->setPosition(Vec2::ZERO);
 	uiBglayer->addChild(menu, 0);
 
-
-
     /////////////////////////////
     // 3. add your codes below...
 
@@ -134,14 +143,14 @@ bool GameScene::init()
 		uiBglayer->addChild(label, 0);
     }
 
-	// プレイヤー
+	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
 	
-
 	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
 	SetEnemy(EnemyMoveAI::IDLE);
+
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	auto map = GameMap::createMap();
 	map->setTag(3);
@@ -159,14 +168,24 @@ bool GameScene::init()
 
 	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
 	camera1->setName("playerCamera");
-	charBglayer->addChild(camera1);
+	this->addChild(camera1);
 	camera1->setPosition3D({ player->getPositionX() - visibleSize.width / 2, player->getPositionY() - visibleSize.height / 2, 0 });
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	
+	auto camera2 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
+	camera2->setName("menuCamera");
+	this->addChild(camera2);
+	camera2->setPosition3D({ 0, 0, 0 });
+	camera2->setRotation3D({ 0, 0, 0 });
+	camera2->setDepth(0.0f);
+	camera2->setCameraFlag(CameraFlag::USER2);
+	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
+
 	// ｼｰﾝにぶら下げる
+	//this->addChild(MenuBglayer, _zOrderMenu);
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
@@ -181,41 +200,47 @@ void GameScene::update(float delta)
 {
 	_inputState->update();
 
-	//ScrollUI();
-	ColTest();
-	
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~ _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+	if (_sceneType == SceneType::GAME)
 	{
-		int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
-		SetEnemy(static_cast<EnemyMoveAI>(Rand));
-	}
-	obj->IsCheckedHP();
-	int pCount = 0;
-	for (auto eRect : this->charBglayer->getChildren())
-	{
-		int tag = eRect->getTag();
-		if (static_cast<int>(objTag::PLAYER) == tag)
-		{
-			pCount++;
-		}
-	}
-	if (pCount <= 0)
-	{
-		Scene *scene = GameOverScene::createScene();
-		Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
-	}
-	if (count > 180)
-	{
-		charBglayer->pause();
+		ColTest();
 
-		for (cocos2d::Node* _node : charBglayer->getChildren())
+		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
-			_node->pause();
+			int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
+			SetEnemy(static_cast<EnemyMoveAI>(Rand));
+		}
+		obj->IsCheckedHP();
+		int pCount = 0;
+		for (auto eRect : this->charBglayer->getChildren())
+		{
+			int tag = eRect->getTag();
+			if (static_cast<int>(objTag::PLAYER) == tag)
+			{
+				pCount++;
+			}
+		}
+		if (pCount <= 0)
+		{
+			Scene *scene = GameOverScene::createScene();
+			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 		}
 	}
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+	else if (_sceneType == SceneType::MENU)
 	{
-		
+		// ポーズ処理
+		if (count > 180)
+		{
+			charBglayer->pause();
+
+			for (cocos2d::Node* _node : charBglayer->getChildren())
+			{
+				_node->pause();
+			}
+		}
+		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+		{
+
+		}
 	}
 	count++;
 }
@@ -272,35 +297,29 @@ void GameScene::ColTest()
 				}
 			}
 		}
-		//if (tag == static_cast<int>(objTag::PLAYER))
-		//{
-		//	Player* player = (Player*)eRect;
-		//	for (auto pRect : this->charBglayer->getChildren())
-		//	{
-
-		//		if (eRect == pRect)
-		//		{
-		//			continue;
-		//		}
-		//		Obj* obj2 = (Obj*)pRect;
-
-		//		int tag2 = pRect->getTag();
-		//		if (tag2 != tag)
-		//		{
-		//			rectA = eRect->getBoundingBox();
-		//			rectE = pRect->getBoundingBox();
-
-		//			if (rectA.intersectsRect(rectE))
-		//			{
-		//				player->SetHP(player->GetHP() - 1);
-		//				obj2->SetHP(obj2->GetHP() - 1);
-
-		//				//eRect->removeFromParent();
-		//				flag = true;
-		//				return;
-		//			}
-		//		}
-		//	}
-		//}
+		if (tag == static_cast<int>(objTag::PLAYER))
+		{
+			Player* player = (Player*)eRect;
+			for (auto pRect : this->charBglayer->getChildren())
+			{
+				if (eRect == pRect)
+				{
+					continue;
+				}
+				int tag2 = pRect->getTag();
+				if (tag2 != tag)
+				{
+					Obj* hitObj = (Obj*)pRect;
+					int tag2 = pRect->getTag();
+					if (tag2 != tag)
+					{
+						if (player->ColisionObj(hitObj, this->charBglayer))
+						{
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
 }

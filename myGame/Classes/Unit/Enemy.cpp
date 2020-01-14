@@ -39,7 +39,7 @@ bool Enemy::init()
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(255, 0, 0));
-	_speedTbl = { Vec2(0, 2),Vec2(2, 0), Vec2(0, -2), Vec2(-2, 0) };
+	
 	_hp = 3;
 	_power = 1;
 	_attackIntarval = 1;
@@ -179,15 +179,13 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 	Rect myRect = this->getBoundingBox();
 	Rect hitRect = hitObj->getBoundingBox();
 	int hitTag = hitObj->getTag();
-	if (hitTag == static_cast<int>(objTag::E_ATTACK))
-	{
-		return false;
-	}
+
 	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj->getTag();
 		if (hitTag == static_cast<int>(objTag::PLAYER))
 		{
+			col = true;
 			Player* player = (Player*)hitObj;
 			player->SetHP(player->GetHP() -_power);
 			//if (/*Œã‚ë‚ªˆÚ“®‚Å‚«‚é‚È‚ç*/)
@@ -197,13 +195,14 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 		}
 		else if(hitTag == static_cast<int>(objTag::ATTACK))
 		{
+			col = true;
 			Weapon* weapon = (Weapon*)hitObj;
 			_hp -= weapon->GetPower();
 			auto dir = weapon->GetDIR();
 			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
 			hitObj->removeFromParent();
 		}
-		col = true;
+		
 	}
 	return col;
 }
