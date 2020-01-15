@@ -87,12 +87,7 @@ bool GameScene::init()
 	backBglayer = Layer::create();
 	backBglayer->setName("backLayer");
 
-	//Menu
-	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
-	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height - levelupText->getContentSize().height));
-
-	MenuBglayer->addChild(levelupText, 0);
+	
 	// UI
     /////////////////////////////
     // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -157,6 +152,31 @@ bool GameScene::init()
 	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	backBglayer->addChild(map);
 
+	// メニュ－
+	/*cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
+	Sprite* sprite = Sprite::create();
+	sprite->setPosition(400, 400);
+	sprite->setTextureRect(rect);
+	sprite->setColor(cocos2d::Color3B(255, 0, 0));
+	MenuBglayer->addChild(sprite);
+
+	Sprite* sprite2 = Sprite::create();
+	sprite2->setPosition(500, 400);
+	sprite2->setTextureRect(rect);
+	sprite2->setColor(cocos2d::Color3B(0, 255, 0));
+	MenuBglayer->addChild(sprite2);
+
+	Sprite* sprite3 = Sprite::create();
+	sprite3->setPosition(600, 400);
+	sprite3->setTextureRect(rect);
+	sprite3->setColor(cocos2d::Color3B(0, 0, 255));
+	MenuBglayer->addChild(sprite3);*/
+
+	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
+	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height / 4 * 3 - levelupText->getContentSize().height));
+	MenuBglayer->addChild(levelupText, 0);
+
 	// カメラ
 	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
 	this->addChild(camera);
@@ -164,7 +184,6 @@ bool GameScene::init()
 	camera->setRotation3D({ 0, 0, 0 });
 	camera->setDepth(1.0f);
 	camera->setCameraFlag(CameraFlag::DEFAULT);
-	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 
 	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
 	camera1->setName("playerCamera");
@@ -173,19 +192,13 @@ bool GameScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
+
+	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	
-	auto camera2 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
-	camera2->setName("menuCamera");
-	this->addChild(camera2);
-	camera2->setPosition3D({ 0, 0, 0 });
-	camera2->setRotation3D({ 0, 0, 0 });
-	camera2->setDepth(0.0f);
-	camera2->setCameraFlag(CameraFlag::USER2);
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 
 	// ｼｰﾝにぶら下げる
-	//this->addChild(MenuBglayer, _zOrderMenu);
+	this->addChild(MenuBglayer, _zOrderMenu);
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
@@ -193,6 +206,7 @@ bool GameScene::init()
 
 
 	this->scheduleUpdate();
+	flag = false;
     return true;
 }
 
@@ -209,11 +223,16 @@ void GameScene::update(float delta)
 			int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
 			SetEnemy(static_cast<EnemyMoveAI>(Rand));
 		}
-		obj->IsCheckedHP();
+		
 		int pCount = 0;
-		for (auto eRect : this->charBglayer->getChildren())
+		for (auto objItr : this->charBglayer->getChildren())
 		{
-			int tag = eRect->getTag();
+			auto obj = (Obj*)objItr;
+			if (obj->IsCheckedHP(*obj))
+			{
+				break;
+			}
+			int tag = obj->getTag();
 			if (static_cast<int>(objTag::PLAYER) == tag)
 			{
 				pCount++;
@@ -228,21 +247,39 @@ void GameScene::update(float delta)
 	else if (_sceneType == SceneType::MENU)
 	{
 		// ポーズ処理
-		if (count > 180)
+		if (!flag)
 		{
 			charBglayer->pause();
-
 			for (cocos2d::Node* _node : charBglayer->getChildren())
 			{
 				_node->pause();
 			}
+			auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
+			camera2->setName("menuCamera");
+			this->addChild(camera2);
+			camera2->setPosition3D({ 0, 0, 0 });
+			camera2->setRotation3D({ 0, 0, 0 });
+			camera2->setDepth(3.0f);
+			camera2->setCameraFlag(CameraFlag::USER2);
+			
+			flag = true; 
+			auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+			auto unAbility = player->GetUnacquiredAbility();
+			std::random_device seed;
+			std::mt19937 engine(seed());
+			std::shuffle(unAbility.begin(), unAbility.end(), engine);
+			player->SetAbility(unAbility.back());
 		}
-		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
-		{
+	
 
-		}
+
 	}
 	count++;
+}
+
+void GameScene::SetSceneType(SceneType sceneType)
+{
+	_sceneType = sceneType;
 }
 
 

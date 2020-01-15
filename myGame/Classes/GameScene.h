@@ -54,6 +54,7 @@ public:
 
     virtual bool init();
 	void update(float delta)override;
+	void SetSceneType(SceneType sceneType);
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
@@ -79,11 +80,16 @@ private:
 
 	int count = 0;
 
-	Obj* obj;
+	
 
 	SceneType _sceneType;
 
 	std::unique_ptr<OPRT_state>_inputState;
+
+	// ‰¼
+	Obj* obj;
+	bool flag;
+
 };
 
 #endif // __HELLOWORLD_SCENE_H__

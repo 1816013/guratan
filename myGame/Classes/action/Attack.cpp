@@ -13,16 +13,16 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 	switch (((Obj&)sp).GetDIR())
 	{
 	case DIR::UP:
-		dirOffset.y = 40;
+		dirOffset.y = 32;
 		break;
 	case DIR::RIGHT:
-		dirOffset.x = 40;
+		dirOffset.x = 32;
 		break;
 	case DIR::DOWN:
-		dirOffset.y = -40;
+		dirOffset.y = -32;
 		break;
 	case DIR::LEFT:
-		dirOffset.x = -40;
+		dirOffset.x = -32;
 		break;
 	default:
 		break;
@@ -31,11 +31,25 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 	/*auto enemy = Enemy::createEnemy();
 	enemy->setPosition(Vec2(32, 32 + 32));
 	nowScene->getChildByName("charLayer")->addChild(enemy);*/
-	auto weapon = Weapon::createWeapon(sp);
-	weapon->setPosition(sp.getPositionX() + dirOffset.x, sp.getPositionY() + dirOffset.y);
-	weapon->setTag(static_cast<int>(objTag::ATTACK));
-	weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	//nowScene->addChild(weapon);
-	nowScene->getChildByName("charLayer")->addChild(weapon);
+	auto SetWeapon = [](Scene& scene,Sprite& sp, Vec2 offset,Size size,  OptionType optionType)
+	{
+		auto weapon = Weapon::createWeapon(sp, optionType);
+		weapon->setPosition(sp.getPositionX() + offset.x, sp.getPositionY() + offset.y);
+		weapon->setTag(static_cast<int>(objTag::ATTACK));
+		weapon->setContentSize(size);
+		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
+		//nowScene->addChild(weapon);
+		scene.getChildByName("charLayer")->addChild(weapon);
+	};
+	SetWeapon(*nowScene, sp, Vec2(0, 0), { 16, 16 }, OptionType::RANGE);
+	//SetWeapon(*nowScene, sp, dirOffset, { 32, 32 }, OptionType::NOMAL);
+	
+		//weapon = Weapon::createWeapon(sp, OptionType::RANGE);
+		//weapon->setPosition(sp.getPositionX() + dirOffset.x, sp.getPositionY() + dirOffset.y);
+		//weapon->setTag(static_cast<int>(objTag::ATTACK));
+		//weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
+		////nowScene->addChild(weapon);
+		//nowScene->getChildByName("charLayer")->addChild(weapon);
+	
 	return true;
 }

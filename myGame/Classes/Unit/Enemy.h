@@ -14,8 +14,9 @@ public:
 	Enemy();
 	~Enemy();
 
+	int GetExp();
 	int GetHP();
-	void SetHP(int hp);
+	void SetHP(const int hp);
 	int GetPower();
 	DIR GetDIR();
 	void SetDIR(DIR dir);

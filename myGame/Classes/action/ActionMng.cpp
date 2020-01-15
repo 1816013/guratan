@@ -31,12 +31,12 @@ void ActionMng::AddActModule(const std::string & actName, actModule & module)
 			_moduleMap[actName].act.emplace_back(actColision());
 			_moduleMap[actName].runAction = Move();
 		}
-		if (actName == "‰EŒü‚«" || actName == "¶Œü‚«")
+		if (actName == "‰EŒü‚«" || actName == "¶Œü‚«" || actName == "ãŒü‚«" || actName == "‰ºŒü‚«")
 		{
 			_moduleMap.emplace(actName, std::move(module));
 			_moduleMap[actName].act.emplace_back(CheckList());
 			_moduleMap[actName].act.emplace_back(CheckKey());
-			_moduleMap[actName].runAction = ChangeLR();
+			_moduleMap[actName].runAction = ChangeDIR();
 		}
 		if (actName == "Œ•UŒ‚")
 		{

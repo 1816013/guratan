@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
+#include "GameScene.h"
 #include "action/Colision.h"
 
 USING_NS_CC;
@@ -19,12 +20,17 @@ Player::~Player()
 {
 }
 
+void Player::addExp(const int exp )
+{
+	_exp += exp;
+}
+
 int Player::GetHP()
 {
 	return _hp;
 }
 
-void Player::SetHP(int hp)
+void Player::SetHP(const int hp)
 {
 	_hp = hp;
 }
@@ -39,20 +45,30 @@ float Player::GetMovePower()
 	return _movePower;
 }
 
-void Player::SetAbility(Ability ability)
+void Player::SetAbility(Ability& ability)
 {
-	_abilityList.emplace_back(ability);
+	_ability.emplace_back(ability);
+	switch (ability)
+	{
+	case Ability::PowerUp:
+		_power += 1;
+		break;
+	case Ability::SpeedUp:
+		break;
+	case Ability::RangeAttack:
+		break;
+	}
 }
 
-std::vector<Ability> Player::GetAbilityList()
+std::vector<Ability> Player::GetUnacquiredAbility()
 {
-	return _abilityList;
+	return _unacquiredAbility;
 }
 
 bool Player::FindAbility(Ability ability)
 {
 	bool find = false;
-	for (auto abilityItr : _abilityList)
+	for (auto abilityItr : _ability)
 	{
 		if (abilityItr == ability)
 		{
@@ -62,30 +78,7 @@ bool Player::FindAbility(Ability ability)
 	return find;
 }
 
-bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
-{
-	bool col = false;
 
-	Rect myRect = this->getBoundingBox();
-	Rect hitRect = hitObj->getBoundingBox();
-	int hitTag = hitObj->getTag();
-
-	if (myRect.intersectsRect(hitRect))
-	{
-		int hitTag = hitObj->getTag();
-		if (hitTag == static_cast<int>(objTag::E_ATTACK))
-		{
-			col = true;
-			_hp -= hitObj->GetPower();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 16, this->_colSize[static_cast<int>(_dir)]))
-			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 16);		// ノックバック処理
-			}
-			hitObj->removeFromParent();
-		}
-	}
-	return col;
-}
 
 bool Player::init()
 {
@@ -118,6 +111,7 @@ bool Player::init()
 
 	// ﾌﾟﾚｲﾔｰｽﾃｰﾀｽ
 	_level = 1;
+	_power = 1;
 	_exp = 0;
 	_expMax = 5;
 	_dir = DIR::UP;
@@ -129,6 +123,10 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
+
+	_unacquiredAbility.emplace_back(Ability::RangeAttack);
+	_unacquiredAbility.emplace_back(Ability::PowerUp);
+	_unacquiredAbility.emplace_back(Ability::SpeedUp);
 
 	// ｱｸｼｮﾝｾｯﾄ @csv出力にしたい
 	// 左移動
@@ -174,6 +172,42 @@ bool Player::init()
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::DOWN;
 		_actMng->AddActModule("下移動", module);
+	}
+	// 左向き
+	{
+		actModule module;
+		module.actID = ACT_STATE::RUN;
+		module.inputID = INPUT_ID::LEFT;
+		module.keyTiming = Timing::ON;
+		module.dir = DIR::LEFT;
+		_actMng->AddActModule("左向き", module);
+	}
+	// 右向き
+	{
+		actModule module;
+		module.actID = ACT_STATE::RUN;		
+		module.inputID = INPUT_ID::RIGHT;
+		module.keyTiming = Timing::ON;
+		module.dir = DIR::RIGHT;
+		_actMng->AddActModule("右向き", module);
+	}
+	// 上向き
+	{
+		actModule module;
+		module.actID = ACT_STATE::RUN;
+		module.inputID = INPUT_ID::UP;
+		module.keyTiming = Timing::ON;
+		module.dir = DIR::UP;
+		_actMng->AddActModule("上向き", module);
+	}
+	// 下向き
+	{
+		actModule module;
+		module.actID = ACT_STATE::RUN;
+		module.inputID = INPUT_ID::DOWN;
+		module.keyTiming = Timing::ON;
+		module.dir = DIR::DOWN;
+		_actMng->AddActModule("下向き", module);
 	}
 	// atack
 	{
@@ -221,13 +255,12 @@ void Player::update(float delta)
 	_actMng->update(*this);
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::UP))
 	{
-		_exp++;
+		//_exp++;
 	}
 	if (_exp >= _expMax)
 	{
 		LevelUp();
-	}
-	
+	}	
 	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
@@ -244,8 +277,35 @@ void Player::SetDIR(DIR dir)
 
 void Player::LevelUp(void)
 {
+	auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
+	gameScene->SetSceneType(SceneType::MENU);
 	_level++;
 	_hp += 2;
 	_exp = 0;
 	_expMax *= 2;
+}
+
+bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+{
+	bool col = false;
+
+	Rect myRect = this->getBoundingBox();
+	Rect hitRect = hitObj->getBoundingBox();
+	int hitTag = hitObj->getTag();
+
+	if (myRect.intersectsRect(hitRect))
+	{
+		int hitTag = hitObj->getTag();
+		if (hitTag == static_cast<int>(objTag::E_ATTACK))
+		{
+			col = true;
+			_hp -= hitObj->GetPower();
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 32, this->_colSize[static_cast<int>(_dir)]))
+			{
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 32);		// ノックバック処理
+			}
+			hitObj->removeFromParent();
+		}
+	}
+	return col;
 }

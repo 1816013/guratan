@@ -3,10 +3,12 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite* Weapon::createWeapon(Sprite& sp)
+cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, OptionType option)
 {
 	auto weapon = Weapon::create();
 	weapon->SetDIR(((Player&)sp).GetDIR());
+	weapon->_power = (((Player&)sp).GetPower());
+	weapon->_optionType = option;
 	return weapon;
 }
 
@@ -17,16 +19,6 @@ Weapon::Weapon()
 
 Weapon::~Weapon()
 {
-}
-
-int Weapon::GetHP()
-{
-	return _hp;
-}
-
-void Weapon::SetHP(int hp)
-{
-	_hp = hp;
 }
 
 DIR Weapon::GetDIR()
@@ -53,7 +45,6 @@ bool Weapon::init()
 		return false;
 	}
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 32, 32);
-
 	this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(0, 255, 0));
 	_hp = 1;
@@ -75,9 +66,27 @@ bool Weapon::init()
 void Weapon::update(float delta)
 {
 	_remainCnt++;
-	if (_remainCnt > 1)
+	switch (_optionType)
 	{
-		this->removeFromParent();
+	case OptionType::NOMAL:
+		if (_remainCnt > 1)
+		{
+			this->removeFromParent();
+		}
+		break;
+	case OptionType::RANGE:
+		if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(this->GetDIR())] * 7, _colSize[static_cast<int>(this->GetDIR())]))
+		{
+			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 7);
+		}
+		else
+		{
+			this->removeFromParent();
+		}
+		break;
+	default:
+		break;
 	}
+	
 }
 

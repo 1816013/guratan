@@ -44,6 +44,7 @@ bool Enemy::init()
 	_hp = 3;
 	_power = 1;
 	_attackIntarval = 1;
+	_exp = 1;
 	_enemyAttackAI = EnemyAttackAI::NONE;
 	time = 0.0f;
 	auto size = this->getContentSize() / 2;
@@ -139,7 +140,7 @@ void Enemy::update(float delta)
 		}
 		if (_enemyMoveAI == EnemyMoveAI::FORROW)
 		{
-			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] /** delta * 60*/);
+			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * 2 /** delta * 60*/);
 		}
 	}
 	time += delta;
@@ -157,9 +158,14 @@ void Enemy::update(float delta)
 	}
 		
 	
-	_actMng->update(*this);
+	//_actMng->update(*this);
 	//this->setPosition(this->getPosition() + _speedTbl[dir]);
 
+}
+
+int Enemy::GetExp()
+{
+	return _exp;
 }
 
 int Enemy::GetHP()
@@ -167,7 +173,7 @@ int Enemy::GetHP()
 	return _hp;
 }
 
-void Enemy::SetHP(int hp)
+void Enemy::SetHP(const int hp)
 {
 	_hp = hp;
 }
@@ -195,7 +201,7 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			player->SetHP(player->GetHP() -_power);
 			if (_gameMap->mapColision(*player, _speedTbl[static_cast<int>(_dir)] * 16, player->_colSize[static_cast<int>(_dir)]))
 			{
-				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 16);		// ノックバック処理
+				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
 			}
 		}
 		else if(hitTag == static_cast<int>(objTag::ATTACK))
@@ -204,13 +210,12 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			Weapon* weapon = (Weapon*)hitObj;
 			_hp -= weapon->GetPower();
 			auto dir = weapon->GetDIR();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 16, weapon->_colSize[static_cast<int>(_dir)]))
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 32, weapon->_colSize[static_cast<int>(_dir)]))
 			{
 				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
 			}
 			hitObj->removeFromParent();
 		}
-		
 	}
 	return col;
 }

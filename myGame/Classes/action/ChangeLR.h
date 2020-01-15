@@ -1,7 +1,7 @@
 #pragma once
 #include "ActionMng.h"
 
-struct ChangeLR
+struct ChangeDIR
 {
 	// ¶‰EØ‚è‘Ö‚¦
 	bool operator()(cocos2d::Sprite& sp, actModule& module);

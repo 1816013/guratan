@@ -39,10 +39,10 @@ public:
 	virtual void SetDIR(DIR dir) = 0;
 	virtual bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
 	virtual int GetHP();
-	virtual void SetHP(int hp);
+	virtual void SetHP(const int hp);
 	virtual int GetPower() = 0;
 
-	bool IsCheckedHP();
+	bool IsCheckedHP(Obj& obj);
 	std::array<std::array<cocos2d::Size, 2>, static_cast<int>(DIR::MAX)>_colSize;
 
 	std::shared_ptr<GameMap>_gameMap;
@@ -51,7 +51,7 @@ protected:
 	// ïœêî
 	cocos2d::Vec2 _pos;				// ç¿ïW	
 	cocos2d::Size _size;				//ëÂÇ´Ç≥
-	
+	int _exp;
 	int _hp;
 	int _power;
 	DIR _dir;

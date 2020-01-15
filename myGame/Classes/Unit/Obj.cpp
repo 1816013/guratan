@@ -1,4 +1,6 @@
 #include "Obj.h"
+#include "Player.h"
+#include "Enemy.h"
 
 USING_NS_CC;
 
@@ -6,16 +8,16 @@ Obj::Obj()
 {
 	_actMng.reset(new ActionMng);
 	_gameMap.reset(new GameMap);
-	_speedTbl = { Vec2(0, 2),Vec2(2, 0), Vec2(0, -2), Vec2(-2, 0) };
+	_speedTbl = { Vec2(0, 1),Vec2(1, 0), Vec2(0, -1), Vec2(-1, 0) };
 }
 
 Obj::~Obj()
 {
 }
 
-bool Obj::IsCheckedHP()
+bool Obj::IsCheckedHP(Obj& obj)
 {
-	auto gameScene = cocos2d::Director::getInstance()->getRunningScene();
+	/*auto gameScene = cocos2d::Director::getInstance()->getRunningScene();
 	if (gameScene->getName() != "GameScene")
 	{
 		return false;
@@ -24,15 +26,20 @@ bool Obj::IsCheckedHP()
 	if (charLayer != nullptr)
 	{
 		for (auto itr : charLayer->getChildren())
-		{
-			Obj* obj = (Obj*)itr;
-			if (obj->GetHP() <= 0)
+		{*/
+			//Obj* obj = (Obj*)itr;
+			if (obj.GetHP() <= 0)
 			{
-				obj->removeFromParent();
+				if (obj.getTag() == static_cast<int>(objTag::ENEMY))
+				{
+					auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+					player->addExp(((Enemy&)obj).GetExp());
+				}
+				obj.removeFromParent();
 				return true;
 			}
-		}
-	}
+		//}
+	//}
 	return false;
 }
 
@@ -46,6 +53,6 @@ int Obj::GetHP()
 	return _hp;
 }
 
-void Obj::SetHP(int hp)
+void Obj::SetHP(const int hp)
 {
 }

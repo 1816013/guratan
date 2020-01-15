@@ -1,18 +1,45 @@
 #include "ChangeLR.h"
 #include <Unit/Player.h>
 
-bool ChangeLR::operator()(cocos2d::Sprite & sp, actModule & module)
+bool ChangeDIR::operator()(cocos2d::Sprite & sp, actModule & module)
 {
-	bool flagLR;
-	if (module.inputID == INPUT_ID::RIGHT)
+	auto checkinput = [](INPUT_ID input, cocos2d::Sprite& sp)
 	{
-		flagLR = false;
-	}
-	else
+		for (auto inputID : INPUT_ID())
+		{
+			if (((Player&)sp)._inputState->GetInput(TRG_STATE::NOW, inputID) == true)
+			{
+				if (input != inputID)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+	DIR dir = ((Obj&)sp).GetDIR();
+	if (checkinput(module.inputID, sp))
 	{
-		flagLR = true;
+		dir = module.dir;
+		((Obj&)sp).SetDIR(dir);
 	}
-	sp.runAction(cocos2d::FlipX::create(flagLR));
+	// ﾃﾞﾊﾞｯｸﾞ用　@キャラ絵が出来たらいらなくなる
+	if (dir == DIR::UP)
+	{
+		sp.setRotation(0.0f);
+	}
+	if (dir == DIR::RIGHT)
+	{
+		sp.setRotation(90.0f);
+	}
+	if (dir == DIR::DOWN)
+	{
+		sp.setRotation(180.0f);
+	}
+	if (dir == DIR::LEFT)
+	{
+		sp.setRotation(270.0f);
+	}
 
 	return true;
 }

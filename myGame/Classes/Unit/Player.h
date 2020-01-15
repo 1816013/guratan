@@ -21,12 +21,14 @@ public:
 
 	DIR GetDIR();
 	void SetDIR(DIR dir);
+
+	void addExp(const int exp);
 	int GetHP();
-	void SetHP(int hp);
+	void SetHP(const int hp);
 	int GetPower();
 	float GetMovePower();
-	void SetAbility(Ability ability);
-	std::vector<Ability> GetAbilityList();
+	void SetAbility(Ability& ability);
+	std::vector<Ability> GetUnacquiredAbility();
 	bool FindAbility(Ability ability);
 
 	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
@@ -42,12 +44,13 @@ private:
 	// 変数
 	cocos2d::DrawNode* line;
 	bool changeF;
-	int _exp;
+	
 	int _expMax;
 	int _level;
 
 	float _movePower;	// 移動速度アビリティ補正用
 
-	std::vector<Ability>_abilityList;
+	std::vector<Ability>_ability;		// 取得しているアビリティ
+	std::vector<Ability>_unacquiredAbility;	// 未取得アビリティ
 };
 
