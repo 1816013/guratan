@@ -30,6 +30,7 @@
 #include <E_Attack.h>
 #include <GameMap.h>
 #include "GameOverScene.h"
+#include "mapObject.h"
 
 USING_NS_CC;
 
@@ -59,7 +60,6 @@ bool GameScene::init()
 	_sceneType = SceneType::GAME;
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
@@ -151,26 +151,10 @@ bool GameScene::init()
 	map->setName("mapMng");
 	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	backBglayer->addChild(map);
+	mapObj = nullptr;
 
 	// メニュ－
-	/*cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
-	Sprite* sprite = Sprite::create();
-	sprite->setPosition(400, 400);
-	sprite->setTextureRect(rect);
-	sprite->setColor(cocos2d::Color3B(255, 0, 0));
-	MenuBglayer->addChild(sprite);
-
-	Sprite* sprite2 = Sprite::create();
-	sprite2->setPosition(500, 400);
-	sprite2->setTextureRect(rect);
-	sprite2->setColor(cocos2d::Color3B(0, 255, 0));
-	MenuBglayer->addChild(sprite2);
-
-	Sprite* sprite3 = Sprite::create();
-	sprite3->setPosition(600, 400);
-	sprite3->setTextureRect(rect);
-	sprite3->setColor(cocos2d::Color3B(0, 0, 255));
-	MenuBglayer->addChild(sprite3);*/
+	
 
 	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
 	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
@@ -192,6 +176,8 @@ bool GameScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
+
+	
 
 	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
@@ -225,6 +211,7 @@ void GameScene::update(float delta)
 		}
 		
 		int pCount = 0;
+		int eCount = 0;
 		for (auto objItr : this->charBglayer->getChildren())
 		{
 			auto obj = (Obj*)objItr;
@@ -237,23 +224,39 @@ void GameScene::update(float delta)
 			{
 				pCount++;
 			}
+			if (static_cast<int>(objTag::ENEMY) == tag)
+			{
+				eCount++;
+			}
 		}
 		if (pCount <= 0)
 		{
 			Scene *scene = GameOverScene::createScene();
 			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 		}
+		
+		if (eCount <= 0 && mapObj == nullptr)
+		{
+			mapObj = mapObject::createMapObj();
+			mapObj->setTag(static_cast<int>(objTag::MAPOBJ));
+			mapObj->setCameraMask(static_cast<int>(CameraFlag::USER1));
+			charBglayer->addChild(mapObj);
+		}
 	}
 	else if (_sceneType == SceneType::MENU)
 	{
-		// ポーズ処理
-		if (!flag)
+		auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+		
+		if (!flag)	// 一回しかやらない処理
 		{
+			flag = true;
+			// ポーズ処理
 			charBglayer->pause();
 			for (cocos2d::Node* _node : charBglayer->getChildren())
 			{
 				_node->pause();
 			}
+			// カメラセット※上にもっていって使わないときは変な方向に向けたほうが良いかも
 			auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
 			camera2->setName("menuCamera");
 			this->addChild(camera2);
@@ -261,14 +264,103 @@ void GameScene::update(float delta)
 			camera2->setRotation3D({ 0, 0, 0 });
 			camera2->setDepth(3.0f);
 			camera2->setCameraFlag(CameraFlag::USER2);
+					
+			// 仮ｽﾌﾟﾗｲﾄ
+			Sprite* sprite[4];
+			cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
+			cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
+			sprite[0] = Sprite::create();
+			sprite[0]->setPosition(400, 400);
+			sprite[0]->setTextureRect(rect);
+
+			sprite[1] = Sprite::create();
+			sprite[1]->setPosition(500, 400);
+			sprite[1]->setTextureRect(rect);
 			
-			flag = true; 
-			auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+			sprite[2] = Sprite::create();
+			sprite[2]->setPosition(600, 400);
+			sprite[2]->setTextureRect(rect);
+
+			sprite[3] = Sprite::create();
+			sprite[3]->setPosition(500, 400);
+			sprite[3]->setColor({ 255, 255, 255 });
+			sprite[3]->setTextureRect(rect);
+			sprite[3]->setName("select");
+					
 			auto unAbility = player->GetUnacquiredAbility();
 			std::random_device seed;
 			std::mt19937 engine(seed());
 			std::shuffle(unAbility.begin(), unAbility.end(), engine);
-			player->SetAbility(unAbility.back());
+			
+			for (int i = 0; i < 3; i++)
+			{
+				switch (unAbility.back())
+				{
+				case Ability::PowerUp:
+					sprite[i]->setColor(cocos2d::Color3B(255, 0, 0));
+					break;
+				case Ability::SpeedUp:
+					sprite[i]->setColor(cocos2d::Color3B(0, 255, 0));
+					break;
+				case Ability::RangeAttack:
+					sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
+					break;
+				}
+				retAbility[i] = unAbility.back();
+				unAbility.pop_back();
+			}
+			MenuBglayer->addChild(sprite[0]);
+			MenuBglayer->addChild(sprite[1]);
+			MenuBglayer->addChild(sprite[2]);
+			MenuBglayer->addChild(sprite[3]);
+			MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
+			selectCnt = 0;
+			//
+		}
+		// PCのみ
+		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::LEFT))
+		{
+			selectCnt--;
+		}
+		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::RIGHT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::RIGHT))
+		{
+			selectCnt++;
+		}
+		if (selectCnt < 0)
+		{
+			selectCnt = 2;
+		}
+		if (selectCnt >= 3)
+		{
+			selectCnt = 0;
+		}
+		auto selectRect = MenuBglayer->getChildByName("select");
+		switch (selectCnt)
+		{
+		case 0:
+			selectRect->setPosition(400, 300);
+			break;
+		case 1:
+			selectRect->setPosition(500, 300);
+			break;
+		case 2:
+			selectRect->setPosition(600, 300);
+			break;
+		default:
+			break;
+		}
+
+		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+		{
+			player->SetAbility(retAbility[selectCnt]);
+			_sceneType = SceneType::GAME;
+			flag = false;
+			charBglayer->resume();
+			for (cocos2d::Node* _node : charBglayer->getChildren())
+			{
+				_node->resume();
+			}
+			this->getChildByName("menuCamera")->removeFromParent();
 		}
 	
 

@@ -94,6 +94,9 @@
     <ClCompile Include="..\Classes\E_Attack.cpp">
       <Filter>src\unit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\mapObject.cpp">
+      <Filter>src\unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -161,6 +164,9 @@
       <Filter>src\action\check</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\E_Attack.h">
+      <Filter>src\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\mapObject.h">
       <Filter>src\unit</Filter>
     </ClInclude>
   </ItemGroup>

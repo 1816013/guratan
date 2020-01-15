@@ -11,6 +11,7 @@ enum class objTag
 	ENEMY,
 	ATTACK,
 	E_ATTACK,
+	MAPOBJ,
 	MAX
 };
 

@@ -8,7 +8,7 @@ bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
 	sp.setPosition(sp.getPosition() + module.speed * ((Player&)sp).GetMovePower());
 
-	if (sp.getTag() == static_cast<int>(objTag::PLAYER))
+	/*if (sp.getTag() == static_cast<int>(objTag::PLAYER))
 	{
 		
 		
@@ -16,7 +16,7 @@ bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 	else
 	{
 		((Enemy&)sp).SetDIR( module.dir);
-	}
+	}*/
 	
 	
 	//TRACE("moveLR\n");

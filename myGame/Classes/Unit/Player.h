@@ -19,13 +19,14 @@ public:
 	Player();
 	~Player();
 
-	DIR GetDIR();
-	void SetDIR(DIR dir);
+	DIR GetDIR()override;
+	void SetDIR(DIR dir)override;
+	int GetHP()override;
+	void SetHP(const int hp)override;
+	int GetPower()override;
 
 	void addExp(const int exp);
-	int GetHP();
-	void SetHP(const int hp);
-	int GetPower();
+	bool GetRangeFlag();
 	float GetMovePower();
 	void SetAbility(Ability& ability);
 	std::vector<Ability> GetUnacquiredAbility();
@@ -43,10 +44,9 @@ private:
 
 	// 変数
 	cocos2d::DrawNode* line;
-	bool changeF;
-	
-	int _expMax;
-	int _level;
+	bool _rangeF;	// 遠距離攻撃ﾌﾗｸﾞ＠いらないかも
+	int _expMax;	// これ以上になるとレベルアップ
+	int _level;		// レベル
 
 	float _movePower;	// 移動速度アビリティ補正用
 

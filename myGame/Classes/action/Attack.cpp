@@ -3,6 +3,7 @@
 #include "GameScene.h"
 #include <Unit/Obj.h>
 #include "Weapon.h"
+#include "Unit/Player.h"
 #include "Unit/Enemy.h"
 
 USING_NS_CC;
@@ -41,8 +42,12 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 		//nowScene->addChild(weapon);
 		scene.getChildByName("charLayer")->addChild(weapon);
 	};
-	SetWeapon(*nowScene, sp, Vec2(0, 0), { 16, 16 }, OptionType::RANGE);
-	//SetWeapon(*nowScene, sp, dirOffset, { 32, 32 }, OptionType::NOMAL);
+	auto player = (Player*)nowScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+	if (player->GetRangeFlag())
+	{
+		SetWeapon(*nowScene, sp, Vec2(0, 0), { 16, 16 }, OptionType::RANGE);
+	}
+	SetWeapon(*nowScene, sp, dirOffset, { 32, 32 }, OptionType::NOMAL);
 	
 		//weapon = Weapon::createWeapon(sp, OptionType::RANGE);
 		//weapon->setPosition(sp.getPositionX() + dirOffset.x, sp.getPositionY() + dirOffset.y);

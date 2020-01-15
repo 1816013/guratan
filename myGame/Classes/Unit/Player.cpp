@@ -25,6 +25,11 @@ void Player::addExp(const int exp )
 	_exp += exp;
 }
 
+bool Player::GetRangeFlag()
+{
+	return _rangeF;
+}
+
 int Player::GetHP()
 {
 	return _hp;
@@ -54,8 +59,10 @@ void Player::SetAbility(Ability& ability)
 		_power += 1;
 		break;
 	case Ability::SpeedUp:
+		_movePower += 0.5f;
 		break;
 	case Ability::RangeAttack:
+		_rangeF = true;
 		break;
 	}
 }
@@ -116,8 +123,9 @@ bool Player::init()
 	_expMax = 5;
 	_dir = DIR::UP;
 	_hp = 1000000000;
-	changeF = false;
 	_movePower = 1.0f;
+	_rangeF = false;
+
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
 	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
@@ -305,6 +313,11 @@ bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 32);		// ノックバック処理
 			}
 			hitObj->removeFromParent();
+		}
+		if (hitTag == static_cast<int>(objTag::MAPOBJ))
+		{
+			col = true;
+			this->removeFromParent();
 		}
 	}
 	return col;

@@ -8,8 +8,6 @@ enum class OptionType
 	MAX
 };
 
-
-
 class Weapon : public Obj
 {
 public:

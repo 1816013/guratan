@@ -28,6 +28,7 @@
 #include "cocos2d.h"
 #include <input/OPRT_state.h>
 #include <Unit/Obj.h>
+#include <Unit/Player.h>
 
 enum class Z_ORDER_TYPE
 {
@@ -87,8 +88,11 @@ private:
 	std::unique_ptr<OPRT_state>_inputState;
 
 	// ‰¼
+	cocos2d::Sprite* mapObj;
 	Obj* obj;
 	bool flag;
+	int selectCnt;
+	Ability retAbility[3];		// abilityˆêŽžŠi”[—p
 
 };
 

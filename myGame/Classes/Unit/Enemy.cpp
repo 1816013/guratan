@@ -199,7 +199,7 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			col = true;
 			Player* player = (Player*)hitObj;
 			player->SetHP(player->GetHP() -_power);
-			if (_gameMap->mapColision(*player, _speedTbl[static_cast<int>(_dir)] * 16, player->_colSize[static_cast<int>(_dir)]))
+			if (_gameMap->mapColision(*player, _speedTbl[static_cast<int>(_dir)] * 32, player->_colSize[static_cast<int>(_dir)]))
 			{
 				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
 			}
