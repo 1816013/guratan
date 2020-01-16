@@ -10,7 +10,8 @@ public:
 	~TitleScene();
 
 	virtual bool init();
-	void ChangeScene(float delta);
+//	void ChangeScene(float delta);
+	void ChangeScene(Ref* sender);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(TitleScene);

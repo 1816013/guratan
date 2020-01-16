@@ -7,11 +7,12 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite * Enemy::createEnemy(EnemyMoveAI enemyAI)
+cocos2d::Sprite * Enemy::createEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI)
 {
 	auto enemy = Enemy::create();
 
-	enemy->SetEnemyAI(enemyAI);
+	enemy->_enemyMoveAI = moveAI;
+	enemy->_enemyAttackAI = attackAI;
 	return enemy;
 }
 
@@ -43,9 +44,9 @@ bool Enemy::init()
 	
 	_hp = 3;
 	_power = 1;
-	_attackIntarval = 1;
+	_attackIntarval = 1.5f;
 	_exp = 1;
-	_enemyAttackAI = EnemyAttackAI::NONE;
+	
 	time = 0.0f;
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -97,8 +98,6 @@ bool Enemy::init()
 	//	_actMng->AddActModule("‰ºˆÚ“®", module);
 	//}
 
-
-
 	this->scheduleUpdate();
 	return true;
 }
@@ -140,7 +139,7 @@ void Enemy::update(float delta)
 		}
 		if (_enemyMoveAI == EnemyMoveAI::FORROW)
 		{
-			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * 2 /** delta * 60*/);
+			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] /** delta * 60*/);
 		}
 	}
 	time += delta;
@@ -210,9 +209,9 @@ bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 			Weapon* weapon = (Weapon*)hitObj;
 			_hp -= weapon->GetPower();
 			auto dir = weapon->GetDIR();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 32, weapon->_colSize[static_cast<int>(_dir)]))
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 33, weapon->_colSize[static_cast<int>(_dir)]))
 			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 16);
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 32);
 			}
 			hitObj->removeFromParent();
 		}

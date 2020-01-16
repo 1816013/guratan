@@ -9,7 +9,7 @@ USING_NS_CC;
 bool actColision::operator()(Sprite & sp, actModule& module) const // “–‚½‚è”»’è
 {
 	auto directer = Director::getInstance();
-	auto map = (TMXTiledMap*)directer->getRunningScene()->getChildByName("backLayer")->getChildByName("mapMng")->getChildByName("mapData");
+	auto map = (TMXTiledMap*)directer->getRunningScene()->getChildByName("backLayer")->getChildByName("mapData");
 	auto col = map->getLayer("wall");
 	auto mapSize = map->getMapSize();
 	auto tileSize = col->getMapTileSize();
@@ -23,8 +23,8 @@ bool actColision::operator()(Sprite & sp, actModule& module) const // “–‚½‚è”»’è
 	for (int i = 0; i < 2; i++)
 	{
 		// ºØ¼Þ®ÝµÌ¾¯Ä
-		Vec2 colOffset = { Vec2(module.speed.x + module.colSize[i].width, 
-							  module.speed.y + module.colSize[i].height) };
+		Vec2 colOffset = { Vec2((module.speed.x * ((Player&)sp).GetMovePower()) +module.colSize[i].width,
+							 ( module.speed.y* ((Player&)sp).GetMovePower()) + module.colSize[i].height) };
 
 		arrayID[i] = { (pos.x + colOffset.x) / tileSize.width,
 					mapSize.height - ((pos.y + colOffset.y) / tileSize.height) };	// ÌßÚ²Ô°À•W‚ÌID	

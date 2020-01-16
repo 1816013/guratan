@@ -51,15 +51,30 @@ bool TitleScene::init()
 	camera1->setCameraFlag(CameraFlag::DEFAULT);
 
 	titleLayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
-	
+
+	auto button = MenuItemImage::create(
+		"sprite/button_start.png",
+		"sprite/button_start.png",
+		CC_CALLBACK_1(TitleScene::ChangeScene, this));
+
+	Menu* menu = Menu::create(button, NULL);
+	menu->setPosition(visibleSize / 2);
+	this->addChild(menu);
+
 	count = 0;
 	this->addChild(titleLayer);
-	this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 1.0f);
+	//this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 1.0f);
 	return true;
 }
 
-void TitleScene::ChangeScene(float delta)
-{	
+//void TitleScene::ChangeScene(float delta)
+//{	
+//	Scene *scene = GameScene::createScene();
+//	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
+//}
+
+void TitleScene::ChangeScene(Ref * sender)
+{
 	Scene *scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 }

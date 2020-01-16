@@ -6,7 +6,7 @@
 class Enemy : public Obj
 {
 public:
-	static cocos2d::Sprite* createEnemy(EnemyMoveAI enemyAI);
+	static cocos2d::Sprite* createEnemy(EnemyMoveAI moveAI ,EnemyAttackAI attackAI);
 	EnemyMoveAI GetEnemyAI();
 	void SetEnemyAI(EnemyMoveAI enemyAI);
 

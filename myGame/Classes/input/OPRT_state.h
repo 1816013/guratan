@@ -28,7 +28,7 @@ enum class INPUT_ID	// “ü—Í
 	RIGHT,		// ‰E
 	DOWN,		// ‰º
 	LEFT,		// ¶
-	ATACK,		// UŒ‚
+	ATTACK,		// UŒ‚
 	SELECT,		// Œˆ’è
 	NONE,		// ‰½‚à‚µ‚Ä‚¢‚È‚¢
 	MAX			

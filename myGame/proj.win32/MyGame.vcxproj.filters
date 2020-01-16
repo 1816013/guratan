@@ -97,6 +97,9 @@
     <ClCompile Include="..\Classes\mapObject.cpp">
       <Filter>src\unit</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\FloorMng.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -168,6 +171,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\mapObject.h">
       <Filter>src\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\FloorMng.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

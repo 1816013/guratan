@@ -63,6 +63,7 @@ bool GameScene::init()
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
+	_gameMap = std::make_unique<GameMap>();
 #else
 	_inputState.reset(new OPRT_touch(this));
 	//_inputState = std::make_unique<OPRT_touch>();
@@ -144,18 +145,20 @@ bool GameScene::init()
 	
 	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
-	SetEnemy(EnemyMoveAI::IDLE);
+	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
+	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
 
 	// Ï¯Ìß(‰¼) @ÏÈ°¼Þ¬°—\’è
-	auto map = GameMap::createMap();
-	map->setName("mapMng");
+	_gameMap->createMap(*backBglayer);
+	/*map->setName("mapMng");
 	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	backBglayer->addChild(map);
+	backBglayer->addChild(map);*/
 	mapObj = nullptr;
 
 	// ƒƒjƒ…|
-	
-
 	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
 	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 4 * 3 - levelupText->getContentSize().height));
@@ -176,8 +179,6 @@ bool GameScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
-
-	
 
 	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
@@ -204,21 +205,18 @@ void GameScene::update(float delta)
 	{
 		ColTest();
 
-		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
+		/*if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
 			int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
 			SetEnemy(static_cast<EnemyMoveAI>(Rand));
-		}
+		}*/
 		
 		int pCount = 0;
 		int eCount = 0;
 		for (auto objItr : this->charBglayer->getChildren())
 		{
 			auto obj = (Obj*)objItr;
-			if (obj->IsCheckedHP(*obj))
-			{
-				break;
-			}
+			
 			int tag = obj->getTag();
 			if (static_cast<int>(objTag::PLAYER) == tag)
 			{
@@ -227,6 +225,10 @@ void GameScene::update(float delta)
 			if (static_cast<int>(objTag::ENEMY) == tag)
 			{
 				eCount++;
+			}
+			if (obj->IsCheckedHP(*obj))
+			{
+				break;
 			}
 		}
 		if (pCount <= 0)
@@ -270,21 +272,21 @@ void GameScene::update(float delta)
 			cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
 			cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
 			sprite[0] = Sprite::create();
-			sprite[0]->setPosition(400, 400);
+			sprite[0]->setPosition(400, 300);
 			sprite[0]->setTextureRect(rect);
 
 			sprite[1] = Sprite::create();
-			sprite[1]->setPosition(500, 400);
+			sprite[1]->setPosition(500, 300);
 			sprite[1]->setTextureRect(rect);
 			
 			sprite[2] = Sprite::create();
-			sprite[2]->setPosition(600, 400);
+			sprite[2]->setPosition(600, 300);
 			sprite[2]->setTextureRect(rect);
 
 			sprite[3] = Sprite::create();
-			sprite[3]->setPosition(500, 400);
+			sprite[3]->setPosition(500, 300);
 			sprite[3]->setColor({ 255, 255, 255 });
-			sprite[3]->setTextureRect(rect);
+			sprite[3]->setTextureRect(selectRect);
 			sprite[3]->setName("select");
 					
 			auto unAbility = player->GetUnacquiredAbility();
@@ -362,9 +364,6 @@ void GameScene::update(float delta)
 			}
 			this->getChildByName("menuCamera")->removeFromParent();
 		}
-	
-
-
 	}
 	count++;
 }
@@ -384,25 +383,20 @@ void GameScene::menuCloseCallback(Ref* pSender)
 
     //EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-
-
 }
 
 
-void GameScene::SetEnemy(EnemyMoveAI ai)
+void GameScene::SetEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI)
 {
-	auto enemy = Enemy::createEnemy(ai);
+	auto enemy = Enemy::createEnemy(moveAI, attackAI);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	enemy->setPosition(Vec2(rand() % 500 + 48, rand() % 500 + 48));
+	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 800 + 48 + 64));
 	charBglayer->addChild(enemy);
 }
 
 void GameScene::ColTest()
 {
-	/*bool flag = false;
-	Rect rectA;
-	Rect rectE;*/
 	for (auto eRect : this->charBglayer->getChildren())
 	{
 		int tag = eRect->getTag();

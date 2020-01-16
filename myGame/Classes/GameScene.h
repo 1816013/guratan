@@ -63,8 +63,9 @@ public:
     CREATE_FUNC(GameScene);
 private:
 	// ä÷êî
-	void SetEnemy(EnemyMoveAI);
+	void SetEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI);
 	void ColTest();
+	/*bool floorInit();*/
 
 	// ïœêî	
 	cocos2d::Layer* uiBglayer;
@@ -86,6 +87,7 @@ private:
 	SceneType _sceneType;
 
 	std::unique_ptr<OPRT_state>_inputState;
+	std::unique_ptr<GameMap>_gameMap;
 
 	// âº
 	cocos2d::Sprite* mapObj;

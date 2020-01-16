@@ -6,6 +6,25 @@ USING_NS_CC;
 cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, OptionType option)
 {
 	auto weapon = Weapon::create();
+	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
+	switch (((Player&)sp).GetDIR())
+	{
+	case DIR::UP:
+		dirOffset.y = 32;
+		break;
+	case DIR::RIGHT:
+		dirOffset.x = 32;
+		break;
+	case DIR::DOWN:
+		dirOffset.y = -32;
+		break;
+	case DIR::LEFT:
+		dirOffset.x = -32;
+		break;
+	default:
+		break;
+	}
+	weapon->setPosition(sp.getPosition() + dirOffset);
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower());
 	weapon->_optionType = option;

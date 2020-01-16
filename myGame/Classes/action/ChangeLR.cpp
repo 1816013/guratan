@@ -9,7 +9,7 @@ bool ChangeDIR::operator()(cocos2d::Sprite & sp, actModule & module)
 		{
 			if (((Player&)sp)._inputState->GetInput(TRG_STATE::NOW, inputID) == true)
 			{
-				if (input != inputID)
+				if (input != inputID && inputID != INPUT_ID::ATTACK)
 				{
 					return false;
 				}

@@ -3,6 +3,7 @@
 #include <input/OPRT_touch.h>
 #include "GameScene.h"
 #include "action/Colision.h"
+#include "Weapon.h"
 
 USING_NS_CC;
 
@@ -105,7 +106,7 @@ bool Player::init()
 
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
-	this->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+	this->setPosition(visibleSize.width / 2, 64);
 	this->setColor(cocos2d::Color3B(0, 0, 255));
 
 	line = DrawNode::create();
@@ -120,9 +121,9 @@ bool Player::init()
 	_level = 1;
 	_power = 1;
 	_exp = 0;
-	_expMax = 5;
+	_expMax = 3;
 	_dir = DIR::UP;
-	_hp = 1000000000;
+	_hp = 10;
 	_movePower = 1.0f;
 	_rangeF = false;
 
@@ -132,9 +133,12 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
+	// アビリティ設定
 	_unacquiredAbility.emplace_back(Ability::RangeAttack);
 	_unacquiredAbility.emplace_back(Ability::PowerUp);
 	_unacquiredAbility.emplace_back(Ability::SpeedUp);
+
+	_charge = 0;
 
 	// ｱｸｼｮﾝｾｯﾄ @csv出力にしたい
 	// 左移動
@@ -217,15 +221,6 @@ bool Player::init()
 		module.dir = DIR::DOWN;
 		_actMng->AddActModule("下向き", module);
 	}
-	// atack
-	{
-		actModule module;
-		module.actID = ACT_STATE::ATACK;
-		module.white.emplace_back(ACT_STATE::IDLE);
-		module.inputID = INPUT_ID::ATACK;
-		module.keyTiming = Timing::ON_MOM;
-		_actMng->AddActModule("剣攻撃", module);
-	}
 	
 	this->scheduleUpdate();
 	return true;
@@ -243,6 +238,7 @@ void Player::update(float delta)
 	gameScene->removeChildByTag(11);
 	gameScene->removeChildByTag(12);
 	gameScene->removeChildByTag(13);
+	gameScene->removeChildByTag(14);
 	auto text = Label::createWithSystemFont("HP" + StringUtils::toString(this->GetHP()), "ueten-1c-medium.ttf", 24);
 	text->setPosition(Point(100, 400));
 	text->setTag(10);
@@ -259,16 +255,53 @@ void Player::update(float delta)
 	text4->setPosition(Point(100, 310));
 	text4->setTag(13);
 	gameScene->addChild(text4);
+	auto text5 = Label::createWithSystemFont("charge" + StringUtils::toString(_charge), "ueten-1c-medium.ttf", 24);
+	text5->setPosition(Point(100, 280));
+	text5->setTag(14);
+	gameScene->addChild(text5);
 	_inputState->update();
 	_actMng->update(*this);
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::UP))
+
+	// 攻撃
+	// 武器作成
+	auto SetWeapon = [](Scene& scene, Sprite& sp, Size size, OptionType optionType)
 	{
-		//_exp++;
+		auto weapon = Weapon::createWeapon(sp, optionType);
+		weapon->setTag(static_cast<int>(objTag::ATTACK));
+		weapon->setContentSize(size);
+		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
+		//nowScene->addChild(weapon);
+		scene.getChildByName("charLayer")->addChild(weapon);
+	};
+
+	// チャージ中
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
+	{
+        _charge += delta;
+
 	}
+	// 押した瞬間攻撃
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+	{
+		SetWeapon(*gameScene, *this, { 32, 32 }, OptionType::NOMAL);
+	}
+
+	// チャージが最大だったらチャージ攻撃
+	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+	{
+  		if (_charge >= 1.0f)
+		{
+			SetWeapon(*gameScene, *this, { 16, 16 }, OptionType::RANGE);
+			//nowScene->addChild(weapon);
+		}
+		_charge = 0.0f;
+	}
+	// レベルアップ
 	if (_exp >= _expMax)
 	{
 		LevelUp();
 	}	
+
 	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
@@ -308,7 +341,7 @@ bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
 		{
 			col = true;
 			_hp -= hitObj->GetPower();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 32, this->_colSize[static_cast<int>(_dir)]))
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 50, this->_colSize[static_cast<int>(_dir)]))
 			{
 				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 32);		// ノックバック処理
 			}

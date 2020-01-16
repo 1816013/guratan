@@ -9,6 +9,11 @@ enum class Ability
 	MAX
 };
 
+enum class ChargeType
+{
+
+};
+
 
 class Player : public Obj
 {
@@ -49,6 +54,7 @@ private:
 	int _level;		// レベル
 
 	float _movePower;	// 移動速度アビリティ補正用
+	float _charge;
 
 	std::vector<Ability>_ability;		// 取得しているアビリティ
 	std::vector<Ability>_unacquiredAbility;	// 未取得アビリティ

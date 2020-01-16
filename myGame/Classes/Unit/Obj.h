@@ -46,8 +46,6 @@ public:
 	bool IsCheckedHP(Obj& obj);
 	std::array<std::array<cocos2d::Size, 2>, static_cast<int>(DIR::MAX)>_colSize;
 
-	std::shared_ptr<GameMap>_gameMap;
-
 protected:
 	// •Ï”
 	cocos2d::Vec2 _pos;				// À•W	
@@ -59,6 +57,7 @@ protected:
 
 	std::array<cocos2d::Vec2, static_cast<int>(DIR::MAX)> _speedTbl;
 
-	std::shared_ptr<ActionMng>_actMng;
+	std::unique_ptr<ActionMng>_actMng;
+	std::unique_ptr<GameMap>_gameMap;
 };
 

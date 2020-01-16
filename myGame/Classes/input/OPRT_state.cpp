@@ -7,8 +7,8 @@ OPRT_state::OPRT_state()
 	inputTbl[static_cast<int>(INPUT_ID::RIGHT)] = cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
 	inputTbl[static_cast<int>(INPUT_ID::DOWN)] = cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW;
 	inputTbl[static_cast<int>(INPUT_ID::LEFT)] = cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW;
-	inputTbl[static_cast<int>(INPUT_ID::ATACK)] = cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_SHIFT;
-	inputTbl[static_cast<int>(INPUT_ID::SELECT)] = cocos2d::EventKeyboard::KeyCode::KEY_SPACE;
+	inputTbl[static_cast<int>(INPUT_ID::ATTACK)] = cocos2d::EventKeyboard::KeyCode::KEY_SPACE;
+	inputTbl[static_cast<int>(INPUT_ID::SELECT)] = cocos2d::EventKeyboard::KeyCode::KEY_ENTER;
 	for (auto input : INPUT_ID())
 	{
 		_keyData[static_cast<int>(TRG_STATE::INPUT)].emplace(inputTbl[static_cast<int>(input)], false);
