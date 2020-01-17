@@ -93,7 +93,7 @@ void Weapon::update(float delta)
 			this->removeFromParent();
 		}
 		break;
-	case OptionType::RANGE:
+	case OptionType::CHARGE:
 		if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(this->GetDIR())] * 7, _colSize[static_cast<int>(this->GetDIR())]))
 		{
 			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 7);

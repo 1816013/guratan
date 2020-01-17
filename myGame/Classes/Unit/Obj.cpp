@@ -43,7 +43,7 @@ bool Obj::IsCheckedHP(Obj& obj)
 	return false;
 }
 
-bool Obj::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+bool Obj::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 {
 	return false;
 }

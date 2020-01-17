@@ -4,7 +4,12 @@
 enum class OptionType
 {
 	NOMAL,
-	RANGE,
+	CHARGE,
+	MAX
+};
+enum class ChargeType
+{
+	SHOT,
 	MAX
 };
 
@@ -14,11 +19,10 @@ public:
 	static cocos2d::Sprite* createWeapon(Sprite& sp, OptionType option);
 	Weapon();
 	~Weapon();
-	DIR GetDIR();
-	void SetDIR(DIR dir);
-	int GetPower();
+	DIR GetDIR()override;
+	void SetDIR(DIR dir)override;
+	int GetPower()override;
 	
-
 	CREATE_FUNC(Weapon);
 private:
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬

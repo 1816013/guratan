@@ -38,7 +38,7 @@ public:
 
 	virtual DIR GetDIR() = 0;
 	virtual void SetDIR(DIR dir) = 0;
-	virtual bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
+	virtual bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene);
 	virtual int GetHP();
 	virtual void SetHP(const int hp);
 	virtual int GetPower() = 0;

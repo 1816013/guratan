@@ -15,13 +15,13 @@ public:
 	~Enemy();
 
 	int GetExp();
-	int GetHP();
-	void SetHP(const int hp);
-	int GetPower();
-	DIR GetDIR();
-	void SetDIR(DIR dir);
+	int GetHP()override;
+	void SetHP(const int hp)override;
+	int GetPower()override;
+	DIR GetDIR()override;
+	void SetDIR(DIR dir)override;
 
-	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
+	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene)override;
 	
 	std::unique_ptr<OPRT_state>_inputState;
 

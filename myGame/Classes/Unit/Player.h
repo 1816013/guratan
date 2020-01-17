@@ -1,5 +1,7 @@
 #pragma once
+
 #include"Obj.h"
+
 
 enum class Ability
 {
@@ -7,11 +9,6 @@ enum class Ability
 	SpeedUp,
 	RangeAttack,
 	MAX
-};
-
-enum class ChargeType
-{
-
 };
 
 
@@ -31,13 +28,12 @@ public:
 	int GetPower()override;
 
 	void addExp(const int exp);
-	bool GetRangeFlag();
 	float GetMovePower();
 	void SetAbility(Ability& ability);
 	std::vector<Ability> GetUnacquiredAbility();
 	bool FindAbility(Ability ability);
 
-	bool ColisionObj(Obj* hitObj, cocos2d::Layer* layer);
+	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene)override;
 
 	std::unique_ptr<OPRT_state>_inputState;
 
@@ -52,10 +48,11 @@ private:
 	bool _rangeF;	// 遠距離攻撃ﾌﾗｸﾞ＠いらないかも
 	int _expMax;	// これ以上になるとレベルアップ
 	int _level;		// レベル
+	float _charge;	// チャージしている時間
+
 
 	float _movePower;	// 移動速度アビリティ補正用
-	float _charge;
-
+	
 	std::vector<Ability>_ability;		// 取得しているアビリティ
 	std::vector<Ability>_unacquiredAbility;	// 未取得アビリティ
 };

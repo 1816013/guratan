@@ -26,11 +26,6 @@ void Player::addExp(const int exp )
 	_exp += exp;
 }
 
-bool Player::GetRangeFlag()
-{
-	return _rangeF;
-}
-
 int Player::GetHP()
 {
 	return _hp;
@@ -239,23 +234,23 @@ void Player::update(float delta)
 	gameScene->removeChildByTag(12);
 	gameScene->removeChildByTag(13);
 	gameScene->removeChildByTag(14);
-	auto text = Label::createWithSystemFont("HP" + StringUtils::toString(this->GetHP()), "ueten-1c-medium.ttf", 24);
+	auto text = Label::createWithSystemFont("プレイヤーHP" + StringUtils::toString(this->GetHP()), "fonts/arial.ttf", 24);
 	text->setPosition(Point(100, 400));
 	text->setTag(10);
 	gameScene->addChild(text);
-	auto text2 = Label::createWithSystemFont("exp" + StringUtils::toString(_exp), "ueten-1c-medium.ttf", 24);
+	auto text2 = Label::createWithSystemFont("exp" + StringUtils::toString(_exp), "fonts/arial.ttf", 24);
 	text2->setPosition(Point(100, 370));
 	text2->setTag(11);
 	gameScene->addChild(text2);
-	auto text3 = Label::createWithSystemFont("expMax" + StringUtils::toString(_expMax), "ueten-1c-medium.ttf", 24);
+	auto text3 = Label::createWithSystemFont("expMax" + StringUtils::toString(_expMax), "fonts/arial.ttf", 24);
 	text3->setPosition(Point(100, 340));
 	text3->setTag(12);
 	gameScene->addChild(text3);
-	auto text4 = Label::createWithSystemFont("level"+ StringUtils::toString(_level), "ueten-1c-medium.ttf", 24);
+	auto text4 = Label::createWithSystemFont("level"+ StringUtils::toString(_level), "fonts/arial.ttf", 24);
 	text4->setPosition(Point(100, 310));
 	text4->setTag(13);
 	gameScene->addChild(text4);
-	auto text5 = Label::createWithSystemFont("charge" + StringUtils::toString(_charge), "ueten-1c-medium.ttf", 24);
+	auto text5 = Label::createWithSystemFont("charge" + StringUtils::toString(_charge), "fonts/arial.ttf", 24);
 	text5->setPosition(Point(100, 280));
 	text5->setTag(14);
 	gameScene->addChild(text5);
@@ -277,8 +272,7 @@ void Player::update(float delta)
 	// チャージ中
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
 	{
-        _charge += delta;
-
+		_charge += delta;
 	}
 	// 押した瞬間攻撃
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
@@ -291,7 +285,7 @@ void Player::update(float delta)
 	{
   		if (_charge >= 1.0f)
 		{
-			SetWeapon(*gameScene, *this, { 16, 16 }, OptionType::RANGE);
+			SetWeapon(*gameScene, *this, { 16, 16 }, OptionType::CHARGE);
 			//nowScene->addChild(weapon);
 		}
 		_charge = 0.0f;
@@ -326,31 +320,34 @@ void Player::LevelUp(void)
 	_expMax *= 2;
 }
 
-bool Player::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 {
 	bool col = false;
 
 	Rect myRect = this->getBoundingBox();
-	Rect hitRect = hitObj->getBoundingBox();
-	int hitTag = hitObj->getTag();
+	Rect hitRect = hitObj.getBoundingBox();
+	int hitTag = hitObj.getTag();
 
 	if (myRect.intersectsRect(hitRect))
 	{
-		int hitTag = hitObj->getTag();
+		int hitTag = hitObj.getTag();
 		if (hitTag == static_cast<int>(objTag::E_ATTACK))
 		{
 			col = true;
-			_hp -= hitObj->GetPower();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj->GetDIR())] * 50, this->_colSize[static_cast<int>(_dir)]))
+			_hp -= hitObj.GetPower();
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 50, this->_colSize[static_cast<int>(_dir)]))
 			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj->GetDIR())]) * 32);		// ノックバック処理
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
 			}
-			hitObj->removeFromParent();
+			hitObj.removeFromParent();
 		}
 		if (hitTag == static_cast<int>(objTag::MAPOBJ))
 		{
 			col = true;
-			this->removeFromParent();
+			auto visibleSize = Director::getInstance()->getVisibleSize();		// ｳｲﾝﾄﾞｳｻｲｽﾞ	
+			this->setPosition(visibleSize.width / 2, 64);
+			auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
+			gameScene->SetNextFloor(true);
 		}
 	}
 	return col;

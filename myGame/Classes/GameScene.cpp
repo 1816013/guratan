@@ -31,6 +31,7 @@
 #include <GameMap.h>
 #include "GameOverScene.h"
 #include "mapObject.h"
+#include <proj.win32/_debug/_DebugConOut.h>
 
 USING_NS_CC;
 
@@ -69,7 +70,6 @@ bool GameScene::init()
 	//_inputState = std::make_unique<OPRT_touch>();
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
-
 	// ÉåÉCÉÑÅ[ê›íË
 	_zOrderMenu = static_cast<int>(Z_ORDER_TYPE::MENU);
 	_zOrderUI = static_cast<int>(Z_ORDER_TYPE::UI);	
@@ -99,7 +99,6 @@ bool GameScene::init()
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(GameScene::menuCloseCallback, this));
-
     if (closeItem == nullptr ||
         closeItem->getContentSize().width <= 0 ||
         closeItem->getContentSize().height <= 0)
@@ -194,7 +193,10 @@ bool GameScene::init()
 
 	this->scheduleUpdate();
 	flag = false;
-    return true;
+	_floorNum = 1;
+	_nextFloor = false;
+	TRACE("floor %d \n", _floorNum);
+	return true;
 }
 
 void GameScene::update(float delta)
@@ -203,14 +205,7 @@ void GameScene::update(float delta)
 
 	if (_sceneType == SceneType::GAME)
 	{
-		ColTest();
-
-		/*if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
-		{
-			int Rand = rand() % static_cast<int>(EnemyMoveAI::MAX);
-			SetEnemy(static_cast<EnemyMoveAI>(Rand));
-		}*/
-		
+		ColTest();		
 		int pCount = 0;
 		int eCount = 0;
 		for (auto objItr : this->charBglayer->getChildren())
@@ -243,6 +238,10 @@ void GameScene::update(float delta)
 			mapObj->setTag(static_cast<int>(objTag::MAPOBJ));
 			mapObj->setCameraMask(static_cast<int>(CameraFlag::USER1));
 			charBglayer->addChild(mapObj);
+		}
+		if (_nextFloor)
+		{
+			ChangeFloor();
 		}
 	}
 	else if (_sceneType == SceneType::MENU)
@@ -365,7 +364,6 @@ void GameScene::update(float delta)
 			this->getChildByName("menuCamera")->removeFromParent();
 		}
 	}
-	count++;
 }
 
 void GameScene::SetSceneType(SceneType sceneType)
@@ -373,6 +371,10 @@ void GameScene::SetSceneType(SceneType sceneType)
 	_sceneType = sceneType;
 }
 
+void GameScene::SetNextFloor(bool flag)
+{
+	_nextFloor = flag;
+}
 
 void GameScene::menuCloseCallback(Ref* pSender)
 {
@@ -399,51 +401,38 @@ void GameScene::ColTest()
 {
 	for (auto eRect : this->charBglayer->getChildren())
 	{
-		int tag = eRect->getTag();
-		// enemyìñÇΩÇËîªíË
-		if (tag == static_cast<int>(objTag::ENEMY))
+		
+		for (auto pRect : this->charBglayer->getChildren())
 		{
-			Enemy* enemy = (Enemy*)eRect;
-			for (auto pRect : this->charBglayer->getChildren())
+			if (eRect == pRect)
 			{
-				if (eRect == pRect)
-				{
-					continue;
-				}
-				Obj* hitObj = (Obj*)pRect;
-				int tag2 = pRect->getTag();
-				if (tag2 != tag)
-				{
-					if (enemy->ColisionObj(hitObj, this->charBglayer))
-					{
-						return;
-					}
-				}
+				continue;
 			}
-		}
-		if (tag == static_cast<int>(objTag::PLAYER))
-		{
-			Player* player = (Player*)eRect;
-			for (auto pRect : this->charBglayer->getChildren())
+			
+			if (eRect->getTag() != pRect->getTag())
 			{
-				if (eRect == pRect)
+				Obj* obj = (Obj*)eRect;
+				Obj* hitObj = (Obj*)pRect;
+				if (obj->ColisionObj(*hitObj, *this))
 				{
-					continue;
-				}
-				int tag2 = pRect->getTag();
-				if (tag2 != tag)
-				{
-					Obj* hitObj = (Obj*)pRect;
-					int tag2 = pRect->getTag();
-					if (tag2 != tag)
-					{
-						if (player->ColisionObj(hitObj, this->charBglayer))
-						{
-							return;
-						}
-					}
+					return;
 				}
 			}
 		}
 	}
+}
+
+bool GameScene::ChangeFloor()
+{
+	_nextFloor = false;
+	mapObj = nullptr;
+	_floorNum++;
+	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
+	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
+	TRACE("floor %d", _floorNum);
+	return true;
 }

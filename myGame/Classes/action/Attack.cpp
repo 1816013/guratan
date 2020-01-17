@@ -43,10 +43,6 @@ bool Attack::operator()(cocos2d::Sprite & sp, actModule & module)
 		scene.getChildByName("charLayer")->addChild(weapon);
 	};
 	auto player = (Player*)nowScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-	if (player->GetRangeFlag())
-	{
-		SetWeapon(*nowScene, sp, Vec2(0, 0), { 16, 16 }, OptionType::RANGE);
-	}
 	SetWeapon(*nowScene, sp, dirOffset, { 32, 32 }, OptionType::NOMAL);
 	
 		//weapon = Weapon::createWeapon(sp, OptionType::RANGE);

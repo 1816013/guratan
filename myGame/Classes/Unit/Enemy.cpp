@@ -182,38 +182,38 @@ int Enemy::GetPower()
 	return _power;
 }
 
-bool Enemy::ColisionObj(Obj * hitObj, cocos2d::Layer * layer)
+bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 {
 	bool col = false;
 
 	Rect myRect = this->getBoundingBox();
-	Rect hitRect = hitObj->getBoundingBox();
-	int hitTag = hitObj->getTag();
+	Rect hitRect = hitObj.getBoundingBox();
+	int hitTag = hitObj.getTag();
 
 	if (myRect.intersectsRect(hitRect))
 	{
-		int hitTag = hitObj->getTag();
+		int hitTag = hitObj.getTag();
 		if (hitTag == static_cast<int>(objTag::PLAYER))
 		{
 			col = true;
-			Player* player = (Player*)hitObj;
-			player->SetHP(player->GetHP() -_power);
-			if (_gameMap->mapColision(*player, _speedTbl[static_cast<int>(_dir)] * 32, player->_colSize[static_cast<int>(_dir)]))
+			//Player* player = (Player*)hitObj;
+			hitObj.SetHP(hitObj.GetHP() -_power);
+			if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, hitObj._colSize[static_cast<int>(_dir)]))
 			{
-				player->setPosition(player->getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
+				hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
 			}
 		}
 		else if(hitTag == static_cast<int>(objTag::ATTACK))
 		{
 			col = true;
-			Weapon* weapon = (Weapon*)hitObj;
-			_hp -= weapon->GetPower();
-			auto dir = weapon->GetDIR();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 33, weapon->_colSize[static_cast<int>(_dir)]))
+			//Weapon* weapon = (Weapon*)hitObj;
+			_hp -= hitObj.GetPower();
+			auto dir = hitObj.GetDIR();
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(dir)] * 33, hitObj._colSize[static_cast<int>(dir)]))
 			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(weapon->GetDIR())]) * 32);
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(dir)]) * 32);
 			}
-			hitObj->removeFromParent();
+			hitObj.removeFromParent();
 		}
 	}
 	return col;

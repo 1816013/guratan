@@ -52,14 +52,21 @@ bool TitleScene::init()
 
 	titleLayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 
-	auto button = MenuItemImage::create(
+	
+	auto listener = cocos2d::EventListenerKeyboard::create();
+	listener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* keyEvent)
+	{
+		this->ChangeScene();
+	};
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+
+	/*auto button = MenuItemImage::create(
 		"sprite/button_start.png",
 		"sprite/button_start.png",
 		CC_CALLBACK_1(TitleScene::ChangeScene, this));
-
 	Menu* menu = Menu::create(button, NULL);
 	menu->setPosition(visibleSize / 2);
-	this->addChild(menu);
+	this->addChild(menu);*/
 
 	count = 0;
 	this->addChild(titleLayer);
@@ -73,7 +80,7 @@ bool TitleScene::init()
 //	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 //}
 
-void TitleScene::ChangeScene(Ref * sender)
+void TitleScene::ChangeScene()
 {
 	Scene *scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));

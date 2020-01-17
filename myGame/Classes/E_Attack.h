@@ -6,10 +6,10 @@ public:
 	static cocos2d::Sprite* createE_Attack(Sprite& sp);
 	E_Attack();
 	~E_Attack();
-	DIR GetDIR();
-	void SetDIR(DIR dir);
-	int GetPower();
-	void SetTargetMove(Sprite& sp);
+	DIR GetDIR()override;
+	void SetDIR(DIR dir)override;
+	int GetPower()override;
+	void SetTargetMove(Sprite& sp); 
 
 	CREATE_FUNC(E_Attack);
 private:

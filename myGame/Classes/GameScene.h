@@ -56,6 +56,7 @@ public:
     virtual bool init();
 	void update(float delta)override;
 	void SetSceneType(SceneType sceneType);
+	void SetNextFloor(bool flag);
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
@@ -65,7 +66,7 @@ private:
 	// 関数
 	void SetEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI);
 	void ColTest();
-	/*bool floorInit();*/
+	bool ChangeFloor();
 
 	// 変数	
 	cocos2d::Layer* uiBglayer;
@@ -80,10 +81,6 @@ private:
 	int _zOrderChar;	// ｷｬﾗのzorder
 	int _zOrderFlont;	// 一番前のzorder
 
-	int count = 0;
-
-	
-
 	SceneType _sceneType;
 
 	std::unique_ptr<OPRT_state>_inputState;
@@ -91,11 +88,11 @@ private:
 
 	// 仮
 	cocos2d::Sprite* mapObj;
-	Obj* obj;
 	bool flag;
-	int selectCnt;
+	int selectCnt;				//　PC操作用
 	Ability retAbility[3];		// ability一時格納用
-
+	bool _nextFloor;			// 次のフロアへ行くか
+	int _floorNum;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
