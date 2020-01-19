@@ -1,15 +1,14 @@
 #pragma once
 #include "Unit/Obj.h"
+#include "Unit/Enemy.h"
+
 class E_Attack : public Obj
 {
 public:
-	static cocos2d::Sprite* createE_Attack(Sprite& sp);
+	static cocos2d::Sprite* createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackAI);
 	E_Attack();
 	~E_Attack();
-	DIR GetDIR()override;
-	void SetDIR(DIR dir)override;
-	int GetPower()override;
-	void SetTargetMove(Sprite& sp); 
+	void SetTargetMove(Sprite& sp, EnemyAttackAI enemyAttackAI); 
 
 	CREATE_FUNC(E_Attack);
 private:

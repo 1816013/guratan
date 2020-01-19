@@ -43,15 +43,16 @@ void OPRT_state::update(void)
 	_keyData[static_cast<int>(TRG_STATE::OLD)] = _keyData[static_cast<int>(TRG_STATE::NOW)];
 	_keyData[static_cast<int>(TRG_STATE::NOW)] = _keyData[static_cast<int>(TRG_STATE::INPUT)];
 
-	/*for (auto input : INPUT_ID())
+}
+
+void OPRT_state::Init(void)
+{
+	for (auto input : INPUT_ID())
 	{
-		if (_keyData[static_cast<int>(TRG_STATE::NOW)][inputTbl[static_cast<int>(input)]] & ~
-			_keyData[static_cast<int>(TRG_STATE::OLD)][inputTbl[static_cast<int>(input)]])
-		{
-			_keyData[static_cast<int>(TRG_STATE::)][inputTbl[static_cast<int>(input)]
-		}
-	
-	}*/
+		_keyData[static_cast<int>(TRG_STATE::NOW)][inputTbl[static_cast<int>(input)]] = false;
+		_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(input)]] = false;
+		_keyData[static_cast<int>(TRG_STATE::OLD)][inputTbl[static_cast<int>(input)]] = false;
+	}
 }
 
 INPUT_ID begin(INPUT_ID)

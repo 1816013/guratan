@@ -7,12 +7,19 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite * Enemy::createEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI)
+cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType)
 {
 	auto enemy = Enemy::create();
+	enemy->physicsBody = PhysicsBody::createBox(Size(32.0f, 32.0f),
+		PhysicsMaterial(0.1f, 1.0f, 0.0f));
+	enemy->physicsBody->setRotationEnable(false);//回転運動不可
+	//set the body isn't affected by the physics world's gravitational force
+	enemy->physicsBody->setGravityEnable(false);
+	enemy->SetEnemyAI(enemyType);
+	enemy->setTag(static_cast<int>(objTag::ENEMY));
+	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
+	enemy->addComponent(enemy->physicsBody);
 
-	enemy->_enemyMoveAI = moveAI;
-	enemy->_enemyAttackAI = attackAI;
 	return enemy;
 }
 
@@ -53,57 +60,14 @@ bool Enemy::init()
 	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
-	//// 左移動
-	//{
-	//	actModule module;
-	//	module.actID = ACT_STATE::RUN;
-	//	module.speed = Vec2(-2, 0);
-	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
-	//	module.inputID = INPUT_ID::LEFT;
-	//	module.keyTiming = Timing::ON;
-	//	module.dir = DIR::LEFT;
-	//	_actMng->AddActModule("左移動", module);
-	//}
-	//// 右移動
-	//{
-	//	actModule module;
-	//	module.actID = ACT_STATE::RUN;
-	//	module.speed = Vec2(2, 0);
-	//	module.colSize = { Size(16, 16), Size(16, -16) };
-	//	module.inputID = INPUT_ID::RIGHT;
-	//	module.keyTiming = Timing::ON;
-	//	module.dir = DIR::RIGHT;
-	//	_actMng->AddActModule("右移動", module);
-	//}
-	//// 上移動
-	//{
-	//	actModule module;
-	//	module.actID = ACT_STATE::RUN;
-	//	module.speed = Vec2(0, 2);
-	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
-	//	module.inputID = INPUT_ID::UP;
-	//	module.keyTiming = Timing::ON;
-	//	module.dir = DIR::UP;
-	//	_actMng->AddActModule("上移動", module);
-	//}
-	//// 下移動
-	//{
-	//	actModule module;
-	//	module.actID = ACT_STATE::RUN;
-	//	module.speed = Vec2(0, -2);
-	//	module.colSize = { Size(-16, 16), Size(-16, -16) };
-	//	module.inputID = INPUT_ID::DOWN;
-	//	module.keyTiming = Timing::ON;
-	//	module.dir = DIR::DOWN;
-	//	_actMng->AddActModule("下移動", module);
-	//}
 
-	this->scheduleUpdate();
+	//this->scheduleUpdate();
 	return true;
 }
 
 void Enemy::update(float delta)
 {
+	time += delta;
 	auto GameScene = Director::getInstance()->getRunningScene();
 	if (GameScene->getName() != "GameScene")
 	{
@@ -112,9 +76,10 @@ void Enemy::update(float delta)
 	auto charLayer = GameScene->getChildByName("charLayer");
 
 	auto player = (Player*)charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
+	
 	if (player != nullptr)
 	{
-		//int dir = rand() % static_cast<int>(DIR::MAX);
+		// 向き変更
 		if (abs(this->getPositionX() - player->getPositionX()) > abs(this->getPositionY() - player->getPositionY()))
 		{
 			if (this->getPositionX() < player->getPositionX())
@@ -137,49 +102,36 @@ void Enemy::update(float delta)
 				_dir = DIR::DOWN;
 			}
 		}
+		// 移動（ある奴だけ）　
 		if (_enemyMoveAI == EnemyMoveAI::FORROW)
 		{
-			this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] /** delta * 60*/);
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 2, _colSize[static_cast<int>(_dir)]))
+			{
+				this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * 2/** delta * 60*/);
+			}
 		}
 	}
-	time += delta;
-	if (_enemyAttackAI == EnemyAttackAI::AIMING)
+	// 攻撃
+	
+	if (_enemyAttackAI != EnemyAttackAI::NONE)
 	{
 		if (time > _attackIntarval)
 		{
 			time = 0;
-			auto e_Attack = E_Attack::createE_Attack(*this);
+			_attackFlag;
+			auto e_Attack = E_Attack::createE_Attack(*this, _enemyAttackAI);
 			e_Attack->setPosition(this->getPosition());
 			e_Attack->setTag(static_cast<int>(objTag::E_ATTACK));
 			e_Attack->setCameraMask(static_cast<int>(CameraFlag::USER1));
 			charLayer->addChild(e_Attack);
 		}
 	}
-		
 	
-	//_actMng->update(*this);
-	//this->setPosition(this->getPosition() + _speedTbl[dir]);
-
 }
 
 int Enemy::GetExp()
 {
 	return _exp;
-}
-
-int Enemy::GetHP()
-{
-	return _hp;
-}
-
-void Enemy::SetHP(const int hp)
-{
-	_hp = hp;
-}
-
-int Enemy::GetPower()
-{
-	return _power;
 }
 
 bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
@@ -195,44 +147,44 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 		int hitTag = hitObj.getTag();
 		if (hitTag == static_cast<int>(objTag::PLAYER))
 		{
-			col = true;
-			//Player* player = (Player*)hitObj;
-			hitObj.SetHP(hitObj.GetHP() -_power);
-			if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, hitObj._colSize[static_cast<int>(_dir)]))
+			if (!((Player&)hitObj).GetStrong())
 			{
-				hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
+				col = true;
+				hitObj.SetHP(hitObj.GetHP() - _power);
+				((Player&)hitObj).SetStrong(true);
+				if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, hitObj._colSize[static_cast<int>(_dir)]))
+				{
+					hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
+				}
 			}
-		}
-		else if(hitTag == static_cast<int>(objTag::ATTACK))
-		{
-			col = true;
-			//Weapon* weapon = (Weapon*)hitObj;
-			_hp -= hitObj.GetPower();
-			auto dir = hitObj.GetDIR();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(dir)] * 33, hitObj._colSize[static_cast<int>(dir)]))
-			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(dir)]) * 32);
-			}
-			hitObj.removeFromParent();
 		}
 	}
 	return col;
 }
 
-void Enemy::SetEnemyAI(EnemyMoveAI enemyAI)
+void Enemy::SetEnemyAI(EnemyType enemyType)
 {
-	_enemyMoveAI = enemyAI;
+	switch (enemyType)
+	{
+	case EnemyType::SLIME:
+		_enemyMoveAI = EnemyMoveAI::FORROW;
+		_enemyAttackAI = EnemyAttackAI::NONE; 
+		_hp = 3;
+		break;
+	case EnemyType::CANNON:
+		_enemyMoveAI = EnemyMoveAI::IDLE;
+		_enemyAttackAI = EnemyAttackAI::AIMING;
+		_hp = 3;
+		_attackIntarval = 2;
+		physicsBody->setEnabled(false);
+		break;
+	case EnemyType::ARCHAR:
+		_enemyMoveAI = EnemyMoveAI::FORROW;
+		_enemyAttackAI = EnemyAttackAI::SHOT;
+		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
+		_hp = 5;
+		break;
+	default:
+		break;
+	}
 }
-
-
-
-DIR Enemy::GetDIR()
-{
-	return _dir;
-}
-
-void Enemy::SetDIR(DIR dir)
-{
-	_dir = dir;
-}
-

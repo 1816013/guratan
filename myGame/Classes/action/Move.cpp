@@ -6,7 +6,12 @@
 
 bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
-	sp.setPosition(sp.getPosition() + module.speed * ((Player&)sp).GetMovePower());
+	auto speed = module.speed;
+	if (((Player&)sp).IsCharged())
+	{
+		speed = speed / 3.0f;
+	}
+	sp.setPosition(sp.getPosition() + speed * ((Player&)sp).GetMovePower());
 
 	/*if (sp.getTag() == static_cast<int>(objTag::PLAYER))
 	{

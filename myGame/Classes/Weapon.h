@@ -7,28 +7,34 @@ enum class OptionType
 	CHARGE,
 	MAX
 };
+
 enum class ChargeType
 {
 	SHOT,
+	TWISTER,
+	FLONTAL,
 	MAX
 };
 
 class Weapon : public Obj
 {
 public:
-	static cocos2d::Sprite* createWeapon(Sprite& sp, OptionType option);
+	static cocos2d::Sprite* createWeapon(Sprite& sp, const OptionType option);
 	Weapon();
 	~Weapon();
-	DIR GetDIR()override;
-	void SetDIR(DIR dir)override;
-	int GetPower()override;
-	
+
 	CREATE_FUNC(Weapon);
 private:
 	bool init()override;				// èâä˙âªÅ@ΩÃﬂ◊≤ƒçÏê¨
 	void update(float delta)override;
+	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene);
+	void SetColSize(cocos2d::Sprite& sp);
+	void SetState();
+
+
 	OptionType _optionType;
-	cocos2d::Vec2 _pos;
+	ChargeType _chargeType;
+	cocos2d::Vec2 _offset;
 	int _remainCnt;
 };
 

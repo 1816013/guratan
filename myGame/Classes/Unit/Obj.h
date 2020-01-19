@@ -15,20 +15,6 @@ enum class objTag
 	MAX
 };
 
-enum class EnemyMoveAI
-{
-	IDLE,
-	FORROW,
-	MAX
-};
-
-enum class EnemyAttackAI
-{
-	NONE,
-	AIMING,
-	MAX
-};
-
 
 class Obj : public cocos2d::Sprite
 {
@@ -36,12 +22,12 @@ public:
 	Obj();
 	virtual ~Obj();
 
-	virtual DIR GetDIR() = 0;
-	virtual void SetDIR(DIR dir) = 0;
+	DIR GetDIR();
+	void SetDIR(DIR dir);
 	virtual bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene);
-	virtual int GetHP();
-	virtual void SetHP(const int hp);
-	virtual int GetPower() = 0;
+	int GetHP();
+	void SetHP(const int hp);
+	int GetPower();
 
 	bool IsCheckedHP(Obj& obj);
 	std::array<std::array<cocos2d::Size, 2>, static_cast<int>(DIR::MAX)>_colSize;

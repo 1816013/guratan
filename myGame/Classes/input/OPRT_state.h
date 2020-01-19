@@ -60,6 +60,7 @@ struct OPRT_state
 	virtual OPRT_TYPE GetType(void) = 0;
 
 	void update(void);
+	void Init(void);
 	
 	bool GetInput(TRG_STATE trg, INPUT_ID inputID)
 	{

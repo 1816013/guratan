@@ -3,10 +3,11 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp)
+cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackAI)
 {
 	auto e_attack = E_Attack::create();
-	e_attack->SetTargetMove(sp);
+	e_attack->_dir = ((Obj&)sp).GetDIR();
+	e_attack->SetTargetMove(sp, enemyAttackAI);
 	return e_attack;
 }
 
@@ -18,36 +19,71 @@ E_Attack::~E_Attack()
 {
 }
 
-DIR E_Attack::GetDIR()
-{
-	return _dir;
-}
-
-void E_Attack::SetDIR(DIR dir)
-{
-	_dir = dir;
-}
-
-int E_Attack::GetPower()
-{
-	return _power;
-}
-
-void E_Attack::SetTargetMove(Sprite & sp)
+void E_Attack::SetTargetMove(Sprite & sp, EnemyAttackAI enemyAttackAI)
 {
 	auto gameScene = Director::getInstance()->getRunningScene();
 	auto charLayer = gameScene->getChildByName("charLayer");
 	this->setPosition(sp.getPosition());
-	Vec2 speed = { 3.0f, 3.0f };
+	Vec2 speed = { 4.0f, 4.0f };
 	auto player = charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
 	if (player != nullptr)
 	{
+		// 移動量セット
 		_targetPos = player->getPosition();
-
-		_radian = atan2(_targetPos.y - this->getPositionY(), _targetPos.x - this->getPositionX());
-
-		_move.x = cos(_radian) * speed.x;
-		_move.y = sin(_radian) * speed.y;
+		Vec2 distance = { _targetPos.x - this->getPositionX() , _targetPos.y - this->getPositionY() };
+		switch (enemyAttackAI)
+		{
+		case EnemyAttackAI::AIMING:
+			_radian = atan2(distance.y, distance.x);
+			_move.x = cos(_radian) * speed.x;
+			_move.y = sin(_radian) * speed.y;
+			break;
+		case EnemyAttackAI::SHOT:
+			switch (_dir)
+			{
+			case DIR::UP:
+				_move.y = speed.y;
+				break;
+			case DIR::RIGHT:
+				_move.x = speed.x;
+				break;
+			case DIR::DOWN:
+				_move.y = -speed.y;
+				break;
+			case DIR::LEFT:
+				_move.x = -speed.x;
+				break;
+			default:
+				break;
+			}
+			/*if (abs(distance.x) > abs(distance.y))
+			{
+				if (distance.x >= 0.0f)
+				{
+					
+				}
+				else if (distance.x < 0.0f)
+				{
+					
+				}
+			}
+			else
+			{
+				if (distance.y >= 0.0f)
+				{
+					
+				}
+				else if (distance.y < 0.0f)
+				{
+					
+				}
+			}*/
+			break;
+		default:
+			break;
+		}
+		
+		// 動きからの向き変更
 		if (abs(_move.x) > abs(_move.y))
 		{
 			if (_move.x >= 0.0f)
@@ -101,10 +137,21 @@ bool E_Attack::init()
 void E_Attack::update(float delta)
 {
 	_remainCnt += delta;
-	this->setPosition(this->getPosition() + _move);
+	if (_gameMap->mapColision(*this, _move, _colSize[static_cast<int>(_dir)]))
+	{
+		this->setPosition(this->getPosition() + _move);
+	}
+	else
+	{
+		this->removeFromParent();
+	}
 	if (_remainCnt > 2.0f)
 	{
 		this->removeFromParent();
 	}
 }
+
+
+
+
 

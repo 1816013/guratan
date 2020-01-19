@@ -26,24 +26,14 @@ void Player::addExp(const int exp )
 	_exp += exp;
 }
 
-int Player::GetHP()
-{
-	return _hp;
-}
-
-void Player::SetHP(const int hp)
-{
-	_hp = hp;
-}
-
-int Player::GetPower()
-{
-	return _power;
-}
-
 float Player::GetMovePower()
 {
 	return _movePower;
+}
+
+std::vector<Ability> Player::GetUnacquiredAbility()
+{
+	return _unacquiredAbility;
 }
 
 void Player::SetAbility(Ability& ability)
@@ -52,36 +42,34 @@ void Player::SetAbility(Ability& ability)
 	switch (ability)
 	{
 	case Ability::PowerUp:
-		_power += 1;
+		_powerRate += 0.5;
 		break;
 	case Ability::SpeedUp:
 		_movePower += 0.5f;
 		break;
 	case Ability::RangeAttack:
-		_rangeF = true;
 		break;
 	}
 }
 
-std::vector<Ability> Player::GetUnacquiredAbility()
+void Player::SetStrong(bool flag)
 {
-	return _unacquiredAbility;
+	_strongF = true;
 }
 
-bool Player::FindAbility(Ability ability)
+bool Player::IsCharged()
 {
-	bool find = false;
-	for (auto abilityItr : _ability)
+	if (_charge > 0)
 	{
-		if (abilityItr == ability)
-		{
-			find = true;
-		}
+		return true;
 	}
-	return find;
+	return false;
 }
 
-
+bool Player::GetStrong()
+{
+	return _strongF;
+}
 
 bool Player::init()
 {
@@ -120,7 +108,9 @@ bool Player::init()
 	_dir = DIR::UP;
 	_hp = 10;
 	_movePower = 1.0f;
-	_rangeF = false;
+	_strongF = false;
+	_strongCnt = 0;
+	_powerRate = 1.0f;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -135,12 +125,12 @@ bool Player::init()
 
 	_charge = 0;
 
-	// ｱｸｼｮﾝｾｯﾄ @csv出力にしたい
+	// ｱｸｼｮﾝｾｯﾄ
 	// 左移動
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(-5, 0);
+		module.speed = Vec2(-3, 0);
 		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::LEFT;
 		module.keyTiming = Timing::ON;
@@ -151,7 +141,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(5, 0);
+		module.speed = Vec2(3, 0);
 		module.colSize = { Size(16, 16), Size(16, -16) };
 		module.inputID = INPUT_ID::RIGHT;
 		module.keyTiming = Timing::ON;
@@ -162,7 +152,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(0, 5);
+		module.speed = Vec2(0, 3);
 		module.colSize = { Size(-16, 16), Size(16, 16) };
 		module.inputID = INPUT_ID::UP;
 		module.keyTiming = Timing::ON;
@@ -173,7 +163,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(0, -5);
+		module.speed = Vec2(0, -3);
 		module.colSize = { Size(-16, -16), Size(16, -16) };
 		module.inputID = INPUT_ID::DOWN;
 		module.keyTiming = Timing::ON;
@@ -259,34 +249,32 @@ void Player::update(float delta)
 
 	// 攻撃
 	// 武器作成
-	auto SetWeapon = [](Scene& scene, Sprite& sp, Size size, OptionType optionType)
+	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType)
 	{
 		auto weapon = Weapon::createWeapon(sp, optionType);
-		weapon->setTag(static_cast<int>(objTag::ATTACK));
-		weapon->setContentSize(size);
 		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
-		//nowScene->addChild(weapon);
 		scene.getChildByName("charLayer")->addChild(weapon);
 	};
 
+	// 押した瞬間攻撃
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+	{
+		SetWeapon(*gameScene, *this, OptionType::NOMAL);
+	}
 	// チャージ中
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
 	{
 		_charge += delta;
 	}
-	// 押した瞬間攻撃
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
-	{
-		SetWeapon(*gameScene, *this, { 32, 32 }, OptionType::NOMAL);
-	}
-
 	// チャージが最大だったらチャージ攻撃
-	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && _inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) )
 	{
-  		if (_charge >= 1.0f)
+		if (_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
 		{
-			SetWeapon(*gameScene, *this, { 16, 16 }, OptionType::CHARGE);
-			//nowScene->addChild(weapon);
+			if (_charge >= 1.0f)
+			{
+				SetWeapon(*gameScene, *this, OptionType::CHARGE);
+			}
 		}
 		_charge = 0.0f;
 	}
@@ -295,19 +283,18 @@ void Player::update(float delta)
 	{
 		LevelUp();
 	}	
+	if (_strongF )
+	{
+		_strongCnt += delta;
+		if (_strongCnt >= 0.5f)
+		{
+			_strongF = false;
+			_strongCnt = 0;
+		}
+	}
 
 	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
-}
-
-DIR Player::GetDIR()
-{
-	return _dir;
-}
-
-void Player::SetDIR(DIR dir)
-{
-	_dir = dir;
 }
 
 void Player::LevelUp(void)
@@ -315,6 +302,7 @@ void Player::LevelUp(void)
 	auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
 	gameScene->SetSceneType(SceneType::MENU);
 	_level++;
+	_power += 1;
 	_hp += 2;
 	_exp = 0;
 	_expMax *= 2;
@@ -333,13 +321,17 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 		int hitTag = hitObj.getTag();
 		if (hitTag == static_cast<int>(objTag::E_ATTACK))
 		{
-			col = true;
-			_hp -= hitObj.GetPower();
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 50, this->_colSize[static_cast<int>(_dir)]))
+			if (!_strongF)
 			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
+				col = true;
+				_hp -= hitObj.GetPower();
+				hitObj.SetHP(hitObj.GetHP() - 1);
+				_strongF = true;
+				if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
+				{
+					this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
+				}
 			}
-			hitObj.removeFromParent();
 		}
 		if (hitTag == static_cast<int>(objTag::MAPOBJ))
 		{
@@ -348,6 +340,8 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			this->setPosition(visibleSize.width / 2, 64);
 			auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
 			gameScene->SetNextFloor(true);
+			_charge = 0;
+			_inputState->Init();
 		}
 	}
 	return col;

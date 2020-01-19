@@ -27,18 +27,18 @@ bool GameMap::init()
 
 bool GameMap::mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<cocos2d::Size, 2> colSize)
 {
-	auto directer = Director::getInstance();
-	auto map = (TMXTiledMap*)directer->getRunningScene()->getChildByName("backLayer")->getChildByName("mapData");
+	auto gameScene = Director::getInstance()->getRunningScene();
+	if (gameScene->getName() != "GameScene")
+	{
+		return false;
+	}
+	auto map = (TMXTiledMap*)gameScene->getChildByName("backLayer")->getChildByName("mapData");
 	auto col = map->getLayer("wall");
 	auto mapSize = map->getMapSize();
 	auto tileSize = col->getMapTileSize();
 
 	Vec2 pos = sp.getPosition();
 	std::array<Vec2, 2>arrayID;
-	/*std::array<Vec2, 3>IDarray;
-	IDarray = { ID ,Vec2{0, 0} , mapSize };
-	auto minMax = std::minmax_element(IDarray.begin(), IDarray.end());*/
-	//if(*minMax.first == Vec2(0, 0) && *minMax.second == mapSize)
 	for (int i = 0; i < 2; i++)
 	{
 		// ºØ¼Þ®ÝµÌ¾¯Ä
@@ -54,6 +54,10 @@ bool GameMap::mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<
 			{
 				return false;
 			}
+		}
+		else
+		{
+			return false;
 		}
 	}
 	return true;

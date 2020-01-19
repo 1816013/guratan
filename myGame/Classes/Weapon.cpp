@@ -3,31 +3,63 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, OptionType option)
+cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option)
 {
 	auto weapon = Weapon::create();
-	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
-	switch (((Player&)sp).GetDIR())
-	{
-	case DIR::UP:
-		dirOffset.y = 32;
-		break;
-	case DIR::RIGHT:
-		dirOffset.x = 32;
-		break;
-	case DIR::DOWN:
-		dirOffset.y = -32;
-		break;
-	case DIR::LEFT:
-		dirOffset.x = -32;
-		break;
-	default:
-		break;
-	}
-	weapon->setPosition(sp.getPosition() + dirOffset);
+	weapon->_optionType = option;
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower());
-	weapon->_optionType = option;
+	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
+	auto offsetCreate = [&](Sprite& sp)
+	{
+		switch (((Obj&)sp).GetDIR())
+		{
+		case DIR::UP:
+			dirOffset.y = weapon->getContentSize().height / 2 + 16;
+			break;
+		case DIR::RIGHT:
+			dirOffset.x = weapon->getContentSize().height / 2 + 16;
+			break;
+		case DIR::DOWN:
+			dirOffset.y = -weapon->getContentSize().height / 2 - 16;
+			break;
+		case DIR::LEFT:
+			dirOffset.x = -weapon->getContentSize().height / 2 - 16;
+			break;
+		default:
+			break;
+		}
+	};
+	if (option == OptionType::NOMAL)
+	{
+		weapon->setContentSize({ 32, 32 });
+		offsetCreate(sp);
+	}
+	else
+	{
+		switch (weapon->_chargeType)
+		{
+		case ChargeType::SHOT:
+			weapon->setContentSize({ 16, 16 });
+			break;
+		case ChargeType::TWISTER:
+			weapon->setContentSize({ 96, 96 });
+			break;
+		case ChargeType::FLONTAL:
+			weapon->setContentSize({ 96, 64 });
+			weapon->_power *= 2;
+			offsetCreate(sp);
+			break;
+		default:
+			break;
+		}
+	}
+	
+	weapon->SetColSize(sp);
+	weapon->setPosition(sp.getPosition() + dirOffset);
+
+	
+	weapon->setTag(static_cast<int>(objTag::ATTACK));
 	return weapon;
 }
 
@@ -40,21 +72,6 @@ Weapon::~Weapon()
 {
 }
 
-DIR Weapon::GetDIR()
-{
-	return _dir;
-}
-
-void Weapon::SetDIR(DIR dir)
-{
-	_dir = dir;
-}
-
-int Weapon::GetPower()
-{
-	return _power;
-}
-
 bool Weapon::init()
 {
 	_remainCnt = 0;
@@ -63,49 +80,138 @@ bool Weapon::init()
 	{
 		return false;
 	}
+	_chargeType = ChargeType::FLONTAL;
+
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(0, 255, 0));
-	_hp = 1;
+	_hp = 1000000;
 	_power = 1;
 
-	auto size = this->getContentSize() / 2;
-	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
-	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
-	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
-	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 	//this->setPosition(100, 100);
 	this->scheduleUpdate();
 
 	return true;
 }
 
-
-
 void Weapon::update(float delta)
 {
 	_remainCnt++;
-	switch (_optionType)
+	if (_optionType == OptionType::NOMAL)
 	{
-	case OptionType::NOMAL:
 		if (_remainCnt > 1)
 		{
 			this->removeFromParent();
 		}
-		break;
-	case OptionType::CHARGE:
-		if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(this->GetDIR())] * 7, _colSize[static_cast<int>(this->GetDIR())]))
+	}
+	else if (_optionType == OptionType::CHARGE)
+	{
+		switch (_chargeType)
 		{
-			this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 7);
+		case ChargeType::SHOT:
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(this->GetDIR())] * 7, _colSize[static_cast<int>(this->GetDIR())]))
+			{
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 7);
+			}
+			else
+			{
+				this->removeFromParent();
+			}
+			break;
+		case ChargeType::TWISTER:
+			if (_remainCnt > 1)
+			{
+				this->removeFromParent();
+			}
+			break;
+		case ChargeType::FLONTAL:
+			if (_dir == DIR::UP)
+			{
+				this->setRotation(0.0f);
+			}
+			if (_dir == DIR::RIGHT)
+			{
+				this->setRotation(90.0f);
+			}
+			if (_dir == DIR::DOWN)
+			{
+				this->setRotation(180.0f);
+			}
+			if (_dir == DIR::LEFT)
+			{
+				this->setRotation(270.0f);
+			}
+			if (_remainCnt > 1)
+			{
+				this->removeFromParent();
+			}
+			break;
+		default:
+			break;
 		}
-		else
-		{
-			this->removeFromParent();
-		}
-		break;
-	default:
-		break;
 	}
 	
+
 }
+
+bool Weapon::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
+{
+	bool col = false;
+
+	Rect myRect = this->getBoundingBox();
+	Rect hitRect = hitObj.getBoundingBox();
+	int hitTag = hitObj.getTag();
+
+  	if (myRect.intersectsRect(hitRect))
+	{
+		int hitTag = hitObj.getTag();
+		if (hitTag == static_cast<int>(objTag::ENEMY))
+		{
+			col = true;
+			_hp -= 1;
+			hitObj.SetHP(hitObj.GetHP() - _power);
+			auto dir = hitObj.GetDIR();
+			auto targetPos = hitObj.getPosition();
+			auto GameScene = Director::getInstance()->getRunningScene();
+			if (GameScene->getName() != "GameScene")
+			{
+				return false;
+			}
+			if (_optionType == OptionType::NOMAL)
+			{
+				if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, this->_colSize[static_cast<int>(_dir)]))
+				{
+					hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
+				}
+			}
+			if (_optionType == OptionType::CHARGE)
+			{
+				auto player = (Player*)GameScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+				auto radian = atan2(targetPos.y - player->getPositionY(), targetPos.x - player->getPositionX());
+				Vec2 move;
+				move.x = cos(radian) * this->getContentSize().height;
+				move.y = sin(radian) * this->getContentSize().height;
+				if (_gameMap->mapColision(hitObj, move, hitObj._colSize[static_cast<int>(_dir)]))
+				{
+					hitObj.setPosition(hitObj.getPosition() + move);		// ノックバック処理
+				}
+			}
+		}
+	}
+	return col;
+}
+
+void Weapon::SetColSize(Sprite & sp)
+{
+	auto size = sp.getContentSize() / 2;
+	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
+	_colSize[static_cast<int>(DIR::RIGHT)] = { Size(size.width, size.height), Size(size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
+	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
+}
+
+void Weapon::SetState()
+{
+}
+
 

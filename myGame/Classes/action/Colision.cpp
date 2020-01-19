@@ -8,8 +8,12 @@ USING_NS_CC;
 
 bool actColision::operator()(Sprite & sp, actModule& module) const // “–‚½‚è”»’è
 {
-	auto directer = Director::getInstance();
-	auto map = (TMXTiledMap*)directer->getRunningScene()->getChildByName("backLayer")->getChildByName("mapData");
+	auto gameScene = Director::getInstance()->getRunningScene();
+	if (gameScene->getName() != "GameScene")
+	{
+		return false;
+	}
+	auto map = (TMXTiledMap*)gameScene->getChildByName("backLayer")->getChildByName("mapData");
 	auto col = map->getLayer("wall");
 	auto mapSize = map->getMapSize();
 	auto tileSize = col->getMapTileSize();

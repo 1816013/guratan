@@ -10,9 +10,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\unit">
-      <UniqueIdentifier>{a545f225-08fb-4c0f-a91e-57a9d5198bfc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\action">
       <UniqueIdentifier>{d3427ddc-f4f4-4fcc-8ec5-c5063ef808dd}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="src\scene">
       <UniqueIdentifier>{8107326a-2ef8-427a-bfcf-da58f624eca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\obj">
+      <UniqueIdentifier>{a545f225-08fb-4c0f-a91e-57a9d5198bfc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,13 +62,13 @@
       <Filter>src\action</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Unit\Player.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Unit\Enemy.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Unit\Obj.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\action\Attack.cpp">
       <Filter>src\action</Filter>
@@ -86,16 +86,16 @@
       <Filter>src\scene</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Weapon.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\action\CheckKey.cpp">
       <Filter>src\action\check</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\E_Attack.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\mapObject.cpp">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\FloorMng.cpp">
       <Filter>src</Filter>
@@ -105,6 +105,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\GameClearScene.cpp">
       <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AnimMng.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,13 +146,13 @@
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit\Player.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit\Enemy.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit\Obj.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\Attack.h">
       <Filter>src\action</Filter>
@@ -167,16 +170,16 @@
       <Filter>src\scene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Weapon.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\CheckKey.h">
       <Filter>src\action\check</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\E_Attack.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\mapObject.h">
-      <Filter>src\unit</Filter>
+      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\FloorMng.h">
       <Filter>src</Filter>
@@ -186,6 +189,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\GameClearScene.h">
       <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AnimMng.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

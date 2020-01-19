@@ -25,8 +25,6 @@
 #include "GameScene.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
-#include <Unit/Player.h>
-#include <Unit/Enemy.h>
 #include <E_Attack.h>
 #include <GameMap.h>
 #include "GameOverScene.h"
@@ -37,7 +35,14 @@ USING_NS_CC;
 
 Scene* GameScene::createScene()
 {
-    return GameScene::create();
+	Scene *ret = new (std::nothrow)GameScene();
+	if (ret && ret->initWithPhysics() && ret->init()) {
+		ret->autorelease();
+		return ret;
+	}
+
+	CC_SAFE_DELETE(ret);
+	return nullptr;
 }
 
 // Print useful error message instead of segfaulting when files are not there.
@@ -56,6 +61,11 @@ bool GameScene::init()
     {
         return false;
     }
+	auto world = getPhysicsWorld();
+	world->setGravity(Vec2(0, 0));
+	world->setSpeed(1.0f);
+	world->setSubsteps(1);
+	//world->setDebugDrawMask(0xffff);
 	// シーン設定
 	this->setName("GameScene");
 	_sceneType = SceneType::GAME;
@@ -141,20 +151,19 @@ bool GameScene::init()
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
-	
-	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	charBglayer->addChild(player);
-	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
-	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+
+	SetEnemy(EnemyType::SLIME);
+	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
+	
+	for (int i = 0; i < 5; i++)
+	{
+		int randAi = rand() % static_cast<int>(EnemyType::MAX);
+		SetEnemy(static_cast<EnemyType>(randAi));
+	}
 
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	_gameMap->createMap(*backBglayer);
-	/*map->setName("mapMng");
-	map->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	backBglayer->addChild(map);*/
 	mapObj = nullptr;
 
 	// メニュ－
@@ -162,6 +171,34 @@ bool GameScene::init()
 	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 4 * 3 - levelupText->getContentSize().height));
 	MenuBglayer->addChild(levelupText, 0);
+	
+
+	// 仮ｽﾌﾟﾗｲﾄ メニュー用
+	cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
+	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
+	sprite[0] = Sprite::create();
+	sprite[0]->setPosition(400, 300);
+	sprite[0]->setTextureRect(rect);
+
+	sprite[1] = Sprite::create();
+	sprite[1]->setPosition(500, 300);
+	sprite[1]->setTextureRect(rect);
+
+	sprite[2] = Sprite::create();
+	sprite[2]->setPosition(600, 300);
+	sprite[2]->setTextureRect(rect);
+
+	sprite[3] = Sprite::create();
+	sprite[3]->setPosition(500, 300);
+	sprite[3]->setColor({ 255, 255, 255 });
+	sprite[3]->setTextureRect(selectRect);
+	sprite[3]->setName("select");
+
+	MenuBglayer->addChild(sprite[0]);
+	MenuBglayer->addChild(sprite[1]);
+	MenuBglayer->addChild(sprite[2]);
+	MenuBglayer->addChild(sprite[3]);
+	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 
 	// カメラ
 	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
@@ -178,10 +215,23 @@ bool GameScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
+	// カメラセット※上にもっていって使わないときは変な方向に向けたほうが良いかも
+	auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
+	camera2->setName("menuCamera");
+	this->addChild(camera2);
+	camera2->setPosition3D({ -1024,-576, 0 });
+	camera2->setRotation3D({ 0, 0, 0 });
+	camera2->setDepth(3.0f);
+	camera2->setCameraFlag(CameraFlag::USER2);
 
 	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
+
+	flag = false;
+	_floorNum = 1;
+	_nextFloor = false;
+	TRACE("floor %d \n", _floorNum);
 
 	// ｼｰﾝにぶら下げる
 	this->addChild(MenuBglayer, _zOrderMenu);
@@ -190,12 +240,7 @@ bool GameScene::init()
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
 
-
 	this->scheduleUpdate();
-	flag = false;
-	_floorNum = 1;
-	_nextFloor = false;
-	TRACE("floor %d \n", _floorNum);
 	return true;
 }
 
@@ -226,11 +271,7 @@ void GameScene::update(float delta)
 				break;
 			}
 		}
-		if (pCount <= 0)
-		{
-			Scene *scene = GameOverScene::createScene();
-			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
-		}
+		
 		
 		if (eCount <= 0 && mapObj == nullptr)
 		{
@@ -238,6 +279,11 @@ void GameScene::update(float delta)
 			mapObj->setTag(static_cast<int>(objTag::MAPOBJ));
 			mapObj->setCameraMask(static_cast<int>(CameraFlag::USER1));
 			charBglayer->addChild(mapObj);
+		}
+		if (pCount <= 0)
+		{
+			Scene *scene = GameOverScene::createScene();
+			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 		}
 		if (_nextFloor)
 		{
@@ -250,44 +296,14 @@ void GameScene::update(float delta)
 		
 		if (!flag)	// 一回しかやらない処理
 		{
+			player->_inputState->Init();
 			flag = true;
 			// ポーズ処理
 			charBglayer->pause();
 			for (cocos2d::Node* _node : charBglayer->getChildren())
 			{
 				_node->pause();
-			}
-			// カメラセット※上にもっていって使わないときは変な方向に向けたほうが良いかも
-			auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
-			camera2->setName("menuCamera");
-			this->addChild(camera2);
-			camera2->setPosition3D({ 0, 0, 0 });
-			camera2->setRotation3D({ 0, 0, 0 });
-			camera2->setDepth(3.0f);
-			camera2->setCameraFlag(CameraFlag::USER2);
-					
-			// 仮ｽﾌﾟﾗｲﾄ
-			Sprite* sprite[4];
-			cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
-			cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
-			sprite[0] = Sprite::create();
-			sprite[0]->setPosition(400, 300);
-			sprite[0]->setTextureRect(rect);
-
-			sprite[1] = Sprite::create();
-			sprite[1]->setPosition(500, 300);
-			sprite[1]->setTextureRect(rect);
-			
-			sprite[2] = Sprite::create();
-			sprite[2]->setPosition(600, 300);
-			sprite[2]->setTextureRect(rect);
-
-			sprite[3] = Sprite::create();
-			sprite[3]->setPosition(500, 300);
-			sprite[3]->setColor({ 255, 255, 255 });
-			sprite[3]->setTextureRect(selectRect);
-			sprite[3]->setName("select");
-					
+			}	
 			auto unAbility = player->GetUnacquiredAbility();
 			std::random_device seed;
 			std::mt19937 engine(seed());
@@ -310,17 +326,14 @@ void GameScene::update(float delta)
 				retAbility[i] = unAbility.back();
 				unAbility.pop_back();
 			}
-			MenuBglayer->addChild(sprite[0]);
-			MenuBglayer->addChild(sprite[1]);
-			MenuBglayer->addChild(sprite[2]);
-			MenuBglayer->addChild(sprite[3]);
-			MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
+			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
+			
 			selectCnt = 0;
 			//
 		}
 		// PCのみ
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::LEFT))
-		{
+ 		{
 			selectCnt--;
 		}
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::RIGHT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::RIGHT))
@@ -361,7 +374,7 @@ void GameScene::update(float delta)
 			{
 				_node->resume();
 			}
-			this->getChildByName("menuCamera")->removeFromParent();
+			this->getChildByName("menuCamera")->setPosition3D({ -1024, -576, 0 });
 		}
 	}
 }
@@ -388,11 +401,9 @@ void GameScene::menuCloseCallback(Ref* pSender)
 }
 
 
-void GameScene::SetEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI)
+void GameScene::SetEnemy(EnemyType enemyType)
 {
-	auto enemy = Enemy::createEnemy(moveAI, attackAI);
-	enemy->setTag(static_cast<int>(objTag::ENEMY));
-	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
+	auto enemy = Enemy::createEnemy(enemyType);
 	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 800 + 48 + 64));
 	charBglayer->addChild(enemy);
 }
@@ -401,22 +412,17 @@ void GameScene::ColTest()
 {
 	for (auto eRect : this->charBglayer->getChildren())
 	{
-		
 		for (auto pRect : this->charBglayer->getChildren())
 		{
 			if (eRect == pRect)
 			{
 				continue;
 			}
-			
 			if (eRect->getTag() != pRect->getTag())
 			{
 				Obj* obj = (Obj*)eRect;
 				Obj* hitObj = (Obj*)pRect;
-				if (obj->ColisionObj(*hitObj, *this))
-				{
-					return;
-				}
+				obj->ColisionObj(*hitObj, *this);
 			}
 		}
 	}
@@ -427,11 +433,11 @@ bool GameScene::ChangeFloor()
 	_nextFloor = false;
 	mapObj = nullptr;
 	_floorNum++;
-	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
-	SetEnemy(EnemyMoveAI::IDLE, EnemyAttackAI::AIMING);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
-	SetEnemy(EnemyMoveAI::FORROW, EnemyAttackAI::NONE);
+	for (int i = 0; i < 5; i++)
+	{
+		int randAi = rand() % static_cast<int>(EnemyType::MAX);
+		SetEnemy(static_cast<EnemyType>(randAi));
+	}
 	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
 	TRACE("floor %d", _floorNum);
 	return true;

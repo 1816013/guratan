@@ -1,8 +1,6 @@
 #pragma once
 
 #include"Obj.h"
-
-
 enum class Ability
 {
 	PowerUp,
@@ -21,17 +19,13 @@ public:
 	Player();
 	~Player();
 
-	DIR GetDIR()override;
-	void SetDIR(DIR dir)override;
-	int GetHP()override;
-	void SetHP(const int hp)override;
-	int GetPower()override;
-
 	void addExp(const int exp);
 	float GetMovePower();
 	void SetAbility(Ability& ability);
+	void SetStrong(bool flag);
+	bool IsCharged();
+	bool GetStrong();
 	std::vector<Ability> GetUnacquiredAbility();
-	bool FindAbility(Ability ability);
 
 	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene)override;
 
@@ -45,12 +39,14 @@ private:
 
 	// 変数
 	cocos2d::DrawNode* line;
-	bool _rangeF;	// 遠距離攻撃ﾌﾗｸﾞ＠いらないかも
 	int _expMax;	// これ以上になるとレベルアップ
 	int _level;		// レベル
 	float _charge;	// チャージしている時間
 
+	bool _strongF;	// 無敵
+	float _strongCnt;	// 無敵時間ｶｳﾝﾀ
 
+	float _powerRate;	// 攻撃力アビリティ用
 	float _movePower;	// 移動速度アビリティ補正用
 	
 	std::vector<Ability>_ability;		// 取得しているアビリティ

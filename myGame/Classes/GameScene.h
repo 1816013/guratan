@@ -29,6 +29,7 @@
 #include <input/OPRT_state.h>
 #include <Unit/Obj.h>
 #include <Unit/Player.h>
+#include <Unit/Enemy.h>
 
 enum class Z_ORDER_TYPE
 {
@@ -61,10 +62,10 @@ public:
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     // implement the "static create()" method manually
-    CREATE_FUNC(GameScene);
+   // CREATE_FUNC(GameScene);
 private:
 	// ä÷êî
-	void SetEnemy(EnemyMoveAI moveAI, EnemyAttackAI attackAI);
+	void SetEnemy(EnemyType enemyType);
 	void ColTest();
 	bool ChangeFloor();
 
@@ -87,6 +88,7 @@ private:
 	std::unique_ptr<GameMap>_gameMap;
 
 	// âº
+	cocos2d::Sprite* sprite[4];
 	cocos2d::Sprite* mapObj;
 	bool flag;
 	int selectCnt;				//Å@PCëÄçÏóp

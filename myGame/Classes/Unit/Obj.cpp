@@ -17,30 +17,28 @@ Obj::~Obj()
 
 bool Obj::IsCheckedHP(Obj& obj)
 {
-	/*auto gameScene = cocos2d::Director::getInstance()->getRunningScene();
-	if (gameScene->getName() != "GameScene")
+	if (obj.GetHP() <= 0)
 	{
-		return false;
+		if (obj.getTag() == static_cast<int>(objTag::ENEMY))
+		{
+			auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+			player->addExp(((Enemy&)obj).GetExp());
+		}
+		obj.removeFromParent();
+		return true;
 	}
-	auto charLayer = (Obj*)gameScene->getChildByName("charLayer");
-	if (charLayer != nullptr)
-	{
-		for (auto itr : charLayer->getChildren())
-		{*/
-			//Obj* obj = (Obj*)itr;
-			if (obj.GetHP() <= 0)
-			{
-				if (obj.getTag() == static_cast<int>(objTag::ENEMY))
-				{
-					auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-					player->addExp(((Enemy&)obj).GetExp());
-				}
-				obj.removeFromParent();
-				return true;
-			}
-		//}
-	//}
+
 	return false;
+}
+
+DIR Obj::GetDIR()
+{
+	return _dir;
+}
+
+void Obj::SetDIR(DIR dir)
+{
+	_dir = dir;
 }
 
 bool Obj::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
@@ -55,4 +53,10 @@ int Obj::GetHP()
 
 void Obj::SetHP(const int hp)
 {
+	_hp = hp;
+}
+
+int Obj::GetPower()
+{
+	return _power;
 }

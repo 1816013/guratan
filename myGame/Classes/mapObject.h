@@ -7,10 +7,6 @@ public:
 	static cocos2d::Sprite* createMapObj();
 	mapObject();
 	~mapObject();
-	DIR GetDIR()override;
-	void SetDIR(DIR dir)override;
-	int GetPower()override;
-
 
 	CREATE_FUNC(mapObject);
 private:
