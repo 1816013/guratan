@@ -25,6 +25,7 @@
 #include "GameScene.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
+#include "Weapon.h"
 #include <E_Attack.h>
 #include "GameOverScene.h"
 #include "mapObject.h"
@@ -67,7 +68,7 @@ bool GameScene::init()
 	//world->setDebugDrawMask(0xffff);
 	// シーン設定
 	this->setName("GameScene");
-	_sceneType = SceneType::GAME;
+	_sceneType = SceneType::MENU;
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -87,6 +88,8 @@ bool GameScene::init()
 	_zOrderBack = static_cast<int>(Z_ORDER_TYPE::BACK);
 	
 	MenuBglayer = Layer::create();
+	auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
+	MenuBglayer->addChild(_bg);
 	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
 	uiBglayer->setName("uiLayer");
@@ -152,7 +155,7 @@ bool GameScene::init()
 	player->setTag(static_cast<int>(objTag::PLAYER));
 	charBglayer->addChild(player);
 
-	SetEnemy(EnemyType::SLIME);
+	//SetEnemy(EnemyType::SLIME);
 	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	
 	for (int i = 0; i < 5; i++)
@@ -165,13 +168,8 @@ bool GameScene::init()
 	_gameMap->createMap(*backBglayer);
 	mapObj = nullptr;
 
-	// メニュ－
-	auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
-	levelupText->setPosition(Vec2(origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height / 4 * 3 - levelupText->getContentSize().height));
-	MenuBglayer->addChild(levelupText, 0);
 	
-
+	
 	// 仮ｽﾌﾟﾗｲﾄ メニュー用
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
 	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
@@ -214,7 +212,7 @@ bool GameScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
-	// カメラセット※上にもっていって使わないときは変な方向に向けたほうが良いかも
+	
 	auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
 	camera2->setName("menuCamera");
 	this->addChild(camera2);
@@ -228,7 +226,7 @@ bool GameScene::init()
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 
 	flag = false;
-	_floorNum = 1;
+	
 	_nextFloor = false;
 	//TRACE("floor %d \n", _floorNum);
 
@@ -239,6 +237,11 @@ bool GameScene::init()
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
 
+	charBglayer->pause();
+	for (cocos2d::Node* _node : charBglayer->getChildren())
+	{
+		_node->pause();
+	}
 	this->scheduleUpdate();
 	return true;
 }
@@ -291,7 +294,12 @@ void GameScene::update(float delta)
 	}
 	else if (_sceneType == SceneType::MENU)
 	{
-		auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+		auto gameScene = Director::getInstance()->getRunningScene();
+		if (gameScene->getName() != "GameScene")
+		{
+			return;
+		}
+		auto player = (Player*)gameScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
 		
 		if (!flag)	// 一回しかやらない処理
 		{
@@ -299,35 +307,58 @@ void GameScene::update(float delta)
 			flag = true;
 			// ポーズ処理
 			charBglayer->pause();
+			
+			selectCnt = 0;
 			for (cocos2d::Node* _node : charBglayer->getChildren())
 			{
 				_node->pause();
 			}	
-			auto unAbility = player->GetUnacquiredAbility();
-			std::random_device seed;
-			std::mt19937 engine(seed());
-			std::shuffle(unAbility.begin(), unAbility.end(), engine);
-			
-			for (int i = 0; i < 3; i++)
+			if (_floorNum != 0)
 			{
-				switch (unAbility.back())
+				auto unAbility = player->GetUnacquiredAbility();
+				std::random_device seed;
+				std::mt19937 engine(seed());
+				std::shuffle(unAbility.begin(), unAbility.end(), engine);
+
+				for (int i = 0; i < 3; i++)
 				{
-				case Ability::PowerUp:
-					sprite[i]->setColor(cocos2d::Color3B(255, 0, 0));
-					break;
-				case Ability::SpeedUp:
-					sprite[i]->setColor(cocos2d::Color3B(0, 255, 0));
-					break;
-				case Ability::RangeAttack:
-					sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
-					break;
+					// メニュ－
+					auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
+					levelupText->setPosition(Vec2( 1024 / 2,
+						576 / 4 * 3 - levelupText->getContentSize().height));
+					levelupText->setCameraMask(static_cast<int>(CameraFlag::USER2));
+					levelupText->setName("Text");
+					MenuBglayer->addChild(levelupText, 0);
+					switch (unAbility.back())
+					{
+					case Ability::PowerUp:
+						sprite[i]->setColor(cocos2d::Color3B(255, 0, 0));
+						break;
+					case Ability::SpeedUp:
+						sprite[i]->setColor(cocos2d::Color3B(0, 255, 0));
+						break;
+					case Ability::ChargeLevel:
+						sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
+						break;
+					}
+					retAbility[i] = unAbility.back();
+					unAbility.pop_back();
 				}
-				retAbility[i] = unAbility.back();
-				unAbility.pop_back();
+			}
+			else // 階層が一の時はじめ
+			{			
+				// メニュ－
+				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/Marker Felt.ttf", 24);
+				ChargeSelect->setPosition(Vec2(1024 / 2,
+					576 / 4 * 3 - ChargeSelect->getContentSize().height));
+				ChargeSelect->setName("Text");
+				ChargeSelect->setCameraMask(static_cast<int>(CameraFlag::USER2));
+				MenuBglayer->addChild(ChargeSelect, 0);
+				sprite[0]->setColor(cocos2d::Color3B(255, 0, 0));
+				sprite[1]->setColor(cocos2d::Color3B(0, 255, 0));	
+				sprite[2]->setColor(cocos2d::Color3B(0, 0, 255));
 			}
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
-			
-			selectCnt = 0;
 			//
 		}
 		// PCのみ
@@ -365,7 +396,16 @@ void GameScene::update(float delta)
 
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
-			player->SetAbility(retAbility[selectCnt]);
+			if (_floorNum == 0)
+			{
+				player->SetChargeType(static_cast<ChargeType>(selectCnt));
+			
+				_floorNum = 1;
+			}
+			else
+			{
+				player->SetAbility(retAbility[selectCnt]);
+			}
 			_sceneType = SceneType::GAME;
 			flag = false;
 			charBglayer->resume();
@@ -373,6 +413,7 @@ void GameScene::update(float delta)
 			{
 				_node->resume();
 			}
+			MenuBglayer->getChildByName("Text")->removeFromParent();
 			this->getChildByName("menuCamera")->setPosition3D({ -1024, -576, 0 });
 		}
 	}

@@ -1,5 +1,6 @@
 #pragma once
 #include <Unit/Obj.h>
+#include "Unit/Player.h"
 
 enum class OptionType
 {
@@ -8,20 +9,13 @@ enum class OptionType
 	MAX
 };
 
-enum class ChargeType
-{
-	SHOT,
-	TWISTER,
-	FLONTAL,
-	MAX
-};
-
 class Weapon : public Obj
 {
 public:
-	static cocos2d::Sprite* createWeapon(Sprite& sp, const OptionType option);
+	static cocos2d::Sprite* createWeapon(Sprite& sp, const OptionType option, int chargeLevel = 0);
 	Weapon();
 	~Weapon();
+
 
 	CREATE_FUNC(Weapon);
 private:
@@ -31,9 +25,8 @@ private:
 	void SetColSize(cocos2d::Sprite& sp);
 	void SetState();
 
-
 	OptionType _optionType;
-	ChargeType _chargeType;
+	ChargeType _chargeType;	// •Û‘¶—p
 	cocos2d::Vec2 _offset;
 	int _remainCnt;
 };

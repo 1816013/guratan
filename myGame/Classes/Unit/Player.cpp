@@ -48,7 +48,7 @@ void Player::SetAbility(Ability& ability)
 	case Ability::SpeedUp:
 		_movePower += 0.5f;
 		break;
-	case Ability::RangeAttack:
+	case Ability::ChargeLevel:
 		break;
 	}
 }
@@ -70,6 +70,16 @@ bool Player::IsCharged()
 bool Player::GetStrong()
 {
 	return _strongF;
+}
+
+void Player::SetChargeType(ChargeType chargeType)
+{
+	_chargeType = chargeType;
+}
+
+ChargeType Player::GetChargeType()
+{
+	return _chargeType;
 }
 
 bool Player::init()
@@ -125,7 +135,7 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
 	// アビリティ設定
-	_unacquiredAbility.emplace_back(Ability::RangeAttack);
+	_unacquiredAbility.emplace_back(Ability::ChargeLevel);
 	_unacquiredAbility.emplace_back(Ability::PowerUp);
 	_unacquiredAbility.emplace_back(Ability::SpeedUp);
 
@@ -137,7 +147,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(-3, 0);
+		module.speed = Vec2(-3.5, 0);
 		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::LEFT;
 		module.keyTiming = Timing::ON;
@@ -148,7 +158,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(3, 0);
+		module.speed = Vec2(3.5, 0);
 		module.colSize = { Size(16, 16), Size(16, -16) };
 		module.inputID = INPUT_ID::RIGHT;
 		module.keyTiming = Timing::ON;
@@ -159,7 +169,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(0, 3);
+		module.speed = Vec2(0, 3.5);
 		module.colSize = { Size(-16, 16), Size(16, 16) };
 		module.inputID = INPUT_ID::UP;
 		module.keyTiming = Timing::ON;
@@ -170,7 +180,7 @@ bool Player::init()
 	{
 		actModule module;
 		module.actID = ACT_STATE::RUN;
-		module.speed = Vec2(0, -3);
+		module.speed = Vec2(0, -3.5);
 		module.colSize = { Size(-16, -16), Size(16, -16) };
 		module.inputID = INPUT_ID::DOWN;
 		module.keyTiming = Timing::ON;
@@ -256,9 +266,9 @@ void Player::update(float delta)
 
 	// 攻撃
 	// 武器作成
-	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType)
+	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType, int chargeLevel = 0)
 	{
-		auto weapon = Weapon::createWeapon(sp, optionType);
+		auto weapon = Weapon::createWeapon(sp, optionType, chargeLevel);
 		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
 		scene.getChildByName("charLayer")->addChild(weapon);
 	};
@@ -272,18 +282,31 @@ void Player::update(float delta)
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
 	{
 		_charge += delta;
+		if (_charge > 1.0f)
+		{
+			_chargeLevel = 1;
+		}
+		if (_charge > 2.0f && _chargeLevelMax > 2)
+		{
+			_chargeLevel = 2;
+		}
+		if (_charge > 3.0f && _chargeLevelMax > 3)
+		{
+			_chargeLevel = 3;
+		}
 	}
 	// チャージが最大だったらチャージ攻撃
 	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) )
 	{
 		if (_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
 		{
-			if (_charge >= 1.0f)
+			if (_chargeLevel >= 1)
 			{
-				SetWeapon(*gameScene, *this, OptionType::CHARGE);
+				SetWeapon(*gameScene, *this, OptionType::CHARGE, _chargeLevel);
 			}
 		}
 		_charge = 0.0f;
+		_chargeLevel = 0;
 	}
 	// レベルアップ
 	if (_exp >= _expMax)
