@@ -26,10 +26,9 @@
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
 #include <E_Attack.h>
-#include <GameMap.h>
 #include "GameOverScene.h"
 #include "mapObject.h"
-#include <proj.win32/_debug/_DebugConOut.h>
+//#include <proj.win32/_debug/_DebugConOut.h>
 
 USING_NS_CC;
 
@@ -231,7 +230,7 @@ bool GameScene::init()
 	flag = false;
 	_floorNum = 1;
 	_nextFloor = false;
-	TRACE("floor %d \n", _floorNum);
+	//TRACE("floor %d \n", _floorNum);
 
 	// ¼°Ý‚É‚Ô‚ç‰º‚°‚é
 	this->addChild(MenuBglayer, _zOrderMenu);
@@ -439,6 +438,6 @@ bool GameScene::ChangeFloor()
 		SetEnemy(static_cast<EnemyType>(randAi));
 	}
 	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
-	TRACE("floor %d", _floorNum);
+//	TRACE("floor %d", _floorNum);
 	return true;
 }

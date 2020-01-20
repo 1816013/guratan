@@ -8,7 +8,7 @@
 class GameMap
 {
 public:
-	void GameMap::createMap(cocos2d::Layer& layer);
+	void createMap(cocos2d::Layer& layer);
 	GameMap();
 	~GameMap();
 	bool mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<cocos2d::Size, 2> colSize);

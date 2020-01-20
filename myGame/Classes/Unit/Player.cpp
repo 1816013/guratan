@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "action/Colision.h"
 #include "Weapon.h"
+#include "AnimMng.h"
 
 USING_NS_CC;
 
@@ -86,19 +87,24 @@ bool Player::init()
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();		// ³²ÝÄÞ³»²½Þ	
+	// ‰æ‘œ
+	lpAnimMng.AnimCreate("player", "idleF", 4, 0.5);
+	lpAnimMng.AnimCreate("player", "idleB", 4, 0.5);
+	lpAnimMng.AnimCreate("player", "idleR", 4, 0.5);
+	lpAnimMng.AnimCreate("player", "idleL", 4, 0.5);
+
+	this->setPosition(visibleSize.width / 2, 64);
+	this->setContentSize({32, 32});
 
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
-	this->setPosition(visibleSize.width / 2, 64);
-	this->setColor(cocos2d::Color3B(0, 0, 255));
-
-	line = DrawNode::create();
-	line->setIgnoreAnchorPointForPosition(false);
-	line->setAnchorPoint({ 1.0f , 1.0f });
-	line->drawLine(Vec2(0, 0), Vec2(0,48 ), Color4F::RED);
-	line->setPosition(Vec2(16.0f, 16.0f));
 	
-	this->addChild(line);
+	texSprite = Sprite::create();
+	texSprite->setAnchorPoint({ 0.3f, 0.1f });
+	this->addChild(texSprite);
+
+	//sp->setPosition(visibleSize.width / 2, 64);
+	//this->setColor(cocos2d::Color3B(0, 0, 255));
 
 	// ÌßÚ²Ô°½Ã°À½
 	_level = 1;
@@ -124,7 +130,8 @@ bool Player::init()
 	_unacquiredAbility.emplace_back(Ability::SpeedUp);
 
 	_charge = 0;
-
+	
+	
 	// ±¸¼®Ý¾¯Ä
 	// ¶ˆÚ“®
 	{
@@ -292,7 +299,9 @@ void Player::update(float delta)
 			_strongCnt = 0;
 		}
 	}
-
+	// ±ÆÒ°¼®Ý
+	auto anim = SetAnim(_dir);	// repeatNum‚ÌÝ’è‚ðSetAnim‚ÅÝ’è‚µ‚Ä‚¢‚é‚½‚ßæ“Ç‚Ý•K{@•ÏX—\’è
+	lpAnimMng.runAnim(*texSprite, *anim, 0);
 	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
@@ -306,6 +315,30 @@ void Player::LevelUp(void)
 	_hp += 2;
 	_exp = 0;
 	_expMax *= 2;
+}
+
+cocos2d::Animation * Player::SetAnim(DIR dir)
+{
+	auto animCache = AnimationCache::getInstance();
+	Animation* anim = nullptr;
+	switch (dir)
+	{
+	case DIR::UP:
+		anim = animCache->getAnimation("idleB");
+		break;
+	case DIR::RIGHT:
+		anim = animCache->getAnimation("idleR");
+		break;
+	case DIR::DOWN:
+		anim = animCache->getAnimation("idleF");
+		break;
+	case DIR::LEFT:
+		anim = animCache->getAnimation("idleL");
+		break;
+	default:
+		break;
+	}
+	return anim;
 }
 
 bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)

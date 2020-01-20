@@ -25,23 +25,23 @@ bool ChangeDIR::operator()(cocos2d::Sprite & sp, actModule & module)
 			dir = module.dir;
 			((Obj&)sp).SetDIR(dir);
 		}
-		// ﾃﾞﾊﾞｯｸﾞ用　@キャラ絵が出来たらいらなくなる
-		if (dir == DIR::UP)
-		{
-			sp.setRotation(0.0f);
-		}
-		if (dir == DIR::RIGHT)
-		{
-			sp.setRotation(90.0f);
-		}
-		if (dir == DIR::DOWN)
-		{
-			sp.setRotation(180.0f);
-		}
-		if (dir == DIR::LEFT)
-		{
-			sp.setRotation(270.0f);
-		}
+		//// ﾃﾞﾊﾞｯｸﾞ用　@キャラ絵が出来たらいらなくなる
+		//if (dir == DIR::UP)
+		//{
+		//	sp.setRotation(0.0f);
+		//}
+		//if (dir == DIR::RIGHT)
+		//{
+		//	sp.setRotation(90.0f);
+		//}
+		//if (dir == DIR::DOWN)
+		//{
+		//	sp.setRotation(180.0f);
+		//}
+		//if (dir == DIR::LEFT)
+		//{
+		//	sp.setRotation(270.0f);
+		//}
 	}
 
 	return true;

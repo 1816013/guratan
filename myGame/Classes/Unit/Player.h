@@ -36,6 +36,7 @@ private:
 	bool init()override;				// 初期化　ｽﾌﾟﾗｲﾄ作成
 	void update(float delta)override;	// ﾌﾟﾚｲﾔｰの移動とｱﾆﾒｰｼｮﾝ処理
 	void LevelUp(void);
+	cocos2d::Animation* SetAnim(DIR dir);	// 方向に応じたｱﾆﾒｰｼｮﾝの設定
 
 	// 変数
 	cocos2d::DrawNode* line;
@@ -48,6 +49,8 @@ private:
 
 	float _powerRate;	// 攻撃力アビリティ用
 	float _movePower;	// 移動速度アビリティ補正用
+
+	Sprite* texSprite;
 	
 	std::vector<Ability>_ability;		// 取得しているアビリティ
 	std::vector<Ability>_unacquiredAbility;	// 未取得アビリティ
