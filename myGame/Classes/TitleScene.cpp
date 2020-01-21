@@ -52,33 +52,27 @@ bool TitleScene::init()
 
 	titleLayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 
-	
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	auto listener = cocos2d::EventListenerKeyboard::create();
 	listener->onKeyPressed = [this](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* keyEvent)
 	{
 		this->ChangeScene();
 	};
+#else
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = [this](cocos2d::Touch* touch, cocos2d::Event* event)
+	{
+		this->ChangeScene();
+		return true;
+};
+#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-
-	/*auto button = MenuItemImage::create(
-		"sprite/button_start.png",
-		"sprite/button_start.png",
-		CC_CALLBACK_1(TitleScene::ChangeScene, this));
-	Menu* menu = Menu::create(button, NULL);
-	menu->setPosition(visibleSize / 2);
-	this->addChild(menu);*/
 
 	count = 0;
 	this->addChild(titleLayer);
 	//this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 1.0f);
 	return true;
 }
-
-//void TitleScene::ChangeScene(float delta)
-//{	
-//	Scene *scene = GameScene::createScene();
-//	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
-//}
 
 void TitleScene::ChangeScene()
 {

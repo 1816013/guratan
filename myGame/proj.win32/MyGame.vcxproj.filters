@@ -109,6 +109,7 @@
     <ClCompile Include="..\Classes\AnimMng.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="MenuLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -193,6 +194,7 @@
     <ClInclude Include="..\Classes\AnimMng.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="MenuLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

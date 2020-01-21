@@ -197,7 +197,6 @@ bool GameScene::init()
 	MenuBglayer->addChild(sprite[1]);
 	MenuBglayer->addChild(sprite[2]);
 	MenuBglayer->addChild(sprite[3]);
-	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 
 	// ƒJƒƒ‰
 	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
@@ -227,10 +226,10 @@ bool GameScene::init()
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 
+	// •Ï”
 	flag = false;
-	_floorNum = 1;
+	_floorNum = 0;
 	_nextFloor = false;
-	//TRACE("floor %d \n", _floorNum);
 
 	// ¼°Ý‚É‚Ô‚ç‰º‚°‚é
 	this->addChild(MenuBglayer, _zOrderMenu);
@@ -441,3 +440,4 @@ bool GameScene::ChangeFloor()
 //	TRACE("floor %d", _floorNum);
 	return true;
 }
+
