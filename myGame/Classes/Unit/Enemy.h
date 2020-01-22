@@ -48,7 +48,7 @@ private:
 	bool _attackFlag;
 	float time;
 
-	cocos2d::Vec2 move;	// ˆÚ“®—Ê
+	
 
 
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬

@@ -156,31 +156,6 @@ void Weapon::update(float delta)
 
 }
 
-bool Weapon::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
-{
-	bool col = false;
-
-	Rect myRect = this->getBoundingBox();
-	Rect hitRect = hitObj.getBoundingBox();
-	int hitTag = hitObj.getTag();
-
-  	if (myRect.intersectsRect(hitRect))
-	{
-		int hitTag = hitObj.getTag();
-		//if (hitTag == static_cast<int>(objTag::ENEMY))
-		//{
-		//	col = true;
-		//	_hp -= 1;
-		//	hitObj.SetHP(hitObj.GetHP() - _power);
-		//	if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, this->_colSize[static_cast<int>(_dir)]))
-		//	{
-		//		hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
-		//	}
-		//}
-	}
-	return col;
-}
-
 void Weapon::SetColSize(Sprite & sp)
 {
 	auto size = sp.getContentSize() / 2;

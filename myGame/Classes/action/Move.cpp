@@ -6,23 +6,12 @@
 
 bool Move::operator()(cocos2d::Sprite& sp, actModule& module)
 {
-	auto speed = module.speed;
+	cocos2d::Vec2 speed = module.speed;
 	if (((Player&)sp).IsCharged())
 	{
 		speed = speed / 3.0f;
 	}
 	sp.setPosition(sp.getPosition() + speed * ((Player&)sp).GetMovePower());
-
-	/*if (sp.getTag() == static_cast<int>(objTag::PLAYER))
-	{
-		
-		
-	}
-	else
-	{
-		((Enemy&)sp).SetDIR( module.dir);
-	}*/
-	
 	
 	//TRACE("moveLR\n");
 	return true;

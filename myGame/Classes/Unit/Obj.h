@@ -24,28 +24,26 @@ public:
 
 	DIR GetDIR();
 	void SetDIR(DIR dir);
-	virtual bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene);
+	virtual bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene);	// プレイヤーとエネミーのみ継承
 	int GetHP();
 	void SetHP(const int hp);
-	void SetKnockFlag(bool flag);
 	bool GetKnockFlag(void);
 	float GetPower();
+	cocos2d::Vec2 GetMove(void);
 
 	bool IsCheckedHP(Obj& obj);
 	std::array<std::array<cocos2d::Size, 2>, static_cast<int>(DIR::MAX)>_colSize;
 
 protected:
-	void KnockBack(Obj& obj, cocos2d::Vec2 vec);
 	// 変数
-	cocos2d::Vec2 _pos;				// 座標	
-	cocos2d::Size _size;				//大きさ
 	int _exp;
 	int _hp;
 	float _power;
 	DIR _dir;
-
+	cocos2d::Vec2 _move;	// 移動量
+	DIR _knockDir;
 	bool _knockF;
-	int _knockCnt;
+	float _knockCnt;
 
 	std::array<cocos2d::Vec2, static_cast<int>(DIR::MAX)> _speedTbl;
 

@@ -56,6 +56,7 @@ bool Enemy::init()
 
 	_knockCnt = 0;
 	_knockF = false;
+	_knockDir = DIR::MAX;
 	
 	time = 0.0f;
 	auto size = this->getContentSize() / 2;
@@ -80,6 +81,7 @@ void Enemy::update(float delta)
 
 	auto player = (Player*)charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
 	
+	// 向き変更
 	if (player != nullptr)
 	{
 		// 向き変更
@@ -107,12 +109,33 @@ void Enemy::update(float delta)
 		}
 	}
 	// 移動（ある奴だけ）　
-	move = _speedTbl[static_cast<int>(_dir)] * 2;
+	if (!_knockF)
+	{
+		_move = _speedTbl[static_cast<int>(_dir)] * 2;
+		
+	}
+	else
+	{
+		_knockCnt += delta;
+		_dir = _knockDir;
+		if (_knockCnt > 0.1f)
+		{
+			_knockCnt = 0;
+			_knockF = false;
+		}
+	}
 	if (_enemyMoveAI == EnemyMoveAI::FORROW)
 	{
-		if (_gameMap->mapColision(*this, move, _colSize[static_cast<int>(_dir)]))
+		if (_gameMap->mapColision(*this, _move, _colSize[static_cast<int>(_dir)]))
 		{
-			this->setPosition(this->getPosition() + move);
+			if (time < _attackIntarval)
+			{
+				this->setPosition(this->getPosition() + _move);
+			}
+			else
+			{
+				time = 0;
+			}
 		}
 	}
 
@@ -156,10 +179,9 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			col = true;
 			_hp -= hitObj.GetPower();
 			hitObj.SetHP(hitObj.GetHP() - 1);	// 武器の耐久を削る
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
-			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
-			}
+			_knockF = true;
+			_knockDir = hitObj.GetDIR();
+			_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 		}
 	}
 	return col;
@@ -186,7 +208,7 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 	case EnemyType::ARCHAR:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
-		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
+		_attackIntarval = ((float)(rand() % 10) / 10) + 1;
 		_hp = 5 + floor;
 		break;
 	default:

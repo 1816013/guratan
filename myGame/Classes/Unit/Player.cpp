@@ -144,8 +144,8 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 10;
-	_hp = 10;
+	_hpMax = 500000;
+	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
 	_strongCnt = 0;
@@ -154,6 +154,9 @@ bool Player::init()
 	_chargeMax = 1.0f;
 	_chargeLevel = 0;
 	_chargeLevelMax = 3;
+	_knockCnt = 0;
+	_knockF = false;
+	_knockDir = DIR::MAX;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -291,6 +294,20 @@ void Player::update(float delta)
 	_inputState->update();
 	_actMng->update(*this);
 
+	if (_knockF)
+	{
+		_knockCnt += delta;
+		if (_gameMap->mapColision(*this, _move, _colSize[static_cast<int>(_knockDir)]))
+		{
+			this->setPosition(this->getPosition() + _move);
+		}
+		if (_knockCnt > 0.15f)
+		{
+			_knockCnt = 0;
+			_knockF = false;
+			_move = { 0 , 0 };
+		}
+	}
 	// 攻撃
 	// 武器作成
 	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType, int chargeLevel = 0)
@@ -409,10 +426,9 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				col = true;
 				_hp -= hitObj.GetPower();
 				_strongF = true;
-				if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
-				{
-					this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
-				}
+				_knockF = true;
+				_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
+				_knockDir = hitObj.GetDIR();
 			}
 		}
 		if (hitTag == static_cast<int>(objTag::E_ATTACK))
@@ -423,11 +439,9 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				_hp -= hitObj.GetPower();
 				hitObj.SetHP(hitObj.GetHP() - 1);
 				_strongF = true;
-				hitObj.SetKnockFlag(true);
-				if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
-				{
-					this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
-				}
+				_knockF = true;
+				_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
+				_knockDir = hitObj.GetDIR();
 			}
 		}
 		if (hitTag == static_cast<int>(objTag::MAPOBJ))
@@ -437,7 +451,7 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			this->setPosition(visibleSize.width / 2, 64);
 			auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
 			gameScene->SetNextFloor(true);
-			_hp = 3;
+			_hp += 3;
 			if (_hp > _hpMax)
 			{
 				_hp = _hpMax;

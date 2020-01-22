@@ -135,9 +135,6 @@ bool GameScene::init()
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
 	charBglayer->addChild(player);
-
-	//SetEnemy(EnemyType::SLIME);
-	//followLayer->runAction(Follow::create(player, Rect(0, 0, visibleSize.width * 4, visibleSize.height * 4)));
 	
 	for (int i = 0; i < 5; i++)
 	{
@@ -327,6 +324,7 @@ void GameScene::update(float delta)
 						break;
 					}
 					retAbility[i] = unAbility.back();
+					unAbility.pop_back();
 				}
 			}
 			else // ŠK‘w‚ªˆê‚ÌŽž‚Í‚¶‚ß
