@@ -1,14 +1,15 @@
 #include "Weapon.h"
-#include "Unit/Player.h"
+
 
 USING_NS_CC;
 
-cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option)
+cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int chargeLevel)
 {
 	auto weapon = Weapon::create();
 	weapon->_optionType = option;
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower());
+	weapon->_chargeType = (((Player&)sp).GetChargeType());
 	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
 	auto offsetCreate = [&](Sprite& sp)
 	{
@@ -41,6 +42,7 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option)
 		{
 		case ChargeType::SHOT:
 			weapon->setContentSize({ 16, 16 });
+			weapon->_hp = 1;
 			break;
 		case ChargeType::TWISTER:
 			weapon->setContentSize({ 96, 96 });
@@ -80,7 +82,7 @@ bool Weapon::init()
 	{
 		return false;
 	}
-	_chargeType = ChargeType::FLONTAL;
+	//_chargeType = ChargeType::FLONTAL;
 
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);

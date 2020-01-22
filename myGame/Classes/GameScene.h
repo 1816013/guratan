@@ -30,6 +30,7 @@
 #include <Unit/Obj.h>
 #include <Unit/Player.h>
 #include <Unit/Enemy.h>
+#include "Weapon.h"
 
 enum class Z_ORDER_TYPE
 {
@@ -93,6 +94,7 @@ private:
 	bool flag;
 	int selectCnt;				//　PC操作用
 	Ability retAbility[3];		// ability一時格納用
+	ChargeType retCharge[3];	// chargeType一時格納用
 	bool _nextFloor;			// 次のフロアへ行くか
 	int _floorNum;
 };

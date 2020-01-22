@@ -22,6 +22,10 @@ bool Obj::IsCheckedHP(Obj& obj)
 		if (obj.getTag() == static_cast<int>(objTag::ENEMY))
 		{
 			auto player = (Player*)Director::getInstance()->getRunningScene()->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+			if (player == nullptr)
+			{
+				return false;
+			}
 			player->addExp(((Enemy&)obj).GetExp());
 		}
 		obj.removeFromParent();

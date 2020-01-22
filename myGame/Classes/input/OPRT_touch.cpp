@@ -8,6 +8,7 @@ OPRT_touch::OPRT_touch(Node* sp)
 	listener->onTouchBegan = [this](cocos2d::Touch* touch, cocos2d::Event* event)->bool
 	{
 		Point pos = touch->getLocation();
+		_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::ATTACK)]] = true;
 		_startTPos = pos;
 		return true;
 	};
@@ -34,7 +35,7 @@ OPRT_touch::OPRT_touch(Node* sp)
 		if (pos.y < start_p.y - margin)
 		{
 			_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::DOWN)]] = true;
-			_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::ATTACK)]] = true;
+			
 		}
 
 		if (pos.x < start_p.x + margin && pos.x > start_p.x - margin

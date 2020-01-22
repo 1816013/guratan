@@ -1,14 +1,21 @@
 #pragma once
-
 #include"Obj.h"
+
 enum class Ability
 {
 	PowerUp,
 	SpeedUp,
-	RangeAttack,
+	ChargeLevel,
 	MAX
 };
 
+enum class ChargeType
+{
+	SHOT,
+	TWISTER,
+	FLONTAL,
+	MAX
+};
 
 class Player : public Obj
 {
@@ -25,6 +32,8 @@ public:
 	void SetStrong(bool flag);
 	bool IsCharged();
 	bool GetStrong();
+	void SetChargeType(ChargeType chargeType);
+	ChargeType GetChargeType();
 	std::vector<Ability> GetUnacquiredAbility();
 
 	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene)override;
@@ -43,12 +52,16 @@ private:
 	int _expMax;	// これ以上になるとレベルアップ
 	int _level;		// レベル
 	float _charge;	// チャージしている時間
-
+	float _chargeMax; // チャージがたまる時間
+	int _chargeLevel; // チャージの強さ
+	int _chargeLevelMax; // チャージの最大強さ
 	bool _strongF;	// 無敵
 	float _strongCnt;	// 無敵時間ｶｳﾝﾀ
 
 	float _powerRate;	// 攻撃力アビリティ用
 	float _movePower;	// 移動速度アビリティ補正用
+
+	ChargeType _chargeType;
 
 	Sprite* texSprite;
 	
