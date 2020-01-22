@@ -5,7 +5,7 @@
 USING_NS_CC;
 void GameMap::createMap(Layer& layer)
 {
-	auto mapS = TMXTiledMap::create("map/map1.tmx");
+	auto mapS = TMXTiledMap::create("map/map2.tmx");
 	mapS->setName("mapData");
 	mapS->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	layer.addChild(mapS);

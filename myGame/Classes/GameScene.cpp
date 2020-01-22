@@ -88,8 +88,8 @@ bool GameScene::init()
 	_zOrderBack = static_cast<int>(Z_ORDER_TYPE::BACK);
 	
 	MenuBglayer = Layer::create();
-	auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
-	MenuBglayer->addChild(_bg);
+	/*auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
+	MenuBglayer->addChild(_bg);*/
 	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
 	uiBglayer->setName("uiLayer");
@@ -131,25 +131,6 @@ bool GameScene::init()
 
     /////////////////////////////
     // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    if (label == nullptr)
-    {
-        problemLoading("'fonts/Marker Felt.ttf'");
-    }
-    else
-    {
-        // position the label on the center of the screen
-        label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                                origin.y + visibleSize.height - label->getContentSize().height));
-
-        // add the label as a child to this layer
-		uiBglayer->addChild(label, 0);
-    }
-
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -168,8 +149,6 @@ bool GameScene::init()
 	_gameMap->createMap(*backBglayer);
 	mapObj = nullptr;
 
-	
-	
 	// 仮ｽﾌﾟﾗｲﾄ メニュー用
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
 	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
@@ -207,7 +186,7 @@ bool GameScene::init()
 	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
 	camera1->setName("playerCamera");
 	this->addChild(camera1);
-	camera1->setPosition3D({ player->getPositionX() - visibleSize.width / 2, player->getPositionY() - visibleSize.height / 2, 0 });
+	camera1->setPosition3D({ 0, 0, 0 });
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::USER1);	
@@ -220,9 +199,10 @@ bool GameScene::init()
 	camera2->setDepth(3.0f);
 	camera2->setCameraFlag(CameraFlag::USER2);
 
+	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
+	
 
 	// 変数
 	flag = false;
@@ -273,8 +253,11 @@ void GameScene::update(float delta)
 				break;
 			}
 		}
-		
-		
+		if (pCount <= 0)
+		{
+			Scene *scene = GameOverScene::createScene();
+			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
+		}
 		if (eCount <= 0 && mapObj == nullptr)
 		{
 			mapObj = mapObject::createMapObj();
@@ -282,11 +265,7 @@ void GameScene::update(float delta)
 			mapObj->setCameraMask(static_cast<int>(CameraFlag::USER1));
 			charBglayer->addChild(mapObj);
 		}
-		if (pCount <= 0)
-		{
-			Scene *scene = GameOverScene::createScene();
-			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
-		}
+		
 		if (_nextFloor)
 		{
 			ChangeFloor();
@@ -336,13 +315,18 @@ void GameScene::update(float delta)
 						break;
 					case Ability::SpeedUp:
 						sprite[i]->setColor(cocos2d::Color3B(0, 255, 0));
+						break; 
+					case Ability::Heal:
+						sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
 						break;
 					case Ability::ChargeLevel:
-						sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
+						sprite[i]->setColor(cocos2d::Color3B(255, 212, 0));
+						break;
+					case Ability::ChargeSpeed:
+						sprite[i]->setColor(cocos2d::Color3B(0, 174, 239));
 						break;
 					}
 					retAbility[i] = unAbility.back();
-					unAbility.pop_back();
 				}
 			}
 			else // 階層が一の時はじめ
@@ -443,8 +427,8 @@ void GameScene::menuCloseCallback(Ref* pSender)
 
 void GameScene::SetEnemy(EnemyType enemyType)
 {
-	auto enemy = Enemy::createEnemy(enemyType);
-	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 800 + 48 + 64));
+	auto enemy = Enemy::createEnemy(enemyType, _floorNum);
+	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 400 + 48 + 64));
 	charBglayer->addChild(enemy);
 }
 

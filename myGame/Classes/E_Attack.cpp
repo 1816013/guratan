@@ -56,28 +56,6 @@ void E_Attack::SetTargetMove(Sprite & sp, EnemyAttackAI enemyAttackAI)
 			default:
 				break;
 			}
-			/*if (abs(distance.x) > abs(distance.y))
-			{
-				if (distance.x >= 0.0f)
-				{
-					
-				}
-				else if (distance.x < 0.0f)
-				{
-					
-				}
-			}
-			else
-			{
-				if (distance.y >= 0.0f)
-				{
-					
-				}
-				else if (distance.y < 0.0f)
-				{
-					
-				}
-			}*/
 			break;
 		default:
 			break;

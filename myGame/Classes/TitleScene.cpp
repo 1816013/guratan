@@ -30,14 +30,15 @@ bool TitleScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto label = Label::createWithTTF("Title Scene", "fonts/Marker Felt.ttf", 24);
-
 	auto titleLayer = Layer::create();
 
-	
-	// position the label on the center of the screen
-	label->setPosition(Vec2(origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height - label->getContentSize().height));
+	auto titleRogo = Sprite::create("image/title.png");
+	titleRogo->setPosition(Vec2(origin.x + visibleSize.width / 2,
+		origin.y + visibleSize.height - titleRogo->getContentSize().height));
+	titleLayer->addChild(titleRogo, 0);
+	auto label = Label::createWithTTF("To Start Press Any Key ", "fonts/Marker Felt.ttf", 48);
+	label->setPosition(Vec2(origin.x + visibleSize.width/2,
+	                        origin.y + visibleSize.height / 3 - label->getContentSize().height));
 
 	// add the label as a child to this layer
 	titleLayer->addChild(label, 0);

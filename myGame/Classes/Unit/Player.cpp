@@ -48,7 +48,28 @@ void Player::SetAbility(Ability& ability)
 	case Ability::SpeedUp:
 		_movePower += 0.5f;
 		break;
+	case Ability::Heal:
+		_hp = _hpMax / 2;
+		if (_hp > _hpMax)
+		{
+			_hp = _hpMax;
+		}
+		break;
 	case Ability::ChargeLevel:
+		_chargeLevel++;
+		if (_chargeLevel >= 3)
+		{
+			_unacquiredAbility.erase(_unacquiredAbility.begin() + static_cast<int>(Ability::ChargeLevel));
+		}
+		break;
+	case Ability::ChargeSpeed:
+		_chargeMax -= 0.1f;
+		if (_chargeMax <= 0.5f)
+		{
+			_unacquiredAbility.erase(_unacquiredAbility.begin() + static_cast<int>(Ability::ChargeSpeed));
+		}
+		break;
+	default:
 		break;
 	}
 }
@@ -103,6 +124,7 @@ bool Player::init()
 	lpAnimMng.AnimCreate("player", "idleR", 4, 0.5);
 	lpAnimMng.AnimCreate("player", "idleL", 4, 0.5);
 
+
 	this->setPosition(visibleSize.width / 2, 64);
 	this->setContentSize({32, 32});
 
@@ -122,11 +144,16 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
+	_hpMax = 10;
 	_hp = 10;
 	_movePower = 1.0f;
 	_strongF = false;
 	_strongCnt = 0;
 	_powerRate = 1.0f;
+	_charge = 0;
+	_chargeMax = 1.0f;
+	_chargeLevel = 0;
+	_chargeLevelMax = 3;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -135,12 +162,12 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
 	// アビリティ設定
-	_unacquiredAbility.emplace_back(Ability::ChargeLevel);
+	
 	_unacquiredAbility.emplace_back(Ability::PowerUp);
 	_unacquiredAbility.emplace_back(Ability::SpeedUp);
-
-	_charge = 0;
-	
+	_unacquiredAbility.emplace_back(Ability::Heal);
+	_unacquiredAbility.emplace_back(Ability::ChargeLevel);
+	_unacquiredAbility.emplace_back(Ability::ChargeSpeed);
 	
 	// ｱｸｼｮﾝｾｯﾄ
 	// 左移動
@@ -272,7 +299,6 @@ void Player::update(float delta)
 		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
 		scene.getChildByName("charLayer")->addChild(weapon);
 	};
-
 	// 押した瞬間攻撃
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
 	{
@@ -282,15 +308,15 @@ void Player::update(float delta)
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
 	{
 		_charge += delta;
-		if (_charge > 1.0f)
+		if (_charge > _chargeMax)
 		{
 			_chargeLevel = 1;
 		}
-		if (_charge > 2.0f && _chargeLevelMax > 2)
+		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 2)
 		{
 			_chargeLevel = 2;
 		}
-		if (_charge > 3.0f && _chargeLevelMax > 3)
+		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 3)
 		{
 			_chargeLevel = 3;
 		}
@@ -313,7 +339,7 @@ void Player::update(float delta)
 	{
 		LevelUp();
 	}	
-	if (_strongF )
+	if (_strongF)
 	{
 		_strongCnt += delta;
 		if (_strongCnt >= 0.5f)
@@ -325,7 +351,7 @@ void Player::update(float delta)
 	// ｱﾆﾒｰｼｮﾝ
 	auto anim = SetAnim(_dir);	// repeatNumの設定をSetAnimで設定しているため先読み必須@変更予定
 	lpAnimMng.runAnim(*texSprite, *anim, 0);
-	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	//gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( 0,this->getPositionY() - 576 / 2, 0 ));
 
 }
 
@@ -335,6 +361,7 @@ void Player::LevelUp(void)
 	gameScene->SetSceneType(SceneType::MENU);
 	_level++;
 	_power += 1;
+	_hpMax += 2;
 	_hp += 2;
 	_exp = 0;
 	_expMax *= 2;
@@ -375,6 +402,19 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj.getTag();
+		if (hitTag == static_cast<int>(objTag::ENEMY))
+		{
+			if (!_strongF)
+			{
+				col = true;
+				_hp -= hitObj.GetPower();
+				_strongF = true;
+				if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
+				{
+					this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
+				}
+			}
+		}
 		if (hitTag == static_cast<int>(objTag::E_ATTACK))
 		{
 			if (!_strongF)
@@ -383,6 +423,7 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				_hp -= hitObj.GetPower();
 				hitObj.SetHP(hitObj.GetHP() - 1);
 				_strongF = true;
+				hitObj.SetKnockFlag(true);
 				if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
 				{
 					this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
@@ -396,6 +437,11 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			this->setPosition(visibleSize.width / 2, 64);
 			auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
 			gameScene->SetNextFloor(true);
+			_hp = 3;
+			if (_hp > _hpMax)
+			{
+				_hp = _hpMax;
+			}
 			_charge = 0;
 			_inputState->Init();
 		}

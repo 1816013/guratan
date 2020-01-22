@@ -5,7 +5,9 @@ enum class Ability
 {
 	PowerUp,
 	SpeedUp,
+	Heal,
 	ChargeLevel,
+	ChargeSpeed,
 	MAX
 };
 
@@ -49,6 +51,7 @@ private:
 
 	// 変数
 	cocos2d::DrawNode* line;
+	int _hpMax;
 	int _expMax;	// これ以上になるとレベルアップ
 	int _level;		// レベル
 	float _charge;	// チャージしている時間

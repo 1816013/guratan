@@ -28,9 +28,9 @@ enum class EnemyAttackAI
 class Enemy : public Obj
 {
 public:
-	static cocos2d::Sprite* createEnemy(EnemyType enemyType);
+	static cocos2d::Sprite* createEnemy(EnemyType enemyType, int floor);
 	EnemyMoveAI GetEnemyAI();
-	void SetEnemyAI(EnemyType enemyType);
+	void SetEnemyAI(EnemyType enemyType,int floor);
 
 	// ŠÖ”
 	Enemy();
@@ -47,6 +47,9 @@ private:
 	float _attackIntarval;
 	bool _attackFlag;
 	float time;
+
+	cocos2d::Vec2 move;	// ˆÚ“®—Ê
+
 
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—	

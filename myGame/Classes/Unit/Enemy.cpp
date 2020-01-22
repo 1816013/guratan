@@ -7,7 +7,7 @@
 
 USING_NS_CC;
 
-cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType)
+cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType, int floor)
 {
 	auto enemy = Enemy::create();
 	enemy->physicsBody = PhysicsBody::createBox(Size(32.0f, 32.0f),
@@ -15,7 +15,7 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType)
 	enemy->physicsBody->setRotationEnable(false);//回転運動不可
 	//set the body isn't affected by the physics world's gravitational force
 	enemy->physicsBody->setGravityEnable(false);
-	enemy->SetEnemyAI(enemyType);
+	enemy->SetEnemyAI(enemyType, floor);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	enemy->addComponent(enemy->physicsBody);
@@ -53,6 +53,9 @@ bool Enemy::init()
 	_power = 1;
 	_attackIntarval = 1.5f;
 	_exp = 1;
+
+	_knockCnt = 0;
+	_knockF = false;
 	
 	time = 0.0f;
 	auto size = this->getContentSize() / 2;
@@ -102,15 +105,18 @@ void Enemy::update(float delta)
 				_dir = DIR::DOWN;
 			}
 		}
-		// 移動（ある奴だけ）　
-		if (_enemyMoveAI == EnemyMoveAI::FORROW)
+	}
+	// 移動（ある奴だけ）　
+	move = _speedTbl[static_cast<int>(_dir)] * 2;
+	if (_enemyMoveAI == EnemyMoveAI::FORROW)
+	{
+		if (_gameMap->mapColision(*this, move, _colSize[static_cast<int>(_dir)]))
 		{
-			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(_dir)] * 2, _colSize[static_cast<int>(_dir)]))
-			{
-				this->setPosition(this->getPosition() + _speedTbl[static_cast<int>(_dir)] * 2/** delta * 60*/);
-			}
+			this->setPosition(this->getPosition() + move);
 		}
 	}
+
+	// ノックバック
 	// 攻撃
 	
 	if (_enemyAttackAI != EnemyAttackAI::NONE)
@@ -145,44 +151,43 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj.getTag();
-		if (hitTag == static_cast<int>(objTag::PLAYER))
+		if (hitTag == static_cast<int>(objTag::ATTACK))
 		{
-			if (!((Player&)hitObj).GetStrong())
+			col = true;
+			_hp -= hitObj.GetPower();
+			hitObj.SetHP(hitObj.GetHP() - 1);	// 武器の耐久を削る
+			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(hitObj.GetDIR())] * 32, this->_colSize[static_cast<int>(hitObj.GetDIR())]))
 			{
-				col = true;
-				hitObj.SetHP(hitObj.GetHP() - _power);
-				((Player&)hitObj).SetStrong(true);
-				if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, hitObj._colSize[static_cast<int>(_dir)]))
-				{
-					hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
-				}
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(hitObj.GetDIR())]) * 32);		// ノックバック処理
 			}
 		}
 	}
 	return col;
 }
 
-void Enemy::SetEnemyAI(EnemyType enemyType)
+
+void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 {
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3;
+		_hp = 3 + floor;
 		break;
 	case EnemyType::CANNON:
 		_enemyMoveAI = EnemyMoveAI::IDLE;
 		_enemyAttackAI = EnemyAttackAI::AIMING;
-		_hp = 3;
-		_attackIntarval = 2;
+		_hp = 3 + floor;
+		_power = 2;
+		_attackIntarval = 1.5;
 		physicsBody->setEnabled(false);
 		break;
 	case EnemyType::ARCHAR:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
 		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
-		_hp = 5;
+		_hp = 5 + floor;
 		break;
 	default:
 		break;

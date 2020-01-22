@@ -41,15 +41,15 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 		switch (weapon->_chargeType)
 		{
 		case ChargeType::SHOT:
-			weapon->setContentSize({ 16, 16 });
+			weapon->setContentSize({ 16.0f * chargeLevel, 16.0f * chargeLevel });
 			weapon->_hp = 1;
 			break;
 		case ChargeType::TWISTER:
-			weapon->setContentSize({ 96, 96 });
+			weapon->setContentSize({ 96.0f + 16.0f * (chargeLevel - 1), 96.0f + 16.0f * (chargeLevel - 1) });
 			break;
 		case ChargeType::FLONTAL:
-			weapon->setContentSize({ 96, 64 });
-			weapon->_power *= 2;
+			weapon->setContentSize({ 96.0f, 64.0f });
+			weapon->_power *= 1.5 + 0.5 * (chargeLevel - 1);
 			offsetCreate(sp);
 			break;
 		default:
@@ -167,38 +167,16 @@ bool Weapon::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
   	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj.getTag();
-		if (hitTag == static_cast<int>(objTag::ENEMY))
-		{
-			col = true;
-			_hp -= 1;
-			hitObj.SetHP(hitObj.GetHP() - _power);
-			auto dir = hitObj.GetDIR();
-			auto targetPos = hitObj.getPosition();
-			auto GameScene = Director::getInstance()->getRunningScene();
-			if (GameScene->getName() != "GameScene")
-			{
-				return false;
-			}
-			if (_optionType == OptionType::NOMAL)
-			{
-				if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, this->_colSize[static_cast<int>(_dir)]))
-				{
-					hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
-				}
-			}
-			if (_optionType == OptionType::CHARGE)
-			{
-				auto player = (Player*)GameScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-				auto radian = atan2(targetPos.y - player->getPositionY(), targetPos.x - player->getPositionX());
-				Vec2 move;
-				move.x = cos(radian) * this->getContentSize().height;
-				move.y = sin(radian) * this->getContentSize().height;
-				if (_gameMap->mapColision(hitObj, move, hitObj._colSize[static_cast<int>(_dir)]))
-				{
-					hitObj.setPosition(hitObj.getPosition() + move);		// ノックバック処理
-				}
-			}
-		}
+		//if (hitTag == static_cast<int>(objTag::ENEMY))
+		//{
+		//	col = true;
+		//	_hp -= 1;
+		//	hitObj.SetHP(hitObj.GetHP() - _power);
+		//	if (_gameMap->mapColision(hitObj, _speedTbl[static_cast<int>(_dir)] * 32, this->_colSize[static_cast<int>(_dir)]))
+		//	{
+		//		hitObj.setPosition(hitObj.getPosition() + (_speedTbl[static_cast<int>(_dir)]) * 32);		// ノックバック処理
+		//	}
+		//}
 	}
 	return col;
 }

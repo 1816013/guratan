@@ -35,6 +35,11 @@ bool Obj::IsCheckedHP(Obj& obj)
 	return false;
 }
 
+void Obj::KnockBack(Obj& obj, Vec2 vec)
+{
+	obj._knockF = true;
+}
+
 DIR Obj::GetDIR()
 {
 	return _dir;
@@ -60,7 +65,17 @@ void Obj::SetHP(const int hp)
 	_hp = hp;
 }
 
-int Obj::GetPower()
+void Obj::SetKnockFlag(bool flag)
+{
+	_knockF = true;
+}
+
+bool Obj::GetKnockFlag(void)
+{
+	return _knockF;
+}
+
+float Obj::GetPower()
 {
 	return _power;
 }
