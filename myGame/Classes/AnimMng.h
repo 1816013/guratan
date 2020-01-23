@@ -32,4 +32,3 @@ private:
 
 	static std::unique_ptr<AnimMng> s_Instance;
 };
-

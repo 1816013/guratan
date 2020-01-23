@@ -22,6 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+#pragma execution_character_set("utf-8")
 #include "GameScene.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
@@ -29,7 +30,6 @@
 #include <E_Attack.h>
 #include "GameOverScene.h"
 #include "mapObject.h"
-//#include <proj.win32/_debug/_DebugConOut.h>
 
 USING_NS_CC;
 
@@ -72,24 +72,16 @@ bool GameScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
-	_inputState = std::make_unique<OPRT_key>(this);
-	_gameMap = std::make_unique<GameMap>();
-#else
-	_inputState.reset(new OPRT_touch(this));
-	//_inputState = std::make_unique<OPRT_touch>();
-#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-
 	// レイヤー設定
 	_zOrderMenu = static_cast<int>(Z_ORDER_TYPE::MENU);
-	_zOrderUI = static_cast<int>(Z_ORDER_TYPE::UI);	
+	_zOrderUI = static_cast<int>(Z_ORDER_TYPE::UI);
 	_zOrderFlont = static_cast<int>(Z_ORDER_TYPE::FLONT);
-	_zOrderChar = static_cast<int>(Z_ORDER_TYPE::CHAR);	
+	_zOrderChar = static_cast<int>(Z_ORDER_TYPE::CHAR);
 	_zOrderBack = static_cast<int>(Z_ORDER_TYPE::BACK);
-	
+
 	MenuBglayer = Layer::create();
-	/*auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
-	MenuBglayer->addChild(_bg);*/
+	auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
+	MenuBglayer->addChild(_bg);
 	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
 	uiBglayer->setName("uiLayer");
@@ -100,13 +92,35 @@ bool GameScene::init()
 	backBglayer = Layer::create();
 	backBglayer->setName("backLayer");
 
-	
-	// UI
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
+	_inputState = std::make_unique<OPRT_key>(this);
+	_gameMap = std::make_unique<GameMap>();
+#else
+	_inputState.reset(new OPRT_touch(this));
+	// バーチャルパッド
+	// 現在タッチしている場所を表す画像
+	Sprite* psp = Sprite::create("image/pad/circle.png");
+	psp->setName("nowTouch");
+	psp->setOpacity(122);
+	psp->setPosition({ 150, 150 });
+	uiBglayer->addChild(psp);
 
-    // add a "close" icon to exit the progress. it's an autorelease object
+	// タッチ開始位置を表す画像
+	Sprite* hsp = Sprite::create("image/pad/hishi.png");
+	hsp->setName("startTouch");
+	hsp->setPosition({ 150, 150 });
+	uiBglayer->addChild(hsp);
+
+	// タッチ開始位置と現在位置をつなぐ線
+	auto line = DrawNode::create();
+	line->setVisible(false);
+	line->setOpacity(128);
+	line->setName("line");
+	uiBglayer->addChild(line);
+	//_inputState = std::make_unique<OPRT_touch>();
+#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+
+	// UI
     auto closeItem = MenuItemImage::create(
                                            "CloseNormal.png",
                                            "CloseSelected.png",
@@ -129,8 +143,6 @@ bool GameScene::init()
     menu->setPosition(Vec2::ZERO);
 	uiBglayer->addChild(menu, 0);
 
-    /////////////////////////////
-    // 3. add your codes below...
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -149,8 +161,8 @@ bool GameScene::init()
 	// 仮ｽﾌﾟﾗｲﾄ メニュー用
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
 	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
-	sprite[0] = Sprite::create();
-	sprite[0]->setPosition(400, 300);
+	/*sprite[0] = Sprite::create();
+	sprite[0]->setPosition(300, 300);
 	sprite[0]->setTextureRect(rect);
 
 	sprite[1] = Sprite::create();
@@ -158,20 +170,24 @@ bool GameScene::init()
 	sprite[1]->setTextureRect(rect);
 
 	sprite[2] = Sprite::create();
-	sprite[2]->setPosition(600, 300);
-	sprite[2]->setTextureRect(rect);
+	sprite[2]->setPosition(700, 300);
+	sprite[2]->setTextureRect(rect);*/
 
 	sprite[3] = Sprite::create();
 	sprite[3]->setPosition(500, 300);
 	sprite[3]->setColor({ 255, 255, 255 });
 	sprite[3]->setTextureRect(selectRect);
 	sprite[3]->setName("select");
-
-	MenuBglayer->addChild(sprite[0]);
-	MenuBglayer->addChild(sprite[1]);
-	MenuBglayer->addChild(sprite[2]);
 	MenuBglayer->addChild(sprite[3]);
-
+	for (int i = 0; i < 3; i++)
+	{
+		selectButton[i] = ui::Button::create("image/select/selectFrame.png");
+		selectButton[i]->setPosition(Vec2(300 + 200 * i, 300));
+		selectButton[i]->setTitleFontName("fonts/arial.ttf");
+		selectButton[i]->setTitleFontSize(20);
+		selectButton[i]->setTitleColor(Color3B::WHITE);
+		MenuBglayer->addChild(selectButton[i]);
+	}
 	// カメラ
 	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
 	this->addChild(camera);
@@ -199,7 +215,6 @@ bool GameScene::init()
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
 	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	
 
 	// 変数
 	flag = false;
@@ -289,6 +304,7 @@ void GameScene::update(float delta)
 			{
 				_node->pause();
 			}	
+			// レベルアップ
 			if (_floorNum != 0)
 			{
 				auto unAbility = player->GetUnacquiredAbility();
@@ -305,29 +321,63 @@ void GameScene::update(float delta)
 					levelupText->setCameraMask(static_cast<int>(CameraFlag::USER2));
 					levelupText->setName("Text");
 					MenuBglayer->addChild(levelupText, 0);
-					switch (unAbility.back())
-					{
-					case Ability::PowerUp:
-						sprite[i]->setColor(cocos2d::Color3B(255, 0, 0));
-						break;
-					case Ability::SpeedUp:
-						sprite[i]->setColor(cocos2d::Color3B(0, 255, 0));
-						break; 
-					case Ability::Heal:
-						sprite[i]->setColor(cocos2d::Color3B(0, 0, 255));
-						break;
-					case Ability::ChargeLevel:
-						sprite[i]->setColor(cocos2d::Color3B(255, 212, 0));
-						break;
-					case Ability::ChargeSpeed:
-						sprite[i]->setColor(cocos2d::Color3B(0, 174, 239));
-						break;
-					}
 					retAbility[i] = unAbility.back();
 					unAbility.pop_back();
 				}
+				auto left = selectButton[0];
+				left->setTitleText(retAbility[0].first);
+				left->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+						player2->SetAbility(retAbility[0]);
+						ChangeSceneType(SceneType::GAME);
+						break;
+					}
+				});
+				auto midle = selectButton[1];
+				midle->setTitleText(retAbility[1].first);
+				midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+						player2->SetAbility(retAbility[1]);
+						ChangeSceneType(SceneType::GAME);
+						break;
+					}
+				});
+				auto right = selectButton[2];
+				right->setTitleText(retAbility[2].first);
+				right->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+
+						player2->SetAbility(retAbility[2]);
+						ChangeSceneType(SceneType::GAME);
+						break;
+					}
+				});				
 			}
-			else // 階層が一の時はじめ
+			else // 階層が一の時// チャージセレクト
 			{			
 				// メニュ－
 				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/Marker Felt.ttf", 24);
@@ -336,9 +386,60 @@ void GameScene::update(float delta)
 				ChargeSelect->setName("Text");
 				ChargeSelect->setCameraMask(static_cast<int>(CameraFlag::USER2));
 				MenuBglayer->addChild(ChargeSelect, 0);
-				sprite[0]->setColor(cocos2d::Color3B(255, 0, 0));
-				sprite[1]->setColor(cocos2d::Color3B(0, 255, 0));	
-				sprite[2]->setColor(cocos2d::Color3B(0, 0, 255));
+				auto left = selectButton[0];
+				left->setTitleText("shot");
+				left->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+						player2->SetChargeType(ChargeType::SHOT);
+						_floorNum = 1;
+						ChangeSceneType(SceneType::GAME);	
+						break;
+					}
+				});
+				auto midle = selectButton[1];
+				midle->setTitleText("twist");
+				midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+						player2->SetChargeType(ChargeType::TWISTER);
+						_floorNum = 1;
+						ChangeSceneType(SceneType::GAME);					
+						break;
+					}
+				});
+				auto right = selectButton[2];
+				right->setTitleText("flontal");
+				right->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+					switch (type)
+					{
+					case ui::Widget::TouchEventType::ENDED:
+						auto gameScene2 = Director::getInstance()->getRunningScene();
+						if (gameScene2->getName() != "GameScene")
+						{
+							return;
+						}
+						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+						player2->SetChargeType(ChargeType::FLONTAL);
+						_floorNum = 1;
+						ChangeSceneType(SceneType::GAME);						
+						break;
+					}
+				});			
 			}
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
 			//
@@ -364,13 +465,13 @@ void GameScene::update(float delta)
 		switch (selectCnt)
 		{
 		case 0:
-			selectRect->setPosition(400, 300);
+			selectRect->setPosition(300, 300);
 			break;
 		case 1:
 			selectRect->setPosition(500, 300);
 			break;
 		case 2:
-			selectRect->setPosition(600, 300);
+			selectRect->setPosition(700, 300);
 			break;
 		default:
 			break;
@@ -381,22 +482,13 @@ void GameScene::update(float delta)
 			if (_floorNum == 0)
 			{
 				player->SetChargeType(static_cast<ChargeType>(selectCnt));
-			
 				_floorNum = 1;
 			}
 			else
 			{
 				player->SetAbility(retAbility[selectCnt]);
 			}
-			_sceneType = SceneType::GAME;
-			flag = false;
-			charBglayer->resume();
-			for (cocos2d::Node* _node : charBglayer->getChildren())
-			{
-				_node->resume();
-			}
-			MenuBglayer->getChildByName("Text")->removeFromParent();
-			this->getChildByName("menuCamera")->setPosition3D({ -1024, -576, 0 });
+			ChangeSceneType(SceneType::GAME);
 		}
 	}
 }
@@ -463,5 +555,19 @@ bool GameScene::ChangeFloor()
 	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
 //	TRACE("floor %d", _floorNum);
 	return true;
+}
+
+void GameScene::ChangeSceneType(SceneType sceneType)
+{
+	_sceneType = sceneType;
+	flag = false;
+	charBglayer->resume();
+	for (cocos2d::Node* _node : charBglayer->getChildren())
+	{
+		_node->resume();
+	}
+	
+	MenuBglayer->getChildByName("Text")->removeFromParent();
+	this->getChildByName("menuCamera")->setPosition3D({ -1024, -576, 0 });
 }
 

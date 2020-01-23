@@ -20,4 +20,3 @@ private:
 	
 	static std::unique_ptr<FloorMng> s_Instance;
 };
-

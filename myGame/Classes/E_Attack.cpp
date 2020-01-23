@@ -114,7 +114,7 @@ bool E_Attack::init()
 
 void E_Attack::update(float delta)
 {
-	_remainCnt += delta;
+//	_remainCnt += delta;
 	if (_gameMap->mapColision(*this, _move, _colSize[static_cast<int>(_dir)]))
 	{
 		this->setPosition(this->getPosition() + _move);
@@ -123,10 +123,10 @@ void E_Attack::update(float delta)
 	{
 		this->removeFromParent();
 	}
-	if (_remainCnt > 2.0f)
+	/*if (_remainCnt > 2.0f)
 	{
 		this->removeFromParent();
-	}
+	}*/
 }
 
 

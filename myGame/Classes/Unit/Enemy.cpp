@@ -181,7 +181,11 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			hitObj.SetHP(hitObj.GetHP() - 1);	// •Ší‚Ì‘Ï‹v‚ğí‚é
 			_knockF = true;
 			_knockDir = hitObj.GetDIR();
-			_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
+			Vec2 distance = { this->getPositionX() - hitObj.getPositionX() , this->getPositionY() - hitObj.getPositionY() };
+			auto radian = atan2(distance.y, distance.x);
+			_move.x = cos(radian) * 8;
+			_move.y = sin(radian) * 8;
+			//_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 		}
 	}
 	return col;
@@ -202,7 +206,7 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		_enemyAttackAI = EnemyAttackAI::AIMING;
 		_hp = 3 + floor;
 		_power = 2;
-		_attackIntarval = 1.5;
+		_attackIntarval = 2;
 		physicsBody->setEnabled(false);
 		break;
 	case EnemyType::ARCHAR:

@@ -31,6 +31,7 @@
 #include <Unit/Player.h>
 #include <Unit/Enemy.h>
 #include "Weapon.h"
+#include "ui//CocosGUI.h"
 
 enum class Z_ORDER_TYPE
 {
@@ -69,6 +70,7 @@ private:
 	void SetEnemy(EnemyType enemyType);
 	void ColTest();
 	bool ChangeFloor();
+	void ChangeSceneType(SceneType sceneType);
 
 	// •Ï”	
 	cocos2d::Layer* uiBglayer;
@@ -90,10 +92,11 @@ private:
 
 	// ‰¼
 	cocos2d::Sprite* sprite[4];
+	cocos2d::ui::Button* selectButton[3];
 	cocos2d::Sprite* mapObj;
 	bool flag;
-	int selectCnt;				//@PC‘€ì—p
-	Ability retAbility[3];		// abilityˆêŠi”[—p
+	int selectCnt;				//
+	AbilityPair retAbility[3];		// abilityˆêŠi”[—p
 	ChargeType retCharge[3];	// chargeTypeˆêŠi”[—p
 	bool _nextFloor;			// Ÿ‚ÌƒtƒƒA‚Ös‚­‚©
 	int _floorNum;

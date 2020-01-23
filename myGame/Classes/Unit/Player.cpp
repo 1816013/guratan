@@ -2,7 +2,6 @@
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
 #include "GameScene.h"
-#include "action/Colision.h"
 #include "Weapon.h"
 #include "AnimMng.h"
 
@@ -32,15 +31,15 @@ float Player::GetMovePower()
 	return _movePower;
 }
 
-std::vector<Ability> Player::GetUnacquiredAbility()
+std::vector<AbilityPair> Player::GetUnacquiredAbility()
 {
 	return _unacquiredAbility;
 }
 
-void Player::SetAbility(Ability& ability)
+void Player::SetAbility(AbilityPair abilityPair)
 {
-	_ability.emplace_back(ability);
-	switch (ability)
+	//_ability.emplace_back(abilityPair);
+	switch (abilityPair.second)
 	{
 	case Ability::PowerUp:
 		_powerRate += 0.5;
@@ -129,14 +128,13 @@ bool Player::init()
 	this->setContentSize({32, 32});
 
 	Rect rect = Rect(0, 0, 32, 32);
+	this->setContentSize({ 32, 32 });
 	this->setTextureRect(rect);
 	
 	texSprite = Sprite::create();
-	texSprite->setAnchorPoint({ 0.3f, 0.1f });
+	texSprite->setAnchorPoint({ 0.37f, 0.1f });
+	texSprite->setScale(1.5f, 1.5f);
 	this->addChild(texSprite);
-
-	//sp->setPosition(visibleSize.width / 2, 64);
-	//this->setColor(cocos2d::Color3B(0, 0, 255));
 
 	// ﾌﾟﾚｲﾔｰｽﾃｰﾀｽ
 	_level = 1;
@@ -165,12 +163,12 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
 	// アビリティ設定
-	
-	_unacquiredAbility.emplace_back(Ability::PowerUp);
-	_unacquiredAbility.emplace_back(Ability::SpeedUp);
-	_unacquiredAbility.emplace_back(Ability::Heal);
-	_unacquiredAbility.emplace_back(Ability::ChargeLevel);
-	_unacquiredAbility.emplace_back(Ability::ChargeSpeed);
+	_ability.emplace_back(std::make_pair("Power UP", Ability::PowerUp));
+	_unacquiredAbility.emplace_back(std::make_pair("Power UP",Ability::PowerUp));
+	_unacquiredAbility.emplace_back(std::make_pair("Speed UP",Ability::SpeedUp));
+	_unacquiredAbility.emplace_back(std::make_pair("Heal",Ability::Heal));
+	_unacquiredAbility.emplace_back(std::make_pair("ChargeLevel UP",Ability::ChargeLevel));
+	_unacquiredAbility.emplace_back(std::make_pair("ChargeSpeed UP",Ability::ChargeSpeed));
 	
 	// ｱｸｼｮﾝｾｯﾄ
 	// 左移動
@@ -368,7 +366,7 @@ void Player::update(float delta)
 	// ｱﾆﾒｰｼｮﾝ
 	auto anim = SetAnim(_dir);	// repeatNumの設定をSetAnimで設定しているため先読み必須@変更予定
 	lpAnimMng.runAnim(*texSprite, *anim, 0);
-	//gameScene->getChildByName("playerCamera")->setPosition3D(Vec3( 0,this->getPositionY() - 576 / 2, 0 ));
+	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 

@@ -33,7 +33,7 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 	};
 	if (option == OptionType::NOMAL)
 	{
-		weapon->setContentSize({ 32, 32 });
+		weapon->setContentSize({ 40, 40 });
 		offsetCreate(sp);
 	}
 	else

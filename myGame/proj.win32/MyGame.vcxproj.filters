@@ -55,9 +55,6 @@
     <ClCompile Include="..\Classes\action\ChangeLR.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\action\Shot.cpp">
-      <Filter>src\action</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\action\Move.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
@@ -135,9 +132,6 @@
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\ChangeLR.h">
-      <Filter>src\action</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\action\Shot.h">
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\Colision.h">

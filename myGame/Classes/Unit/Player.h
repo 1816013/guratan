@@ -19,6 +19,8 @@ enum class ChargeType
 	MAX
 };
 
+using AbilityPair = std::pair<std::string, Ability>;	//名前, アビリティ種類
+
 class Player : public Obj
 {
 public:
@@ -30,13 +32,13 @@ public:
 
 	void addExp(const int exp);
 	float GetMovePower();
-	void SetAbility(Ability& ability);
+	void SetAbility(AbilityPair ability);
 	void SetStrong(bool flag);
 	bool IsCharged();
 	bool GetStrong();
 	void SetChargeType(ChargeType chargeType);
 	ChargeType GetChargeType();
-	std::vector<Ability> GetUnacquiredAbility();
+	std::vector<AbilityPair> GetUnacquiredAbility();
 
 	bool ColisionObj(Obj& hitObj, cocos2d::Scene& scene)override;
 
@@ -68,7 +70,7 @@ private:
 
 	Sprite* texSprite;
 	
-	std::vector<Ability>_ability;		// 取得しているアビリティ
-	std::vector<Ability>_unacquiredAbility;	// 未取得アビリティ
+	std::vector<AbilityPair>_ability;		// 取得しているアビリティ
+	std::vector<AbilityPair>_unacquiredAbility;	// 未取得アビリティ
 };
 
