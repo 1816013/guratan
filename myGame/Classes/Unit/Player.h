@@ -68,7 +68,8 @@ private:
 
 	ChargeType _chargeType;
 
-	Sprite* texSprite;
+	cocos2d::Sprite* texSprite;
+	cocos2d::Animation* _oldAnim;
 	
 	std::vector<AbilityPair>_ability;		// 取得しているアビリティ
 	std::vector<AbilityPair>_unacquiredAbility;	// 未取得アビリティ

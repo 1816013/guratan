@@ -48,7 +48,7 @@ void Player::SetAbility(AbilityPair abilityPair)
 		_movePower += 0.5f;
 		break;
 	case Ability::Heal:
-		_hp = _hpMax / 2;
+		_hp += _hpMax / 2;
 		if (_hp > _hpMax)
 		{
 			_hp = _hpMax;
@@ -129,7 +129,7 @@ bool Player::init()
 
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setContentSize({ 32, 32 });
-	this->setTextureRect(rect);
+	//this->setTextureRect(rect);
 	
 	texSprite = Sprite::create();
 	texSprite->setAnchorPoint({ 0.37f, 0.1f });
@@ -142,7 +142,7 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 500000;
+	_hpMax = 10;
 	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
@@ -155,6 +155,7 @@ bool Player::init()
 	_knockCnt = 0;
 	_knockF = false;
 	_knockDir = DIR::MAX;
+	_oldAnim = nullptr;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -269,7 +270,7 @@ void Player::update(float delta)
 	gameScene->removeChildByTag(12);
 	gameScene->removeChildByTag(13);
 	gameScene->removeChildByTag(14);
-	auto text = Label::createWithSystemFont("プレイヤーHP" + StringUtils::toString(this->GetHP()), "fonts/arial.ttf", 24);
+	auto text = Label::createWithSystemFont("HP" + StringUtils::toString(this->GetHP()), "fonts/arial.ttf", 24);
 	text->setPosition(Point(100, 400));
 	text->setTag(10);
 	gameScene->addChild(text);
@@ -365,8 +366,9 @@ void Player::update(float delta)
 	}
 	// ｱﾆﾒｰｼｮﾝ
 	auto anim = SetAnim(_dir);	// repeatNumの設定をSetAnimで設定しているため先読み必須@変更予定
-	lpAnimMng.runAnim(*texSprite, *anim, 0);
-	gameScene->getChildByName("playerCamera")->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	lpAnimMng.runAnim(*texSprite, *anim,*_oldAnim, 0);
+	_oldAnim = anim;
+	//gameScene->getChildByName("playerCamera")->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 
@@ -389,16 +391,16 @@ cocos2d::Animation * Player::SetAnim(DIR dir)
 	switch (dir)
 	{
 	case DIR::UP:
-		anim = animCache->getAnimation("idleB");
+		anim = animCache->getAnimation("player-idleB");
 		break;
 	case DIR::RIGHT:
-		anim = animCache->getAnimation("idleR");
+		anim = animCache->getAnimation("player-idleR");
 		break;
 	case DIR::DOWN:
-		anim = animCache->getAnimation("idleF");
+		anim = animCache->getAnimation("player-idleF");
 		break;
 	case DIR::LEFT:
-		anim = animCache->getAnimation("idleL");
+		anim = animCache->getAnimation("player-idleL");
 		break;
 	default:
 		break;

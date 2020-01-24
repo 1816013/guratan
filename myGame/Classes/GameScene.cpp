@@ -30,19 +30,13 @@
 #include <E_Attack.h>
 #include "GameOverScene.h"
 #include "mapObject.h"
+#include "AnimMng.h"
 
 USING_NS_CC;
 
 Scene* GameScene::createScene()
 {
-	Scene *ret = new (std::nothrow)GameScene();
-	if (ret && ret->initWithPhysics() && ret->init()) {
-		ret->autorelease();
-		return ret;
-	}
-
-	CC_SAFE_DELETE(ret);
-	return nullptr;
+	return GameScene::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
@@ -61,11 +55,6 @@ bool GameScene::init()
     {
         return false;
     }
-	auto world = getPhysicsWorld();
-	world->setGravity(Vec2(0, 0));
-	world->setSpeed(1.0f);
-	world->setSubsteps(1);
-	//world->setDebugDrawMask(0xffff);
 	// シーン設定
 	this->setName("GameScene");
 	_sceneType = SceneType::MENU;
@@ -95,6 +84,15 @@ bool GameScene::init()
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
 	_gameMap = std::make_unique<GameMap>();
+	// 仮ｽﾌﾟﾗｲﾄ メニュー用
+	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
+
+	selectSp = Sprite::create();
+	selectSp->setPosition(500, 200);
+	selectSp->setColor({ 255, 255, 255 });
+	selectSp->setTextureRect(selectRect);
+	selectSp->setName("select");
+	MenuBglayer->addChild(selectSp);
 #else
 	_inputState.reset(new OPRT_touch(this));
 	// バーチャルパッド
@@ -118,6 +116,7 @@ bool GameScene::init()
 	line->setName("line");
 	uiBglayer->addChild(line);
 	//_inputState = std::make_unique<OPRT_touch>();
+
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
 	// UI
@@ -151,34 +150,14 @@ bool GameScene::init()
 	for (int i = 0; i < 5; i++)
 	{
 		int randAi = rand() % static_cast<int>(EnemyType::MAX);
-		SetEnemy(static_cast<EnemyType>(randAi));
+		SetEnemy(static_cast<EnemyType>(0));
 	}
 
 	// ﾏｯﾌﾟ(仮) @ﾏﾈｰｼﾞｬｰ予定
 	_gameMap->createMap(*backBglayer);
 	mapObj = nullptr;
 
-	// 仮ｽﾌﾟﾗｲﾄ メニュー用
-	cocos2d::Rect rect = cocos2d::Rect(0, 0, 50, 50);
-	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
-	/*sprite[0] = Sprite::create();
-	sprite[0]->setPosition(300, 300);
-	sprite[0]->setTextureRect(rect);
 
-	sprite[1] = Sprite::create();
-	sprite[1]->setPosition(500, 300);
-	sprite[1]->setTextureRect(rect);
-
-	sprite[2] = Sprite::create();
-	sprite[2]->setPosition(700, 300);
-	sprite[2]->setTextureRect(rect);*/
-
-	sprite[3] = Sprite::create();
-	sprite[3]->setPosition(500, 300);
-	sprite[3]->setColor({ 255, 255, 255 });
-	sprite[3]->setTextureRect(selectRect);
-	sprite[3]->setName("select");
-	MenuBglayer->addChild(sprite[3]);
 	for (int i = 0; i < 3; i++)
 	{
 		selectButton[i] = ui::Button::create("image/select/selectFrame.png");
@@ -220,15 +199,12 @@ bool GameScene::init()
 	flag = false;
 	_floorNum = 0;
 	_nextFloor = false;
-
-
 	// ｼｰﾝにぶら下げる
 	this->addChild(MenuBglayer, _zOrderMenu);
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
-
 	charBglayer->pause();
 	for (cocos2d::Node* _node : charBglayer->getChildren())
 	{
@@ -444,7 +420,7 @@ void GameScene::update(float delta)
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
 			//
 		}
-		// PCのみ
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::LEFT))
  		{
 			selectCnt--;
@@ -465,17 +441,18 @@ void GameScene::update(float delta)
 		switch (selectCnt)
 		{
 		case 0:
-			selectRect->setPosition(300, 300);
+			selectRect->setPosition(300, 200);
 			break;
 		case 1:
-			selectRect->setPosition(500, 300);
+			selectRect->setPosition(500, 200);
 			break;
 		case 2:
-			selectRect->setPosition(700, 300);
+			selectRect->setPosition(700, 200);
 			break;
 		default:
 			break;
 		}
+#endif
 
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
@@ -514,7 +491,6 @@ void GameScene::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
 }
 
-
 void GameScene::SetEnemy(EnemyType enemyType)
 {
 	auto enemy = Enemy::createEnemy(enemyType, _floorNum);
@@ -532,12 +508,12 @@ void GameScene::ColTest()
 			{
 				continue;
 			}
-			if (eRect->getTag() != pRect->getTag())
-			{
+			/*if (eRect->getTag() != pRect->getTag())
+			{*/
 				Obj* obj = (Obj*)eRect;
 				Obj* hitObj = (Obj*)pRect;
 				obj->ColisionObj(*hitObj, *this);
-			}
+			//}
 		}
 	}
 }

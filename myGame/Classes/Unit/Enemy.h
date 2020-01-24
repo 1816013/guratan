@@ -41,15 +41,15 @@ public:
 	
 	CREATE_FUNC(Enemy);
 private:
-	cocos2d::PhysicsBody*  physicsBody;
+	cocos2d::Animation* SetAnim(DIR dir);	// •ûŒü‚É‰‚¶‚½±ÆÒ°¼®İ‚Ìİ’è
+	cocos2d::Animation* _oldAnim;
+	cocos2d::Sprite* texSprite;
+	EnemyType _enemyType;
 	EnemyMoveAI _enemyMoveAI;
 	EnemyAttackAI _enemyAttackAI;
 	float _attackIntarval;
 	bool _attackFlag;
 	float time;
-
-	
-
 
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;	// ÌßÚ²Ô°‚ÌˆÚ“®‚Æ±ÆÒ°¼®İˆ—	

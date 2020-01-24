@@ -40,11 +40,11 @@ bool AnimMng::AnimCreate(const std::string type, const std::string key, int num,
 	animation->setDelayPerUnit(time); // ±ÆÒ°¼®Ý‚ÌŠúŠÔ
 	animation->setRestoreOriginalFrame(true);	// ±ÆÒ°¼®ÝI—¹Žž‚É‰‚ß‚É–ß‚é‚©
 
-	AnimationCache::getInstance()->addAnimation(animation, key);
+	AnimationCache::getInstance()->addAnimation(animation,type +"-"+ key);
 	return true;
 }
 
-void AnimMng::runAnim(Sprite& sp, Animation& anim, int repeatNum)
+void AnimMng::runAnim(Sprite& sp, cocos2d::Animation& anim, cocos2d::Animation& oldAnim, int repeatNum)
 {
 	if (&anim == nullptr)
 	{
@@ -59,10 +59,9 @@ void AnimMng::runAnim(Sprite& sp, Animation& anim, int repeatNum)
 	{
 		animAct = Repeat::create(Animate::create(&anim), repeatNum);
 	}
-	if (_oldAnim != &anim)
+	if (&oldAnim != &anim)
 	{
 		sp.stopAllActions();
 		sp.runAction(animAct);
-		_oldAnim = &anim;
 	}
 }

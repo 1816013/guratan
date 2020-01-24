@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "E_Attack.h"
 #include "action/Colision.h"
+#include "AnimMng.h"
 
 
 USING_NS_CC;
@@ -10,15 +11,9 @@ USING_NS_CC;
 cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType, int floor)
 {
 	auto enemy = Enemy::create();
-	enemy->physicsBody = PhysicsBody::createBox(Size(32.0f, 32.0f),
-		PhysicsMaterial(0.1f, 1.0f, 0.0f));
-	enemy->physicsBody->setRotationEnable(false);//âÒì]â^ìÆïsâ¬
-	//set the body isn't affected by the physics world's gravitational force
-	enemy->physicsBody->setGravityEnable(false);
 	enemy->SetEnemyAI(enemyType, floor);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	enemy->addComponent(enemy->physicsBody);
 
 	return enemy;
 }
@@ -43,12 +38,10 @@ bool Enemy::init()
 	{
 		return false;
 	}
-	//auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
-	this->setColor(cocos2d::Color3B(255, 0, 0));
-	
+	_oldAnim = nullptr;
 	_hp = 3;
 	_power = 1;
 	_attackIntarval = 1.5f;
@@ -65,21 +58,21 @@ bool Enemy::init()
 	_colSize[static_cast<int>(DIR::DOWN)] = { Size(size.width, -size.height), Size(-size.width, -size.height) };
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
-	//this->scheduleUpdate();
+	this->scheduleUpdate();
 	return true;
 }
 
 void Enemy::update(float delta)
 {
-	time += delta;
 	auto GameScene = Director::getInstance()->getRunningScene();
 	if (GameScene->getName() != "GameScene")
 	{
 		return;
 	}
 	auto charLayer = GameScene->getChildByName("charLayer");
-
 	auto player = (Player*)charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
+	time += delta;
+	
 	
 	// å¸Ç´ïœçX
 	if (player != nullptr)
@@ -112,7 +105,6 @@ void Enemy::update(float delta)
 	if (!_knockF)
 	{
 		_move = _speedTbl[static_cast<int>(_dir)] * 2;
-		
 	}
 	else
 	{
@@ -128,20 +120,11 @@ void Enemy::update(float delta)
 	{
 		if (_gameMap->mapColision(*this, _move, _colSize[static_cast<int>(_dir)]))
 		{
-			if (time < _attackIntarval)
-			{
-				this->setPosition(this->getPosition() + _move);
-			}
-			else
-			{
-				time = 0;
-			}
+			this->setPosition(this->getPosition() + _move);
 		}
 	}
-
 	// ÉmÉbÉNÉoÉbÉN
-	// çUåÇ
-	
+	// çUåÇ	
 	if (_enemyAttackAI != EnemyAttackAI::NONE)
 	{
 		if (time > _attackIntarval)
@@ -155,6 +138,10 @@ void Enemy::update(float delta)
 			charLayer->addChild(e_Attack);
 		}
 	}
+
+	auto anim = SetAnim(_dir);
+	lpAnimMng.runAnim(*this, *anim, *_oldAnim, 0);
+	_oldAnim = anim;
 	
 }
 
@@ -187,19 +174,90 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			_move.y = sin(radian) * 8;
 			//_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 		}
+		if (hitTag == static_cast<int>(objTag::ENEMY))
+		{
+			if (_enemyType != EnemyType::CANNON)
+			{
+				col = true;
+				_knockF = true;
+				_knockDir = hitObj.GetDIR();
+				Vec2 distance = { this->getPositionX() - hitObj.getPositionX() , this->getPositionY() - hitObj.getPositionY() };
+				auto radian = atan2(distance.y, distance.x);
+				_move.x = cos(radian) * 1;
+				_move.y = sin(radian) * 1;
+				//_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
+			}
+		}
 	}
 	return col;
+}
+
+cocos2d::Animation * Enemy::SetAnim(DIR dir)
+{
+	auto animCache = AnimationCache::getInstance();
+	Animation* anim = nullptr;
+	if (EnemyType::SLIME == _enemyType)
+	{
+		switch (dir)
+		{
+		case DIR::UP:
+			anim = animCache->getAnimation("slime-runB");
+			break;
+		case DIR::RIGHT:
+			anim = animCache->getAnimation("slime-runR");
+			this->setFlippedX(false);
+			break;
+		case DIR::DOWN:
+			anim = animCache->getAnimation("slime-runF");
+			break;
+		case DIR::LEFT:
+			anim = animCache->getAnimation("slime-runR");
+			this->setFlippedX(true);
+			break;
+		default:
+			break;
+		}
+		return anim;
+	}
+	if (EnemyType::ARCHAR == _enemyType)
+	{
+		switch (dir)
+		{
+		case DIR::UP:
+			anim = animCache->getAnimation("skeleton-runB");
+			break;
+		case DIR::RIGHT:
+			anim = animCache->getAnimation("skeleton-runR");
+			this->setFlippedX(false);
+			break;
+		case DIR::DOWN:
+			anim = animCache->getAnimation("skeleton-runF");
+			break;
+		case DIR::LEFT:
+			anim = animCache->getAnimation("skeleton-runR");
+			this->setFlippedX(true);
+			break;
+		default:
+			break;
+		}
+		return anim;
+	}
+	return anim;
 }
 
 
 void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 {
+	_enemyType = enemyType;
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
 		_hp = 3 + floor;
+		lpAnimMng.AnimCreate("slime", "runR", 3, 0.1);
+		lpAnimMng.AnimCreate("slime", "runB", 3, 0.1);
+		lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
 		break;
 	case EnemyType::CANNON:
 		_enemyMoveAI = EnemyMoveAI::IDLE;
@@ -207,12 +265,14 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		_hp = 3 + floor;
 		_power = 2;
 		_attackIntarval = 2;
-		physicsBody->setEnabled(false);
 		break;
 	case EnemyType::ARCHAR:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
-		_attackIntarval = ((float)(rand() % 10) / 10) + 1;
+		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
+		lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.1);
+		lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.1);
+		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);
 		_hp = 5 + floor;
 		break;
 	default:

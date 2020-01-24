@@ -64,7 +64,7 @@ public:
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     // implement the "static create()" method manually
-   // CREATE_FUNC(GameScene);
+    CREATE_FUNC(GameScene);
 private:
 	// ä÷êî
 	void SetEnemy(EnemyType enemyType);
@@ -91,7 +91,7 @@ private:
 	std::unique_ptr<GameMap>_gameMap;
 
 	// âº
-	cocos2d::Sprite* sprite[4];
+	cocos2d::Sprite* selectSp;
 	cocos2d::ui::Button* selectButton[3];
 	cocos2d::Sprite* mapObj;
 	bool flag;

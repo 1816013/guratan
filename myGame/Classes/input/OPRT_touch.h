@@ -2,7 +2,7 @@
 #include "OPRT_state.h"
 struct touch
 {
-	Vec2 _pos;
+	cocos2d::Vec2 _pos;
 	bool isMoveTouch;
 	bool isAttackTouch;
 	touch() { isMoveTouch = false; isAttackTouch = false; _pos = cocos2d::Vec2::ZERO; }
