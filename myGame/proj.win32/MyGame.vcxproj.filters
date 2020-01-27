@@ -94,9 +94,6 @@
     <ClCompile Include="..\Classes\mapObject.cpp">
       <Filter>src\obj</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\FloorMng.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="_debug\_DebugConOut.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -106,7 +103,9 @@
     <ClCompile Include="..\Classes\AnimMng.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="MenuLayer.cpp" />
+    <ClCompile Include="..\Classes\HpBar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -176,9 +175,6 @@
     <ClInclude Include="..\Classes\mapObject.h">
       <Filter>src\obj</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\FloorMng.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="_debug\_DebugConOut.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -188,7 +184,9 @@
     <ClInclude Include="..\Classes\AnimMng.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="MenuLayer.h" />
+    <ClInclude Include="..\Classes\HpBar.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

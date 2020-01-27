@@ -71,10 +71,10 @@ list(APPEND GAME_SOURCE
         Classes/GameMap.cpp
         Classes/TitleScene.cpp
         Classes/E_Attack.cpp
-        Classes/FloorMng.cpp
         Classes/CricketJni.cpp
         Classes/mapObject.cpp
         Classes/Weapon.cpp
+        Classes/HpBar.cpp
         Classes/input/OPRT_state.cpp
         Classes/input/OPRT_key.cpp
         Classes/input/OPRT_touch.cpp
@@ -99,10 +99,10 @@ list(APPEND GAME_HEADER
         Classes/GameMap.h
         Classes/TitleScene.h
         Classes/E_Attack.h
-        Classes/FloorMng.h
         Classes/CricketJni.h
         Classes/mapObject.h
         Classes/Weapon.h
+        Classes/HpBar.h
         Classes/input/OPRT_state.h
         Classes/input/OPRT_key.h
         Classes/input/OPRT_touch.h

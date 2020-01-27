@@ -38,7 +38,7 @@ bool Enemy::init()
 	{
 		return false;
 	}
-
+	_dir = DIR::DOWN;
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setTextureRect(rect);
 	_oldAnim = nullptr;
@@ -130,7 +130,6 @@ void Enemy::update(float delta)
 		if (time > _attackIntarval)
 		{
 			time = 0;
-			_attackFlag;
 			auto e_Attack = E_Attack::createE_Attack(*this, _enemyAttackAI);
 			e_Attack->setPosition(this->getPosition());
 			e_Attack->setTag(static_cast<int>(objTag::E_ATTACK));
@@ -249,15 +248,18 @@ cocos2d::Animation * Enemy::SetAnim(DIR dir)
 void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 {
 	_enemyType = enemyType;
+	auto animCache = AnimationCache::getInstance();
+	Animation* anim = nullptr;
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3 + floor;
+		_hp = 3 + floor;	
 		lpAnimMng.AnimCreate("slime", "runR", 3, 0.1);
 		lpAnimMng.AnimCreate("slime", "runB", 3, 0.1);
 		lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
+		anim = animCache->getAnimation("slime-runF");
 		break;
 	case EnemyType::CANNON:
 		_enemyMoveAI = EnemyMoveAI::IDLE;
@@ -272,10 +274,11 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
 		lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.1);
 		lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.1);
-		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);
+		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);		
 		_hp = 5 + floor;
 		break;
 	default:
 		break;
 	}
+	lpAnimMng.runAnim(*this, *anim, *_oldAnim, 0);
 }

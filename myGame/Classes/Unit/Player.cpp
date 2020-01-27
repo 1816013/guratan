@@ -4,6 +4,7 @@
 #include "GameScene.h"
 #include "Weapon.h"
 #include "AnimMng.h"
+#include "HpBar.h"
 
 USING_NS_CC;
 
@@ -171,6 +172,7 @@ bool Player::init()
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeLevel UP",Ability::ChargeLevel));
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeSpeed UP",Ability::ChargeSpeed));
 	
+
 	// ±¸¼®Ý¾¯Ä
 	// ¶ˆÚ“®
 	{
@@ -265,15 +267,16 @@ void Player::update(float delta)
 	{
 		return;
 	}
-	gameScene->removeChildByTag(10);
+	auto hpBar = (Bar*)gameScene->getChildByName("uiLayer")->getChildByName("playerHPBar");
+	if (hpBar->getNowMax() != _hpMax)
+	{
+		hpBar->changeMax(_hpMax, _hp);
+	}
+	hpBar->changeValue(_hp);
 	gameScene->removeChildByTag(11);
 	gameScene->removeChildByTag(12);
 	gameScene->removeChildByTag(13);
 	gameScene->removeChildByTag(14);
-	auto text = Label::createWithSystemFont("HP" + StringUtils::toString(this->GetHP()), "fonts/arial.ttf", 24);
-	text->setPosition(Point(100, 400));
-	text->setTag(10);
-	gameScene->addChild(text);
 	auto text2 = Label::createWithSystemFont("exp" + StringUtils::toString(_exp), "fonts/arial.ttf", 24);
 	text2->setPosition(Point(100, 370));
 	text2->setTag(11);
@@ -368,7 +371,8 @@ void Player::update(float delta)
 	auto anim = SetAnim(_dir);	// repeatNum‚ÌÝ’è‚ðSetAnim‚ÅÝ’è‚µ‚Ä‚¢‚é‚½‚ßæ“Ç‚Ý•K{@•ÏX—\’è
 	lpAnimMng.runAnim(*texSprite, *anim,*_oldAnim, 0);
 	_oldAnim = anim;
-	//gameScene->getChildByName("playerCamera")->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	auto playerCam = gameScene->getChildByName("playerCamera");
+	playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 

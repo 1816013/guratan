@@ -31,6 +31,7 @@
 #include "GameOverScene.h"
 #include "mapObject.h"
 #include "AnimMng.h"
+#include "HpBar.h"
 
 USING_NS_CC;
 
@@ -141,7 +142,14 @@ bool GameScene::init()
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
 	uiBglayer->addChild(menu, 0);
-
+	auto hpBar = Bar::createHpBar(10, BarType::HP, Size(288, 24));
+	hpBar->setName("playerHPBar");
+	hpBar->setPosition(200, 500);
+	uiBglayer->addChild(hpBar, 0);
+	/*auto expBar = Bar::createHpBar(10, BarType::HP, Size(288, 12));
+	expBar->setName("playerEXPBar");
+	expBar->setPosition(500, 480);
+	uiBglayer->addChild(expBar, 0);*/
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -205,11 +213,6 @@ bool GameScene::init()
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
 	this->addChild(flontBglayer, _zOrderFlont);
-	charBglayer->pause();
-	for (cocos2d::Node* _node : charBglayer->getChildren())
-	{
-		_node->pause();
-	}
 	this->scheduleUpdate();
 	return true;
 }
@@ -259,7 +262,7 @@ void GameScene::update(float delta)
 			ChangeFloor();
 		}
 	}
-	else if (_sceneType == SceneType::MENU)
+	else if (_sceneType == SceneType::MENU) // メニューレイヤークラスに分ける予定
 	{
 		auto gameScene = Director::getInstance()->getRunningScene();
 		if (gameScene->getName() != "GameScene")
@@ -467,7 +470,7 @@ void GameScene::update(float delta)
 			}
 			ChangeSceneType(SceneType::GAME);
 		}
-	}
+	}   
 }
 
 void GameScene::SetSceneType(SceneType sceneType)
