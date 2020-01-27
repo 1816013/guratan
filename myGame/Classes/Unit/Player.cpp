@@ -4,7 +4,7 @@
 #include "GameScene.h"
 #include "Weapon.h"
 #include "AnimMng.h"
-#include "HpBar.h"
+#include "Bar.h"
 
 USING_NS_CC;
 

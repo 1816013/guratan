@@ -31,7 +31,7 @@
 #include "GameOverScene.h"
 #include "mapObject.h"
 #include "AnimMng.h"
-#include "HpBar.h"
+#include "Bar.h"
 
 USING_NS_CC;
 

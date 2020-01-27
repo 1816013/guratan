@@ -158,12 +158,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\action\Move.cpp" />
     <ClCompile Include="..\Classes\AnimMng.cpp" />
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Bar.cpp" />
     <ClCompile Include="..\Classes\CricketJni.cpp" />
     <ClCompile Include="..\Classes\E_Attack.cpp" />
     <ClCompile Include="..\Classes\GameClearScene.cpp" />
     <ClCompile Include="..\Classes\GameOverScene.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
-    <ClCompile Include="..\Classes\HpBar.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_key.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_state.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_touch.cpp" />
@@ -187,12 +187,12 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\action\Move.h" />
     <ClInclude Include="..\Classes\AnimMng.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\Bar.h" />
     <ClInclude Include="..\Classes\CricketJni.h" />
     <ClInclude Include="..\Classes\E_Attack.h" />
     <ClInclude Include="..\Classes\GameClearScene.h" />
     <ClInclude Include="..\Classes\GameOverScene.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
-    <ClInclude Include="..\Classes\HpBar.h" />
     <ClInclude Include="..\Classes\input\OPRT_key.h" />
     <ClInclude Include="..\Classes\input\OPRT_state.h" />
     <ClInclude Include="..\Classes\input\OPRT_touch.h" />

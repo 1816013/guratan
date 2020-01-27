@@ -1,5 +1,5 @@
 #pragma execution_character_set("utf-8")
-#include "HpBar.h"
+#include "Bar.h"
 USING_NS_CC;
 
 Sprite* Bar::createHpBar(const unsigned int max, BarType barType, Size size)
