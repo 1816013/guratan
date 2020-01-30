@@ -146,10 +146,10 @@ bool GameScene::init()
 	hpBar->setName("playerHPBar");
 	hpBar->setPosition(200, 500);
 	uiBglayer->addChild(hpBar, 0);
-	/*auto expBar = Bar::createHpBar(10, BarType::HP, Size(288, 12));
-	expBar->setName("playerEXPBar");
-	expBar->setPosition(500, 480);
-	uiBglayer->addChild(expBar, 0);*/
+	auto expBar = Bar::createHpBar(10, BarType::EXP, Size(288, 12));
+	expBar->setName("playerExpBar");
+	expBar->setPosition(200, 480);
+	uiBglayer->addChild(expBar, 0);
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -170,7 +170,7 @@ bool GameScene::init()
 	{
 		selectButton[i] = ui::Button::create("image/select/selectFrame.png");
 		selectButton[i]->setPosition(Vec2(300 + 200 * i, 300));
-		selectButton[i]->setTitleFontName("fonts/arial.ttf");
+		selectButton[i]->setTitleFontName("fonts/PixelMplus12-Regular.ttf");
 		selectButton[i]->setTitleFontSize(20);
 		selectButton[i]->setTitleColor(Color3B::WHITE);
 		MenuBglayer->addChild(selectButton[i]);
@@ -359,7 +359,7 @@ void GameScene::update(float delta)
 			else // 階層が一の時// チャージセレクト
 			{			
 				// メニュ－
-				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/Marker Felt.ttf", 24);
+				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/PixelMplus12-Regular.ttf", 24);
 				ChargeSelect->setPosition(Vec2(1024 / 2,
 					576 / 4 * 3 - ChargeSelect->getContentSize().height));
 				ChargeSelect->setName("Text");

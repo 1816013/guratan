@@ -5,7 +5,7 @@
 #include "Weapon.h"
 #include "AnimMng.h"
 #include "Bar.h"
-
+//#pragma execution_character_set("utf-8")
 USING_NS_CC;
 
 cocos2d::Sprite* Player::createPlayer()
@@ -261,7 +261,7 @@ bool Player::init()
 
 void Player::update(float delta)
 {
-	// HP表記(仮)
+	// HP表記
 	auto gameScene = Director::getInstance()->getRunningScene();
 	if (gameScene->getName() != "GameScene")
 	{
@@ -273,23 +273,19 @@ void Player::update(float delta)
 		hpBar->changeMax(_hpMax, _hp);
 	}
 	hpBar->changeValue(_hp);
-	gameScene->removeChildByTag(11);
-	gameScene->removeChildByTag(12);
+	auto expBar = (Bar*)gameScene->getChildByName("uiLayer")->getChildByName("playerExpBar");
+	if (expBar->getNowMax() != _expMax)
+	{
+		expBar->changeMax(_expMax, _exp);
+	}
+	expBar->changeValue(_exp);
 	gameScene->removeChildByTag(13);
 	gameScene->removeChildByTag(14);
-	auto text2 = Label::createWithSystemFont("exp" + StringUtils::toString(_exp), "fonts/arial.ttf", 24);
-	text2->setPosition(Point(100, 370));
-	text2->setTag(11);
-	gameScene->addChild(text2);
-	auto text3 = Label::createWithSystemFont("expMax" + StringUtils::toString(_expMax), "fonts/arial.ttf", 24);
-	text3->setPosition(Point(100, 340));
-	text3->setTag(12);
-	gameScene->addChild(text3);
-	auto text4 = Label::createWithSystemFont("level"+ StringUtils::toString(_level), "fonts/arial.ttf", 24);
-	text4->setPosition(Point(100, 310));
+	auto text4 = Label::createWithTTF("Level  "+ StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
+	text4->setPosition(Point(80, 530));
 	text4->setTag(13);
 	gameScene->addChild(text4);
-	auto text5 = Label::createWithSystemFont("charge" + StringUtils::toString(_charge), "fonts/arial.ttf", 24);
+	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
 	text5->setPosition(Point(100, 280));
 	text5->setTag(14);
 	gameScene->addChild(text5);
@@ -371,8 +367,8 @@ void Player::update(float delta)
 	auto anim = SetAnim(_dir);	// repeatNumの設定をSetAnimで設定しているため先読み必須@変更予定
 	lpAnimMng.runAnim(*texSprite, *anim,*_oldAnim, 0);
 	_oldAnim = anim;
-	auto playerCam = gameScene->getChildByName("playerCamera");
-	playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	//auto playerCam = gameScene->getChildByName("playerCamera");
+	//playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 

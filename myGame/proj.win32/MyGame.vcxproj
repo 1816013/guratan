@@ -14,7 +14,7 @@
     <ProjectGuid>{76A39BB2-9B84-4C65-98A5-654D86B86F2A}</ProjectGuid>
     <RootNamespace>test_win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -174,6 +174,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Unit\Obj.cpp" />
     <ClCompile Include="..\Classes\Unit\Player.cpp" />
     <ClCompile Include="..\Classes\Weapon.cpp" />
+    <ClCompile Include="DamageText.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="_debug\_DebugConOut.cpp" />
   </ItemGroup>
@@ -203,6 +204,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Unit\Obj.h" />
     <ClInclude Include="..\Classes\Unit\Player.h" />
     <ClInclude Include="..\Classes\Weapon.h" />
+    <ClInclude Include="DamageText.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="_debug\_DebugConOut.h" />
   </ItemGroup>

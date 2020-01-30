@@ -3,7 +3,7 @@
 #include <map>
 #include <functional>
 #include <input/OPRT_state.h>
-#pragma execution_character_set("utf-8")
+//#pragma execution_character_set("utf-8")
 enum class ACT_STATE
 {
 	RUN,

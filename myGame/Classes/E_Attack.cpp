@@ -24,7 +24,7 @@ void E_Attack::SetTargetMove(Sprite & sp, EnemyAttackAI enemyAttackAI)
 	auto gameScene = Director::getInstance()->getRunningScene();
 	auto charLayer = gameScene->getChildByName("charLayer");
 	this->setPosition(sp.getPosition());
-	Vec2 speed = { 4.0f, 4.0f };
+	Vec2 speed = { 6.0f, 6.0f };
 	auto player = charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
 	if (player != nullptr)
 	{

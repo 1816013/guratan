@@ -113,7 +113,7 @@ void Weapon::update(float delta)
 		case ChargeType::SHOT:
 			if (_gameMap->mapColision(*this, _speedTbl[static_cast<int>(this->GetDIR())] * 7, _colSize[static_cast<int>(this->GetDIR())]))
 			{
-				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 7);
+				this->setPosition(this->getPosition() + (_speedTbl[static_cast<int>(this->GetDIR())]) * 8);
 			}
 			else
 			{
