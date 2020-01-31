@@ -28,7 +28,6 @@ bool LoadingScene::init()
 	// ‚Ð‚Æ‚Â‘O‚Ì¼°Ý‚ªŽæ‚ê‚é
 	auto scene = (GameScene*)Director::getInstance()->getRunningScene();
 
-
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 

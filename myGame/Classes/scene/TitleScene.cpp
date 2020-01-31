@@ -54,7 +54,7 @@ bool TitleScene::init()
 	{
 		this->ChangeScene();
 	};
-	auto label = Label::createWithTTF("To Start Press Any Key ", "fonts/PixelMplus12-Regular.ttf", 96);
+	auto label = Label::createWithTTF("To Start Press Any Key ", "fonts/PixelMplus12-Regular.ttf", 48);
 	label->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 3 - label->getContentSize().height));
 
@@ -67,7 +67,7 @@ bool TitleScene::init()
 		this->ChangeScene();
 		return true;
 	};
-	auto label = Label::createWithTTF("Tap To Start ", "fonts/Marker Felt.ttf", 48);
+	auto label = Label::createWithTTF("Tap To Start ", "fonts/PixelMplus12-Regular.ttf", 48);
 	label->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 3 - label->getContentSize().height));
 

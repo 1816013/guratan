@@ -96,6 +96,10 @@ void Bar::changeValue(const unsigned int value)
 
 void Bar::changeMax(const unsigned int max, const unsigned int value)
 {
+	if (_max == max)
+	{
+		return;
+	}
 	_max = max;
 	//ChangeNumber(max, value);
 	changeValue(value);

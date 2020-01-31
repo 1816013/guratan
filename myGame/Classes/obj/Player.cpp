@@ -149,7 +149,7 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 100000;
+	_hpMax = 10;
 	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
@@ -159,7 +159,7 @@ bool Player::init()
 	_chargeMax = 1.0f;
 	_chargeLevel = 0;
 	_chargeLevelMax = 3;
-	_knockCnt = 0;
+	_knockCnt = 0.0f;
 	_knockF = false;
 	_knockDir = DIR::MAX;
 	_oldAnim = nullptr;
@@ -171,12 +171,17 @@ bool Player::init()
 	_colSize[static_cast<int>(DIR::LEFT)] = { Size(-size.width, size.height), Size(-size.width, -size.height) };
 
 	// アビリティ設定
-	_ability.emplace_back(std::make_pair("Power UP", Ability::PowerUp));
+	//_ability.emplace_back(std::make_pair("Power UP", Ability::PowerUp));
 	_unacquiredAbility.emplace_back(std::make_pair("Power UP",Ability::PowerUp));
 	_unacquiredAbility.emplace_back(std::make_pair("Speed UP",Ability::SpeedUp));
 	_unacquiredAbility.emplace_back(std::make_pair("Heal",Ability::Heal));
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeLevel UP",Ability::ChargeLevel));
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeSpeed UP",Ability::ChargeSpeed));
+
+	auto text4 = Label::createWithTTF("LV  " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
+	text4->setPosition(Point(140, 520));
+	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
+	text5->setPosition(Point(100, 280));
 	
 
 	// ｱｸｼｮﾝｾｯﾄ
@@ -274,27 +279,12 @@ void Player::update(float delta)
 		return;
 	}
 	auto hpBar = (Bar*)gameScene->getChildByName("uiLayer")->getChildByName("playerHPBar");
-	if (hpBar->getNowMax() != _hpMax)
-	{
-		hpBar->changeMax(_hpMax, _hp);
-	}
+	hpBar->changeMax(_hpMax, _hp);
 	hpBar->changeValue(_hp);
 	auto expBar = (Bar*)gameScene->getChildByName("uiLayer")->getChildByName("playerExpBar");
-	if (expBar->getNowMax() != _expMax)
-	{
-		expBar->changeMax(_expMax, _exp);
-	}
+	expBar->changeMax(_expMax, _exp);
 	expBar->changeValue(_exp);
-	gameScene->removeChildByTag(13);
-	gameScene->removeChildByTag(14);
-	auto text4 = Label::createWithTTF("LV  "+ StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
-	text4->setPosition(Point(140, 520));
-	text4->setTag(13);
-	gameScene->addChild(text4);
-	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
-	text5->setPosition(Point(100, 280));
-	text5->setTag(14);
-	gameScene->addChild(text5);
+
 	_inputState->update();
 	_actMng->update(*this);
 
