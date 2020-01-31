@@ -1,6 +1,6 @@
 #include "Move.h"
-#include <Unit/Player.h>
-#include <Unit/Enemy.h>
+#include <obj/Player.h>
+#include <obj/Enemy.h>
 //#include "EffectMng.h"
 //#include "_debug/_DebugConOut.h"
 

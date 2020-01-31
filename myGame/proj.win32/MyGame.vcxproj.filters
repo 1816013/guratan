@@ -58,58 +58,58 @@
     <ClCompile Include="..\Classes\action\Move.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Unit\Player.cpp">
-      <Filter>src\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Unit\Enemy.cpp">
-      <Filter>src\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Unit\Obj.cpp">
-      <Filter>src\obj</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\action\Attack.cpp">
       <Filter>src\action</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GameOverScene.cpp">
-      <Filter>src\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameScene.cpp">
-      <Filter>src\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\TitleScene.cpp">
-      <Filter>src\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Weapon.cpp">
-      <Filter>src\obj</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\action\CheckKey.cpp">
       <Filter>src\action\check</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\E_Attack.cpp">
-      <Filter>src\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\mapObject.cpp">
-      <Filter>src\obj</Filter>
     </ClCompile>
     <ClCompile Include="_debug\_DebugConOut.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\GameClearScene.cpp">
-      <Filter>src\scene</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\AnimMng.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Bar.cpp">
+    <ClCompile Include="..\Classes\UI\Bar.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\DamageText.cpp">
+    <ClCompile Include="..\Classes\UI\DamageText.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\LoadingScene.cpp">
+    <ClCompile Include="..\Classes\obj\E_Attack.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\obj\Enemy.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\obj\mapObject.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\obj\Obj.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\obj\Player.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\obj\Weapon.cpp">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scene\GameClearScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scene\GameOverScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scene\GameScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scene\LoadingScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\scene\TitleScene.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -145,58 +145,58 @@
     <ClInclude Include="..\Classes\action\Move.h">
       <Filter>src\action</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Unit\Player.h">
-      <Filter>src\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Unit\Enemy.h">
-      <Filter>src\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Unit\Obj.h">
-      <Filter>src\obj</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\action\Attack.h">
       <Filter>src\action</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameMap.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GameOverScene.h">
-      <Filter>src\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameScene.h">
-      <Filter>src\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\TitleScene.h">
-      <Filter>src\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Weapon.h">
-      <Filter>src\obj</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\action\CheckKey.h">
       <Filter>src\action\check</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\E_Attack.h">
-      <Filter>src\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\mapObject.h">
-      <Filter>src\obj</Filter>
     </ClInclude>
     <ClInclude Include="_debug\_DebugConOut.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\GameClearScene.h">
-      <Filter>src\scene</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\AnimMng.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Bar.h">
+    <ClInclude Include="..\Classes\UI\Bar.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\DamageText.h">
+    <ClInclude Include="..\Classes\UI\DamageText.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\LoadingScene.h">
+    <ClInclude Include="..\Classes\obj\E_Attack.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\obj\Enemy.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\obj\mapObject.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\obj\Obj.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\obj\Player.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\obj\Weapon.h">
+      <Filter>src\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scene\GameClearScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scene\GameOverScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scene\GameScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scene\LoadingScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\scene\TitleScene.h">
       <Filter>src\scene</Filter>
     </ClInclude>
   </ItemGroup>

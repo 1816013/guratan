@@ -63,60 +63,62 @@ endif()
 
 # add cross-platforms source files and header files 
 list(APPEND GAME_SOURCE
-        Classes/AppDelegate.cpp
         Classes/AnimMng.cpp
-        Classes/GameScene.cpp
-        Classes/GameOverScene.cpp
-        Classes/GameClearScene.cpp
-        Classes/GameMap.cpp
-        Classes/TitleScene.cpp
-        Classes/E_Attack.cpp
+        Classes/AppDelegate.cpp
         Classes/CricketJni.cpp
-        Classes/mapObject.cpp
-        Classes/Weapon.cpp
-        Classes/HpBar.cpp
-        Classes/input/OPRT_state.cpp
-        Classes/input/OPRT_key.cpp
-        Classes/input/OPRT_touch.cpp
-        Classes/Unit/Obj.cpp
-        Classes/Unit/Player.cpp
-        Classes/Unit/Enemy.cpp
+        Classes/GameMap.cpp
         Classes/action/ActionMng.cpp
+        Classes/action/Attack.cpp
         Classes/action/ChangeLR.cpp
         Classes/action/CheckKey.cpp
         Classes/action/CheckList.cpp
         Classes/action/Colision.cpp
         Classes/action/Move.cpp
-        Classes/action/Shot.cpp
-        Classes/action/Attack.cpp
+        Classes/input/OPRT_state.cpp
+        Classes/input/OPRT_key.cpp
+        Classes/input/OPRT_touch.cpp
+        Classes/obj/E_Attack.cpp
+        Classes/obj/Enemy.cpp
+        Classes/obj/mapObject.cpp
+        Classes/obj/Obj.cpp
+        Classes/obj/Player.cpp
+        Classes/obj/Weapon.cpp
+        Classes/scene/GameClearScene.cpp
+        Classes/scene/GameOverScene.cpp
+        Classes/scene/GameScene.cpp
+        Classes/scene/LoadingScene.cpp
+        Classes/scene/TitleScene.cpp
+        Classes/UI/Bar.cpp
+        Classes/UI/DamageText.cpp
      )
 list(APPEND GAME_HEADER
-        Classes/AppDelegate.h
         Classes/AnimMng.h
-        Classes/GameScene.h
-        Classes/GameOverScene.h
-        Classes/GameClearScene.h
-        Classes/GameMap.h
-        Classes/TitleScene.h
-        Classes/E_Attack.h
+        Classes/AppDelegate.h
         Classes/CricketJni.h
-        Classes/mapObject.h
-        Classes/Weapon.h
-        Classes/HpBar.h
-        Classes/input/OPRT_state.h
-        Classes/input/OPRT_key.h
-        Classes/input/OPRT_touch.h
-        Classes/Unit/Obj.h
-        Classes/Unit/Player.h
-        Classes/Unit/Enemy.h
+        Classes/GameMap.h
         Classes/action/ActionMng.h
+        Classes/action/Attack.h
         Classes/action/ChangeLR.h
         Classes/action/CheckKey.h
         Classes/action/CheckList.h
         Classes/action/Colision.h
         Classes/action/Move.h
-        Classes/action/Shot.h
-        Classes/action/Attack.h
+        Classes/input/OPRT_state.h
+        Classes/input/OPRT_key.h
+        Classes/input/OPRT_touch.h
+        Classes/obj/E_Attack.h
+        Classes/obj/Enemy.h
+        Classes/obj/mapObject.h
+        Classes/obj/Obj.h
+        Classes/obj/Player.h
+        Classes/obj/Weapon.h
+        Classes/scene/GameClearScene.h
+        Classes/scene/GameOverScene.h
+        Classes/scene/GameScene.h
+        Classes/scene/LoadingScene.h
+        Classes/scene/TitleScene.h
+        Classes/UI/Bar.h
+        Classes/UI/DamageText.h
      )
 
 if(ANDROID)

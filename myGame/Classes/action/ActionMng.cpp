@@ -4,7 +4,6 @@
 #include "Colision.h"
 #include "Move.h"
 #include "ChangeLR.h"
-#include "Shot.h"
 #include "Attack.h"
 
 

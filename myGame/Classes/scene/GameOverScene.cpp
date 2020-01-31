@@ -1,7 +1,7 @@
-#include "GameOverScene.h"
+ï»¿#include "GameOverScene.h"
 #include "TitleScene.h"
 #include "GameScene.h"
-
+#pragma execution_character_set("utf-8")
 USING_NS_CC;
 
 cocos2d::Scene * GameOverScene::createScene()
@@ -23,20 +23,20 @@ bool GameOverScene::init()
 	{
 		return false;
 	}
-	// ƒV[ƒ“–¼‘OÝ’è
+	// ã‚·ãƒ¼ãƒ³åå‰è¨­å®š
 	this->setName("GameOverScene");
-	// ‚Ð‚Æ‚Â‘O‚Ì¼°Ý‚ªŽæ‚ê‚é
+	// ã²ã¨ã¤å‰ã®ï½¼ï½°ï¾ãŒå–ã‚Œã‚‹
 	auto scene = (GameScene*)Director::getInstance()->getRunningScene();
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto label = Label::createWithTTF("GameOver Scene", "fonts/Marker Felt.ttf", 24);
+	auto label = Label::createWithTTF("GameOver Scene", "fonts/PixelMplus12-Regular.ttf", 24);
 	// position the label on the center of the screen
 	label->setPosition(Vec2(visibleSize.width / 2,
 		visibleSize.height - label->getContentSize().height));
 
-	auto label2 = Label::createWithTTF("“ž’BŠK‘w@" + StringUtils::toString(scene->_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
+	auto label2 = Label::createWithTTF("åˆ°é”éšŽå±¤ã€€" + StringUtils::toString(scene->_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
 	// position the label on the center of the screen
 	label2->setPosition(Vec2(visibleSize.width / 2,
 		visibleSize.height / 2 - label->getContentSize().height));

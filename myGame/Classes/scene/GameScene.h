@@ -27,10 +27,10 @@
 
 #include "cocos2d.h"
 #include <input/OPRT_state.h>
-#include <Unit/Obj.h>
-#include <Unit/Player.h>
-#include <Unit/Enemy.h>
-#include "Weapon.h"
+#include <obj/Obj.h>
+#include <obj/Player.h>
+#include <obj/Enemy.h>
+#include <obj/Weapon.h>
 #include "ui//CocosGUI.h"
 
 enum class Z_ORDER_TYPE

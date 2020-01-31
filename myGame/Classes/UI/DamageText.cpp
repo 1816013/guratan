@@ -1,5 +1,5 @@
 #include "DamageText.h"
-#include "Unit/Obj.h"
+#include <obj/Obj.h>
 USING_NS_CC;
 
 cocos2d::Sprite * DamageText::createDamageT(unsigned int value, Sprite& sp)

@@ -1,11 +1,11 @@
 #include "Player.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
-#include "GameScene.h"
+#include <scene/GameScene.h>
 #include "Weapon.h"
 #include "AnimMng.h"
-#include "Bar.h"
-#include "DamageText.h"
+#include <UI/Bar.h>
+#include <UI/DamageText.h>
 //#pragma execution_character_set("utf-8")
 USING_NS_CC;
 
@@ -178,12 +178,6 @@ bool Player::init()
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeLevel UP",Ability::ChargeLevel));
 	_unacquiredAbility.emplace_back(std::make_pair("ChargeSpeed UP",Ability::ChargeSpeed));
 
-	auto text4 = Label::createWithTTF("LV  " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
-	text4->setPosition(Point(140, 520));
-	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
-	text5->setPosition(Point(100, 280));
-	
-
 	// ±¸¼®Ý¾¯Ä
 	// ¶ˆÚ“®
 	{
@@ -285,6 +279,17 @@ void Player::update(float delta)
 	expBar->changeMax(_expMax, _exp);
 	expBar->changeValue(_exp);
 
+	gameScene->removeChildByTag(10);
+	gameScene->removeChildByTag(11);
+	auto text4 = Label::createWithTTF("LV  " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
+	text4->setTag(10);
+	text4->setPosition(Point(140, 520));
+	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
+	text5->setTag(11);
+	text5->setPosition(Point(100, 280));
+
+	gameScene->addChild(text4);
+	gameScene->addChild(text5);
 	_inputState->update();
 	_actMng->update(*this);
 

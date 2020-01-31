@@ -1,6 +1,6 @@
 #pragma once
-#include <Unit/Obj.h>
-#include "Unit/Player.h"
+#include <obj/Obj.h>
+#include <obj/Player.h>
 
 enum class OptionType
 {

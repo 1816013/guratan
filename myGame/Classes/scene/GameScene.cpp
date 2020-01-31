@@ -26,12 +26,12 @@
 #include "GameScene.h"
 #include <input/OPRT_key.h>
 #include <input/OPRT_touch.h>
-#include "Weapon.h"
-#include <E_Attack.h>
+#include <obj/Weapon.h>
+#include <obj/E_Attack.h>
 #include "GameOverScene.h"
-#include "mapObject.h"
+#include <obj/mapObject.h>
 #include "AnimMng.h"
-#include "Bar.h"
+#include <UI/Bar.h>
 #include "LoadingScene.h"
 
 USING_NS_CC;
@@ -471,6 +471,7 @@ void GameScene::update(float delta)
 			{
 				player->SetAbility(retAbility[selectCnt]);
 			}
+			
 			ChangeSceneType(SceneType::GAME);
 		}
 	}   

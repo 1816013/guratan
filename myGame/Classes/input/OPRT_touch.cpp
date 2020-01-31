@@ -4,11 +4,14 @@ USING_NS_CC;
 
 OPRT_touch::OPRT_touch(Node* sp)
 {
-	numberOfTouch = 0;
+	touch touch;
+	touch.isAttackTouch = false;
+	touch.isMoveTouch = false;
+	touch.pos = Vec2::ZERO;
 	touchVectors.clear();
 	for (int i = 0; i < 5; i++)
 	{
-		touchVectors.emplace_back(Vec2::ZERO);
+		touchVectors.emplace_back(touch);
 	}
 	
 	auto listener = EventListenerTouchAllAtOnce::create();
@@ -21,21 +24,23 @@ OPRT_touch::OPRT_touch(Node* sp)
 		}
 		
 		for (auto touch : touches) {
-			touchVectors[touch->getID()] = touch->getLocation();
+			touchVectors[touch->getID()].pos = touch->getLocation();
 			auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();	
-			if (touchVectors[touch->getID()].x > visibleSize.width / 2)
+			if (touchVectors[touch->getID()].pos.x > visibleSize.width / 2)
 			{
-				_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::ATTACK)]] = true;		
+				_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::ATTACK)]] = true;
+				touchVectors[touch->getID()].isAttackTouch = true;
 			}
 			else
 			{
 				auto nowSp = gameScene->getChildByName("uiLayer")->getChildByName("nowTouch");
 				auto startSp = gameScene->getChildByName("uiLayer")->getChildByName("startTouch");
-				nowSp->setPosition(touchVectors[touch->getID()]);
-				startSp->setPosition(touchVectors[touch->getID()]);
+				nowSp->setPosition(touchVectors[touch->getID()].pos);
+				startSp->setPosition(touchVectors[touch->getID()].pos);
+				touchVectors[touch->getID()].isMoveTouch = true;
 			}
 		}
-		numberOfTouch += touches.size();
+		//numberOfTouch += touches.size();
 		return true;
 	};
 	listener->onTouchesMoved = [&](std::vector<Touch*> touches, Event *event)
@@ -49,23 +54,24 @@ OPRT_touch::OPRT_touch(Node* sp)
 		auto startSp = gameScene->getChildByName("uiLayer")->getChildByName("startTouch");
 		auto line = (cocos2d::DrawNode*)gameScene->getChildByName("uiLayer")->getChildByName("line");
 		auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
-		//auto start_p = _startTPos;
+	
 		float margin = 50.0f;
 		for (auto touch : touches) {
 			auto nowPos = touch->getLocation();
-			if (touchVectors[touch->getID()].x < visibleSize.width / 2)
+			if (touchVectors[touch->getID()].pos.x < visibleSize.width / 2)
 			{
+				
 				auto spPos = touch->getLocation();
 				// ˆê’è‹——£ˆÈã‚ÍŠÛ‚ðˆÚ“®‚Å‚«‚È‚¢
-				auto vec = nowPos - touchVectors[touch->getID()];
+				auto vec = nowPos - touchVectors[touch->getID()].pos;
 				float distance = sqrt(pow(vec.x, 2) + pow(vec.y, 2));
-				float rad = atan2(nowPos.y - touchVectors[touch->getID()].y, nowPos.x - touchVectors[touch->getID()].x);
+				float rad = atan2(nowPos.y - touchVectors[touch->getID()].pos.y, nowPos.x - touchVectors[touch->getID()].pos.x);
 				if (distance > 140)
 				{
 					float px = 140 * cos(rad);
 					float py = 140 * sin(rad);
-					spPos.x = px + touchVectors[touch->getID()].x;
-					spPos.y = py + touchVectors[touch->getID()].y;
+					spPos.x = px + touchVectors[touch->getID()].pos.x;
+					spPos.y = py + touchVectors[touch->getID()].pos.y;
 				}
 				// Œ»ÝˆÊ’u‚ðXV‚·‚é
 				nowSp->setPosition(spPos);
@@ -75,50 +81,38 @@ OPRT_touch::OPRT_touch(Node* sp)
 				line->drawLine(touch->getStartLocation(), spPos, { 1.0f, 1.0f, 1.0f, 0.5f });
 
 				// “ü—Í
-				if (nowPos.x > touchVectors[touch->getID()].x + margin)
+				if (nowPos.x > touchVectors[touch->getID()].pos.x + margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::LEFT)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::RIGHT)]] = true;
 				}
 
-				if (nowPos.x < touchVectors[touch->getID()].x - margin)
+				if (nowPos.x < touchVectors[touch->getID()].pos.x - margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::RIGHT)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::LEFT)]] = true;
 				}
 
-				if (nowPos.y > touchVectors[touch->getID()].y + margin)
+				if (nowPos.y > touchVectors[touch->getID()].pos.y + margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::DOWN)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::UP)]] = true;
 				}
 
-				if (nowPos.y < touchVectors[touch->getID()].y - margin)
+				if (nowPos.y < touchVectors[touch->getID()].pos.y - margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::UP)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::DOWN)]] = true;				
 				}
-				if (abs(nowPos.y - touchVectors[touch->getID()].y) < margin)
+				if (abs(nowPos.y - touchVectors[touch->getID()].pos.y) < margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::UP)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::DOWN)]] = false;
 				}
-				if (abs(nowPos.x - touchVectors[touch->getID()].x) < margin)
+				if (abs(nowPos.x - touchVectors[touch->getID()].pos.x) < margin)
 				{
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::RIGHT)]] = false;
 					_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::LEFT)]] = false;
-				}
-			}
-
-			if (nowPos.x < touchVectors[touch->getID()].x + margin && nowPos.x > touchVectors[touch->getID()].x - margin
-				&& nowPos.y < touchVectors[touch->getID()].y + margin && nowPos.y > touchVectors[touch->getID()].y - margin)
-			{
-				for (auto input : INPUT_ID())
-				{
-					if (input != INPUT_ID::ATTACK && input != INPUT_ID::SELECT && input != INPUT_ID::NONE)
-					{
-						_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(input)]] = false;
-					}
 				}
 			}
 		}
@@ -135,17 +129,31 @@ OPRT_touch::OPRT_touch(Node* sp)
 		auto nowSp = gameScene->getChildByName("uiLayer")->getChildByName("nowTouch");
 		auto startSp = gameScene->getChildByName("uiLayer")->getChildByName("startTouch");
 		auto line = (cocos2d::DrawNode*)gameScene->getChildByName("uiLayer")->getChildByName("line");
-		numberOfTouch -= touches.size();
-		if (numberOfTouch == 0)
+		for (auto touch : touches)
 		{
-			nowSp->setPosition(150, 150);
-			startSp->setPosition(150, 150);
-			line->setVisible(false);
-			for (auto input : INPUT_ID())
+			if (touchVectors[touch->getID()].isMoveTouch)
 			{
-				_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(input)]] = false;
+				nowSp->setPosition(150, 150);
+				startSp->setPosition(150, 150);
+				line->setVisible(false);
+				for (auto input : INPUT_ID())
+				{
+					if (input != INPUT_ID::ATTACK && input != INPUT_ID::SELECT && input != INPUT_ID::NONE)
+					{
+						_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(input)]] = false;
+						touchVectors[touch->getID()].isMoveTouch = false;
+					}
+				}
+			}
+			if (touchVectors[touch->getID()].isAttackTouch)
+			{
+				_keyData[static_cast<int>(TRG_STATE::INPUT)][inputTbl[static_cast<int>(INPUT_ID::ATTACK)]] = false;
+				touchVectors[touch->getID()].isAttackTouch = true;
 			}
 		}
+	
+			
+		//}
 		return true;
 	};
 

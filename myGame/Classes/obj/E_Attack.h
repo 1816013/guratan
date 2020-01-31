@@ -1,6 +1,6 @@
 #pragma once
-#include "Unit/Obj.h"
-#include "Unit/Enemy.h"
+#include "Obj.h"
+#include "Enemy.h"
 
 class E_Attack : public Obj
 {

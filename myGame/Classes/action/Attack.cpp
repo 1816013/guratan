@@ -1,9 +1,9 @@
 #include "Attack.h"
 #include "Colision.h"
-#include "GameScene.h"
-#include <Unit/Obj.h>
-#include "Weapon.h"
-#include "Unit/Player.h"
+#include "scene/GameScene.h"
+#include <obj/Obj.h>
+#include <obj/Weapon.h>
+#include <obj/Player.h>
 
 
 USING_NS_CC;

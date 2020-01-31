@@ -69,8 +69,12 @@ private:
 
 	ChargeType _chargeType;
 
-	cocos2d::Sprite* texSprite;
+	cocos2d::Sprite* texSprite;		// 描画用スプライト※画像が大きくboundingboxでの当たり判定ができないため必要	
 	cocos2d::Animation* _oldAnim;
+
+	// テキスト
+	cocos2d::Label* lvText;
+	cocos2d::Label* chargeText;
 	
 	std::vector<AbilityPair>_ability;		// 取得しているアビリティ
 	std::vector<AbilityPair>_unacquiredAbility;	// 未取得アビリティ

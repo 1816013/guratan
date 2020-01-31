@@ -1,10 +1,10 @@
 #include "Enemy.h"
-#include <Unit/Player.h>
+#include "Player.h"
 #include "Weapon.h"
 #include "E_Attack.h"
 #include "action/Colision.h"
 #include "AnimMng.h"
-#include "DamageText.h"
+#include <UI/DamageText.h>
 
 USING_NS_CC;
 
@@ -247,6 +247,10 @@ cocos2d::Animation * Enemy::SetAnim(DIR dir)
 		}
 		return anim;
 	}
+	if (EnemyType::CANNON == _enemyType)
+	{
+		anim = animCache->getAnimation("orb-idle");
+	}
 	return anim;
 }
 
@@ -259,15 +263,16 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
-		_enemyMoveAI = EnemyMoveAI::FORROW;
-		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3 + floor;	
 		lpAnimMng.AnimCreate("slime", "runR", 3, 0.1);
 		lpAnimMng.AnimCreate("slime", "runB", 3, 0.1);
 		lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
+		_enemyMoveAI = EnemyMoveAI::FORROW;
+		_enemyAttackAI = EnemyAttackAI::NONE; 
+		_hp = 3 + floor;	
 		anim = animCache->getAnimation("slime-runF");
 		break;
 	case EnemyType::CANNON:
+		lpAnimMng.AnimCreate("orb", "idle", 5, 0.1);
 		_enemyMoveAI = EnemyMoveAI::IDLE;
 		_enemyAttackAI = EnemyAttackAI::AIMING;
 		_hp = 3 + floor;
@@ -275,12 +280,12 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		_attackIntarval = 2;
 		break;
 	case EnemyType::ARCHAR:
+		lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.1);
+		lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.1);
+		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
 		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
-		lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.1);
-		lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.1);
-		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);		
 		_hp = 5 + floor;
 		break;
 	default:
