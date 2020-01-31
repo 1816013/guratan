@@ -106,7 +106,12 @@
     <ClCompile Include="..\Classes\Bar.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="DamageText.cpp" />
+    <ClCompile Include="..\Classes\DamageText.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LoadingScene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -188,7 +193,12 @@
     <ClInclude Include="..\Classes\Bar.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="DamageText.h" />
+    <ClInclude Include="..\Classes\DamageText.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LoadingScene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

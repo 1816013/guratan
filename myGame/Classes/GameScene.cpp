@@ -32,6 +32,7 @@
 #include "mapObject.h"
 #include "AnimMng.h"
 #include "Bar.h"
+#include "LoadingScene.h"
 
 USING_NS_CC;
 
@@ -144,12 +145,15 @@ bool GameScene::init()
 	uiBglayer->addChild(menu, 0);
 	auto hpBar = Bar::createHpBar(10, BarType::HP, Size(288, 24));
 	hpBar->setName("playerHPBar");
-	hpBar->setPosition(200, 500);
+	hpBar->setPosition(300, 520);
 	uiBglayer->addChild(hpBar, 0);
 	auto expBar = Bar::createHpBar(10, BarType::EXP, Size(288, 12));
 	expBar->setName("playerExpBar");
-	expBar->setPosition(200, 480);
+	expBar->setPosition(300, 500);
 	uiBglayer->addChild(expBar, 0);
+	auto floor = Label::createWithTTF(StringUtils::toString(_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
+	floor->setPosition(80, 520);
+	uiBglayer->addChild(floor, 0);
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -249,7 +253,7 @@ void GameScene::update(float delta)
 			Scene *scene = GameOverScene::createScene();
 			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
 		}
-		if (eCount <= 0 && mapObj == nullptr)
+		else if (eCount <= 0 && mapObj == nullptr)
 		{
 			mapObj = mapObject::createMapObj();
 			mapObj->setTag(static_cast<int>(objTag::MAPOBJ));
@@ -259,10 +263,11 @@ void GameScene::update(float delta)
 		
 		if (_nextFloor)
 		{
+			Director::getInstance()->pushScene(LoadingScene::createScene());
 			ChangeFloor();
 		}
 	}
-	else if (_sceneType == SceneType::MENU) // メニューレイヤークラスに分ける予定
+	if (_sceneType == SceneType::MENU) // メニューレイヤークラスに分ける予定
 	{
 		auto gameScene = Director::getInstance()->getRunningScene();
 		if (gameScene->getName() != "GameScene")
@@ -294,7 +299,7 @@ void GameScene::update(float delta)
 				for (int i = 0; i < 3; i++)
 				{
 					// メニュ－
-					auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/Marker Felt.ttf", 24);
+					auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/PixelMplus12-Regular.ttf", 24);
 					levelupText->setPosition(Vec2( 1024 / 2,
 						576 / 4 * 3 - levelupText->getContentSize().height));
 					levelupText->setCameraMask(static_cast<int>(CameraFlag::USER2));
@@ -421,7 +426,6 @@ void GameScene::update(float delta)
 				});			
 			}
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
-			//
 		}
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::LEFT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::LEFT))
@@ -456,7 +460,6 @@ void GameScene::update(float delta)
 			break;
 		}
 #endif
-
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
 			if (_floorNum == 0)
@@ -511,12 +514,10 @@ void GameScene::ColTest()
 			{
 				continue;
 			}
-			/*if (eRect->getTag() != pRect->getTag())
-			{*/
-				Obj* obj = (Obj*)eRect;
-				Obj* hitObj = (Obj*)pRect;
-				obj->ColisionObj(*hitObj, *this);
-			//}
+			Obj* obj = (Obj*)eRect;
+			Obj* hitObj = (Obj*)pRect;
+			obj->ColisionObj(*hitObj, *this);
+
 		}
 	}
 }

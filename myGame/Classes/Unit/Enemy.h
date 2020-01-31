@@ -29,6 +29,7 @@ class Enemy : public Obj
 {
 public:
 	static cocos2d::Sprite* createEnemy(EnemyType enemyType, int floor);
+	EnemyType GetEnemyType();
 	EnemyMoveAI GetEnemyAI();
 	void SetEnemyAI(EnemyType enemyType,int floor);
 

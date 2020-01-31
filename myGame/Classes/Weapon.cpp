@@ -8,7 +8,7 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 	auto weapon = Weapon::create();
 	weapon->_optionType = option;
 	weapon->SetDIR(((Player&)sp).GetDIR());
-	weapon->_power = (((Player&)sp).GetPower());
+	weapon->_power = (((Player&)sp).GetPower() * ((Player&)sp).GetPowerRate());
 	weapon->_chargeType = (((Player&)sp).GetChargeType());
 	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
 	auto offsetCreate = [&](Sprite& sp)
@@ -41,7 +41,7 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 		switch (weapon->_chargeType)
 		{
 		case ChargeType::SHOT:
-			weapon->setContentSize({ 16.0f * chargeLevel, 16.0f * chargeLevel });
+			weapon->setContentSize({ 16.0f + 16.0f * (chargeLevel - 1), 16.0f + 16.0f * (chargeLevel - 1) });
 			weapon->_hp = 1;
 			break;
 		case ChargeType::TWISTER:

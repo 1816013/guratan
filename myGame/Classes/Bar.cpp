@@ -57,7 +57,6 @@ bool Bar::initValue( const unsigned int max, BarType barType, cocos2d::Size size
 	_number = Label::createWithTTF(StringUtils::toString(initValue) + "/" + StringUtils::toString(_max), "fonts/PixelMplus12-Regular.ttf", 12);
 	_number->setPosition(Point(_frame->getContentSize().width + 10, 0));
 	_number->setAnchorPoint({ 0, 0 });
-	_number->setTag(10);
 	_frame->addChild(_number);
 	// ‰Šú’l‚ğİ’è
 	changeValue(_max);

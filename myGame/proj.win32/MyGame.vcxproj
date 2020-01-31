@@ -160,6 +160,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
     <ClCompile Include="..\Classes\Bar.cpp" />
     <ClCompile Include="..\Classes\CricketJni.cpp" />
+    <ClCompile Include="..\Classes\DamageText.cpp" />
     <ClCompile Include="..\Classes\E_Attack.cpp" />
     <ClCompile Include="..\Classes\GameClearScene.cpp" />
     <ClCompile Include="..\Classes\GameOverScene.cpp" />
@@ -168,13 +169,13 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\input\OPRT_state.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_touch.cpp" />
     <ClCompile Include="..\Classes\GameMap.cpp" />
+    <ClCompile Include="..\Classes\LoadingScene.cpp" />
     <ClCompile Include="..\Classes\mapObject.cpp" />
     <ClCompile Include="..\Classes\TitleScene.cpp" />
     <ClCompile Include="..\Classes\Unit\Enemy.cpp" />
     <ClCompile Include="..\Classes\Unit\Obj.cpp" />
     <ClCompile Include="..\Classes\Unit\Player.cpp" />
     <ClCompile Include="..\Classes\Weapon.cpp" />
-    <ClCompile Include="DamageText.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="_debug\_DebugConOut.cpp" />
   </ItemGroup>
@@ -190,6 +191,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\Bar.h" />
     <ClInclude Include="..\Classes\CricketJni.h" />
+    <ClInclude Include="..\Classes\DamageText.h" />
     <ClInclude Include="..\Classes\E_Attack.h" />
     <ClInclude Include="..\Classes\GameClearScene.h" />
     <ClInclude Include="..\Classes\GameOverScene.h" />
@@ -198,13 +200,13 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\input\OPRT_state.h" />
     <ClInclude Include="..\Classes\input\OPRT_touch.h" />
     <ClInclude Include="..\Classes\GameMap.h" />
+    <ClInclude Include="..\Classes\LoadingScene.h" />
     <ClInclude Include="..\Classes\mapObject.h" />
     <ClInclude Include="..\Classes\TitleScene.h" />
     <ClInclude Include="..\Classes\Unit\Enemy.h" />
     <ClInclude Include="..\Classes\Unit\Obj.h" />
     <ClInclude Include="..\Classes\Unit\Player.h" />
     <ClInclude Include="..\Classes\Weapon.h" />
-    <ClInclude Include="DamageText.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="_debug\_DebugConOut.h" />
   </ItemGroup>

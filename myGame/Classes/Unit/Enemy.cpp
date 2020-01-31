@@ -4,7 +4,7 @@
 #include "E_Attack.h"
 #include "action/Colision.h"
 #include "AnimMng.h"
-
+#include "DamageText.h"
 
 USING_NS_CC;
 
@@ -16,6 +16,11 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType, int floor)
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
 
 	return enemy;
+}
+
+EnemyType Enemy::GetEnemyType()
+{
+	return _enemyType;
 }
 
 EnemyMoveAI Enemy::GetEnemyAI()
@@ -171,11 +176,13 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			auto radian = atan2(distance.y, distance.x);
 			_move.x = cos(radian) * 8;
 			_move.y = sin(radian) * 8;
-			//_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
+			auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
+			scene.getChildByName("uiLayer")->addChild(damageT);
 		}
+		// âüÇµçáÇ¢îªíË
 		if (hitTag == static_cast<int>(objTag::ENEMY))
 		{
-			if (_enemyType != EnemyType::CANNON)
+			if (_enemyType != EnemyType::CANNON && ((Enemy&)hitObj).GetEnemyType() != EnemyType::CANNON)
 			{
 				col = true;
 				_knockF = true;
@@ -184,7 +191,6 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				auto radian = atan2(distance.y, distance.x);
 				_move.x = cos(radian) * 1;
 				_move.y = sin(radian) * 1;
-				//_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 			}
 		}
 	}

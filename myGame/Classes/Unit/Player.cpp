@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "AnimMng.h"
 #include "Bar.h"
+#include "DamageText.h"
 //#pragma execution_character_set("utf-8")
 USING_NS_CC;
 
@@ -30,6 +31,11 @@ void Player::addExp(const int exp )
 float Player::GetMovePower()
 {
 	return _movePower;
+}
+
+float Player::GetPowerRate()
+{
+	return _powerRate;
 }
 
 std::vector<AbilityPair> Player::GetUnacquiredAbility()
@@ -143,7 +149,7 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 10;
+	_hpMax = 100000;
 	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
@@ -281,8 +287,8 @@ void Player::update(float delta)
 	expBar->changeValue(_exp);
 	gameScene->removeChildByTag(13);
 	gameScene->removeChildByTag(14);
-	auto text4 = Label::createWithTTF("Level  "+ StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
-	text4->setPosition(Point(80, 530));
+	auto text4 = Label::createWithTTF("LV  "+ StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
+	text4->setPosition(Point(140, 520));
 	text4->setTag(13);
 	gameScene->addChild(text4);
 	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
@@ -367,8 +373,8 @@ void Player::update(float delta)
 	auto anim = SetAnim(_dir);	// repeatNumの設定をSetAnimで設定しているため先読み必須@変更予定
 	lpAnimMng.runAnim(*texSprite, *anim,*_oldAnim, 0);
 	_oldAnim = anim;
-	//auto playerCam = gameScene->getChildByName("playerCamera");
-	//playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
+	auto playerCam = gameScene->getChildByName("playerCamera");
+	playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
 }
 
@@ -415,7 +421,6 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 	Rect myRect = this->getBoundingBox();
 	Rect hitRect = hitObj.getBoundingBox();
 	int hitTag = hitObj.getTag();
-
 	if (myRect.intersectsRect(hitRect))
 	{
 		int hitTag = hitObj.getTag();
@@ -426,11 +431,15 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				col = true;
 				_hp -= hitObj.GetPower();
 				_strongF = true;
-				_knockF = true;
+				_knockF = true;				
 				_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 				_knockDir = hitObj.GetDIR();
+				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
+				scene.getChildByName("uiLayer")->addChild(damageT);
+				scene.runAction(Blink::create(0.1f, 1));
 			}
 		}
+		// 両方ダメージ受けるもの
 		if (hitTag == static_cast<int>(objTag::E_ATTACK))
 		{
 			if (!_strongF)
@@ -442,6 +451,8 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				_knockF = true;
 				_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 				_knockDir = hitObj.GetDIR();
+				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
+				scene.getChildByName("uiLayer")->addChild(damageT);
 			}
 		}
 		if (hitTag == static_cast<int>(objTag::MAPOBJ))

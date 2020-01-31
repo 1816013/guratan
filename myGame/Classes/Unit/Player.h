@@ -32,6 +32,7 @@ public:
 
 	void addExp(const int exp);
 	float GetMovePower();
+	float GetPowerRate();
 	void SetAbility(AbilityPair ability);
 	void SetStrong(bool flag);
 	bool IsCharged();

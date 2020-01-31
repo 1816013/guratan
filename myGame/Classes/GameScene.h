@@ -47,6 +47,7 @@ enum class SceneType
 {
 	GAME,
 	MENU,
+	LOADING,
 	MAX
 };
 
@@ -60,6 +61,8 @@ public:
 	void update(float delta)override;
 	void SetSceneType(SceneType sceneType);
 	void SetNextFloor(bool flag);
+
+	int _floorNum;
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
@@ -99,7 +102,6 @@ private:
 	AbilityPair retAbility[3];		// abilityˆêŠi”[—p
 	ChargeType retCharge[3];	// chargeTypeˆêŠi”[—p
 	bool _nextFloor;			// Ÿ‚ÌƒtƒƒA‚Ös‚­‚©
-	int _floorNum;
 };
 
 #endif // __HELLOWORLD_SCENE_H__
