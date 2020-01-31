@@ -267,7 +267,7 @@ void GameScene::update(float delta)
 			mapObj = mapObject::createMapObj();
 			mapObj->setTag(static_cast<int>(objTag::MAPOBJ));
 			mapObj->setCameraMask(static_cast<int>(CameraFlag::USER1));
-			charBglayer->addChild(mapObj);
+			charBglayer->addChild(mapObj, -1);
 		}
 		
 		if (_nextFloor)

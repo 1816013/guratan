@@ -8,6 +8,10 @@ cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackA
 	auto e_attack = E_Attack::create();
 	e_attack->_dir = ((Obj&)sp).GetDIR();
 	e_attack->SetTargetMove(sp, enemyAttackAI);
+	if (enemyAttackAI == EnemyAttackAI::SHOT)
+	{
+		e_attack->setTexture("image/e_attack/spear.png");
+	}
 	return e_attack;
 }
 
@@ -43,15 +47,19 @@ void E_Attack::SetTargetMove(Sprite & sp, EnemyAttackAI enemyAttackAI)
 			{
 			case DIR::UP:
 				_move.y = speed.y;
+				this->setRotation(0.0f);
 				break;
 			case DIR::RIGHT:
 				_move.x = speed.x;
+				this->setRotation(90.0f);
 				break;
 			case DIR::DOWN:
 				_move.y = -speed.y;
+				this->setRotation(180.0f);
 				break;
 			case DIR::LEFT:
 				_move.x = -speed.x;
+				this->setRotation(270.0f);
 				break;
 			default:
 				break;
@@ -98,7 +106,6 @@ bool E_Attack::init()
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 16, 16);
 	
 	this->setTextureRect(rect);
-	this->setColor(cocos2d::Color3B(228, 0, 127));
 	_hp = 1;
 	_power = 1;
 	_remainCnt = 0;

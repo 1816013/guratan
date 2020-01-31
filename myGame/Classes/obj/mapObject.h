@@ -12,4 +12,5 @@ public:
 private:
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;
+	cocos2d::Animation* _oldanim;
 };
