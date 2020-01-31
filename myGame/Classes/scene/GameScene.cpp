@@ -41,6 +41,15 @@ Scene* GameScene::createScene()
 	return GameScene::create();
 }
 
+
+GameScene::~GameScene()
+{
+	if (_running)
+	{
+		onExit();
+	}
+}
+
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
 {
@@ -501,7 +510,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
 void GameScene::SetEnemy(EnemyType enemyType)
 {
 	auto enemy = Enemy::createEnemy(enemyType, _floorNum);
-	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 400 + 48 + 64));
+	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 400 + 48 + 96));
 	charBglayer->addChild(enemy);
 }
 

@@ -56,6 +56,7 @@ class GameScene : public cocos2d::Scene
 {
 public:
     static cocos2d::Scene* createScene();
+	~GameScene();
 
     virtual bool init();
 	void update(float delta)override;
