@@ -27,16 +27,12 @@ bool LoadingScene::init()
 	this->setName("LoadingScene");
 	// ‚Ð‚Æ‚Â‘O‚Ì¼°Ý‚ªŽæ‚ê‚é
 	auto scene = (GameScene*)Director::getInstance()->getRunningScene();
-
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-	auto label = Label::createWithTTF(StringUtils::toString(scene->_floorNum + 1) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
-	// position the label on the center of the screen
-	label->setPosition(Vec2(origin.x + visibleSize.width / 2,
-		origin.y + visibleSize.height - label->getContentSize().height));
-
-	// add the label as a child to this layer
+	// ŠK”•\Ž¦
+	auto label = Label::createWithTTF(StringUtils::toString(scene->_floorNum + 1) + " F", "fonts/PixelMplus12-Regular.ttf", 48);
+	label->setPosition(Vec2( visibleSize.width / 2, visibleSize.height / 2));
+	label->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	this->addChild(label, 0);
 	this->scheduleOnce(schedule_selector(LoadingScene::ChangeScene), 3.0f);
 	return true;

@@ -14,7 +14,7 @@
     <ProjectGuid>{76A39BB2-9B84-4C65-98A5-654D86B86F2A}</ProjectGuid>
     <RootNamespace>test_win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -150,10 +150,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\action\ActionMng.cpp" />
-    <ClCompile Include="..\Classes\action\Attack.cpp" />
-    <ClCompile Include="..\Classes\action\ChangeLR.cpp" />
+    <ClCompile Include="..\Classes\action\ChangeDIR.cpp" />
     <ClCompile Include="..\Classes\action\CheckKey.cpp" />
-    <ClCompile Include="..\Classes\action\CheckList.cpp" />
     <ClCompile Include="..\Classes\action\Colision.cpp" />
     <ClCompile Include="..\Classes\action\Move.cpp" />
     <ClCompile Include="..\Classes\AnimMng.cpp" />
@@ -181,10 +179,8 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\action\ActionMng.h" />
-    <ClInclude Include="..\Classes\action\Attack.h" />
-    <ClInclude Include="..\Classes\action\ChangeLR.h" />
+    <ClInclude Include="..\Classes\action\ChangeDIR.h" />
     <ClInclude Include="..\Classes\action\CheckKey.h" />
-    <ClInclude Include="..\Classes\action\CheckList.h" />
     <ClInclude Include="..\Classes\action\Colision.h" />
     <ClInclude Include="..\Classes\action\Move.h" />
     <ClInclude Include="..\Classes\AnimMng.h" />

@@ -62,6 +62,7 @@ public:
 	void update(float delta)override;
 	void SetSceneType(SceneType sceneType);
 	void SetNextFloor(bool flag);
+	bool ChangeFloor();
 
 	int _floorNum;
     
@@ -72,22 +73,27 @@ public:
 private:
 	// ŠÖ”
 	void SetEnemy(EnemyType enemyType);
-	void ColTest();
-	bool ChangeFloor();
+	void Colition();
 	void ChangeSceneType(SceneType sceneType);
+	cocos2d::Camera* SetCamera(std::string name, cocos2d::CameraFlag cameraF,float depth);
+	void SelectEnded(int select);
 
 	// •Ï”	
 	cocos2d::Layer* uiBglayer;
 	cocos2d::Layer* MenuBglayer;
 	cocos2d::Layer* charBglayer;
-	cocos2d::Layer* flontBglayer;
 	cocos2d::Layer* backBglayer;
 
 	int _zOrderUI;		// UI‚ÌLayer
 	int _zOrderMenu;	// Menu‚ÌLayer
 	int _zOrderBack;	// ˆê”ÔŒã‚ë‚Ìzorder
 	int _zOrderChar;	// ·¬×‚Ìzorder
-	int _zOrderFlont;	// ˆê”Ô‘O‚Ìzorder
+
+	AbilityPair retAbility[3];		// abilityˆêŠi”[—p
+	ChargeType retCharge[3];	// chargeTypeˆêŠi”[—p
+	bool _nextFloor;			// Ÿ‚ÌƒtƒƒA‚Ös‚­‚©
+
+	cocos2d::Label* _floorT;
 
 	SceneType _sceneType;
 
@@ -100,9 +106,7 @@ private:
 	cocos2d::Sprite* mapObj;
 	bool flag;
 	int selectCnt;				//
-	AbilityPair retAbility[3];		// abilityˆêŠi”[—p
-	ChargeType retCharge[3];	// chargeTypeˆêŠi”[—p
-	bool _nextFloor;			// Ÿ‚ÌƒtƒƒA‚Ös‚­‚©
+	
 };
 
 #endif // __HELLOWORLD_SCENE_H__

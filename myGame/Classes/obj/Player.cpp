@@ -52,7 +52,7 @@ void Player::SetAbility(AbilityPair abilityPair)
 		_powerRate += 0.5;
 		break;
 	case Ability::SpeedUp:
-		_movePower += 0.5f;
+		_movePower += 0.2f;
 		break;
 	case Ability::Heal:
 		_hp += _hpMax / 2;
@@ -69,8 +69,8 @@ void Player::SetAbility(AbilityPair abilityPair)
 		}
 		break;
 	case Ability::ChargeSpeed:
-		_chargeMax -= 0.1f;
-		if (_chargeMax <= 0.5f)
+		_chargeMax -= 0.2f;
+		if (_chargeMax <= 0.4f)
 		{
 			_unacquiredAbility.erase(_unacquiredAbility.begin() + static_cast<int>(Ability::ChargeSpeed));
 		}
@@ -129,19 +129,21 @@ bool Player::init()
 	lpAnimMng.AnimCreate("player", "idleB", 4, 0.5);
 	lpAnimMng.AnimCreate("player", "idleR", 4, 0.5);
 	lpAnimMng.AnimCreate("player", "idleL", 4, 0.5);
-
-
+	// 一番最初の絵
 	this->setPosition(visibleSize.width / 2, 64);
 	this->setContentSize({32, 32});
 
 	Rect rect = Rect(0, 0, 32, 32);
 	this->setContentSize({ 32, 32 });
-	//this->setTextureRect(rect);
-	
+
 	texSprite = Sprite::create();
 	texSprite->setAnchorPoint({ 0.37f, 0.1f });
 	texSprite->setScale(1.5f, 1.5f);
 	this->addChild(texSprite);
+	auto anim = AnimationCache::getInstance()->getAnimation("player-idleF");
+	lpAnimMng.runAnim(*texSprite, *anim, *_oldAnim);
+	_oldAnim = anim;
+
 
 	// ﾌﾟﾚｲﾔｰｽﾃｰﾀｽ
 	_level = 1;
@@ -162,7 +164,6 @@ bool Player::init()
 	_knockCnt = 0.0f;
 	_knockF = false;
 	_knockDir = DIR::MAX;
-	_oldAnim = nullptr;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -279,20 +280,23 @@ void Player::update(float delta)
 	expBar->changeMax(_expMax, _exp);
 	expBar->changeValue(_exp);
 
-	gameScene->removeChildByTag(10);
-	gameScene->removeChildByTag(11);
-	auto text4 = Label::createWithTTF("LV  " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
+	gameScene->getChildByName("uiLayer")->removeChildByTag(10);
+	gameScene->getChildByName("uiLayer")->removeChildByTag(11);
+	auto text4 = Label::createWithTTF("LV " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
 	text4->setTag(10);
 	text4->setPosition(Point(140, 520));
 	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
 	text5->setTag(11);
 	text5->setPosition(Point(100, 280));
 
-	gameScene->addChild(text4);
-	gameScene->addChild(text5);
+	gameScene->getChildByName("uiLayer")->addChild(text4);
+	gameScene->getChildByName("uiLayer")->addChild(text5);
 	_inputState->update();
 	_actMng->update(*this);
 
+	attack(delta, *gameScene);
+
+	// ノックバック
 	if (_knockF)
 	{
 		_knockCnt += delta;
@@ -307,49 +311,7 @@ void Player::update(float delta)
 			_move = { 0 , 0 };
 		}
 	}
-	// 攻撃
-	// 武器作成
-	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType, int chargeLevel = 0)
-	{
-		auto weapon = Weapon::createWeapon(sp, optionType, chargeLevel);
-		weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
-		scene.getChildByName("charLayer")->addChild(weapon);
-	};
-	// 押した瞬間攻撃
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
-	{
-		SetWeapon(*gameScene, *this, OptionType::NOMAL);
-	}
-	// チャージ中
-	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
-	{
-		_charge += delta;
-		if (_charge > _chargeMax)
-		{
-			_chargeLevel = 1;
-		}
-		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 2)
-		{
-			_chargeLevel = 2;
-		}
-		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 3)
-		{
-			_chargeLevel = 3;
-		}
-	}
-	// チャージが最大だったらチャージ攻撃
-	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) )
-	{
-		if (_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
-		{
-			if (_chargeLevel >= 1)
-			{
-				SetWeapon(*gameScene, *this, OptionType::CHARGE, _chargeLevel);
-			}
-		}
-		_charge = 0.0f;
-		_chargeLevel = 0;
-	}
+
 	// レベルアップ
 	if (_exp >= _expMax)
 	{
@@ -371,6 +333,52 @@ void Player::update(float delta)
 	auto playerCam = gameScene->getChildByName("playerCamera");
 	playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
+}
+
+void Player::attack(float delta, cocos2d::Scene& scene)
+{
+	// 攻撃
+// 武器作成
+	auto SetWeapon = [](Scene& scene, Sprite& sp, const OptionType optionType, int chargeLevel = 0)
+	{
+		auto weapon = Weapon::createWeapon(sp, optionType, chargeLevel);
+		scene.getChildByName("charLayer")->addChild(weapon);
+	};
+	// 押した瞬間攻撃
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK) && !_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+	{
+		SetWeapon(scene, *this, OptionType::NOMAL);
+	}
+	// チャージ中
+	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
+	{
+		_charge += delta;
+		if (_charge > _chargeMax)
+		{
+			_chargeLevel = 1;
+		}
+		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 2)
+		{
+			_chargeLevel = 2;
+		}
+		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 3)
+		{
+			_chargeLevel = 3;
+		}
+	}
+	// チャージが最大だったらチャージ攻撃
+	if (!_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
+	{
+		if (_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::ATTACK))
+		{
+			if (_chargeLevel >= 1)
+			{
+				SetWeapon(scene, *this, OptionType::CHARGE, _chargeLevel);
+			}
+		}
+		_charge = 0.0f;
+		_chargeLevel = 0;
+	}
 }
 
 void Player::LevelUp(void)

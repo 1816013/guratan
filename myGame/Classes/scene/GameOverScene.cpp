@@ -36,7 +36,7 @@ bool GameOverScene::init()
 	label->setPosition(Vec2(visibleSize.width / 2,
 		visibleSize.height - label->getContentSize().height));
 
-	auto label2 = Label::createWithTTF("到達階層　" + StringUtils::toString(scene->_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
+	auto label2 = Label::createWithTTF("到達階層　" + StringUtils::toString(scene->_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 48);
 	// position the label on the center of the screen
 	label2->setPosition(Vec2(visibleSize.width / 2,
 		visibleSize.height / 2 - label->getContentSize().height));

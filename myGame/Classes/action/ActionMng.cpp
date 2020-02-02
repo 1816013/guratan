@@ -1,10 +1,8 @@
 #include "ActionMng.h"
-#include "CheckList.h"
 #include "CheckKey.h"
 #include "Colision.h"
 #include "Move.h"
-#include "ChangeLR.h"
-#include "Attack.h"
+#include "ChangeDIR.h"
 
 
 USING_NS_CC;
@@ -25,7 +23,6 @@ void ActionMng::AddActModule(const std::string & actName, actModule & module)
 		if (actName == "¶ˆÚ“®" || actName == "‰EˆÚ“®" || actName == "ãˆÚ“®" || actName == "‰ºˆÚ“®")
 		{
 			_moduleMap.emplace(actName, std::move(module));
-			_moduleMap[actName].act.emplace_back(CheckList());
 			_moduleMap[actName].act.emplace_back(CheckKey());
 			_moduleMap[actName].act.emplace_back(actColision());
 			_moduleMap[actName].runAction = Move();
@@ -33,16 +30,8 @@ void ActionMng::AddActModule(const std::string & actName, actModule & module)
 		if (actName == "‰EŒü‚«" || actName == "¶Œü‚«" || actName == "ãŒü‚«" || actName == "‰ºŒü‚«")
 		{
 			_moduleMap.emplace(actName, std::move(module));
-			_moduleMap[actName].act.emplace_back(CheckList());
 			_moduleMap[actName].act.emplace_back(CheckKey());
 			_moduleMap[actName].runAction = ChangeDIR();
-		}
-		if (actName == "Œ•UŒ‚")
-		{
-			_moduleMap.emplace(actName, std::move(module));
-			_moduleMap[actName].act.emplace_back(CheckList());
-			_moduleMap[actName].act.emplace_back(CheckKey());
-			_moduleMap[actName].runAction = Attack();
 		}
 	}
 }

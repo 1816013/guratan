@@ -6,6 +6,8 @@ USING_NS_CC;
 cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int chargeLevel)
 {
 	auto weapon = Weapon::create();
+	int CameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1);
+	weapon->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	weapon->_optionType = option;
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower() * ((Player&)sp).GetPowerRate());

@@ -49,6 +49,7 @@ public:
 private:
 	bool init()override;				// 初期化　ｽﾌﾟﾗｲﾄ作成
 	void update(float delta)override;	// ﾌﾟﾚｲﾔｰの移動とｱﾆﾒｰｼｮﾝ処理
+	void attack(float delta, cocos2d::Scene& scene);
 	void LevelUp(void);
 	cocos2d::Animation* SetAnim(DIR dir);	// 方向に応じたｱﾆﾒｰｼｮﾝの設定
 
@@ -61,8 +62,7 @@ private:
 	float _chargeMax;		// チャージがたまる時間
 	int _chargeLevel;		// チャージの強さ
 	int _chargeLevelMax;	// チャージの最大強さ
-	bool _strongF;			// 無敵
-	float _strongCnt;		// 無敵時間ｶｳﾝﾀ
+	
 
 	float _powerRate;		// 攻撃力アビリティ用
 	float _movePower;		// 移動速度アビリティ補正用

@@ -3,13 +3,6 @@
 #include <input/OPRT_touch.h>
 
 USING_NS_CC;
-void GameMap::createMap(Layer& layer)
-{
-	auto mapS = TMXTiledMap::create("map/map2.tmx");
-	mapS->setName("mapData");
-	mapS->setCameraMask(static_cast<int>(CameraFlag::USER1));
-	layer.addChild(mapS);
-}
 
 GameMap::GameMap()
 {
@@ -19,11 +12,14 @@ GameMap::GameMap()
 GameMap::~GameMap()
 {
 }
-
-bool GameMap::init()
+void GameMap::createMap(Layer& layer)
 {
-	return true;
+	auto mapS = TMXTiledMap::create("map/map2.tmx");
+	mapS->setName("mapData");
+	mapS->setCameraMask(static_cast<int>(CameraFlag::USER1));
+	layer.addChild(mapS);
 }
+
 
 bool GameMap::mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<cocos2d::Size, 2> colSize)
 {

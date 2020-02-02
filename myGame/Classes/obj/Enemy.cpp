@@ -13,6 +13,7 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType, int floor)
 	auto enemy = Enemy::create();
 	enemy->SetEnemyAI(enemyType, floor);
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
+	int CameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1);
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
 
 	return enemy;
@@ -44,13 +45,13 @@ bool Enemy::init()
 		return false;
 	}
 	_dir = DIR::DOWN;
-	Rect rect = Rect(0, 0, 32, 32);
-	this->setTextureRect(rect);
 	_oldAnim = nullptr;
 	_hp = 3;
 	_power = 1;
 	_attackIntarval = 1.5f;
 	_exp = 1;
+	_strongF = false;
+	_strongCnt = 0;
 
 	_knockCnt = 0;
 	_knockF = false;
@@ -78,7 +79,16 @@ void Enemy::update(float delta)
 	auto player = (Player*)charLayer->getChildByTag(static_cast<int>(objTag::PLAYER));
 	time += delta;
 	
-	
+	// ñ≥ìGîªíË
+	if (_strongF)
+	{
+		_strongCnt += delta;
+		if (_strongCnt >= 0.1f)
+		{
+			_strongF = false;
+			_strongCnt = 0;
+		}
+	}
 	// å¸Ç´ïœçX
 	if (player != nullptr)
 	{
@@ -128,7 +138,6 @@ void Enemy::update(float delta)
 			this->setPosition(this->getPosition() + _move);
 		}
 	}
-	// ÉmÉbÉNÉoÉbÉN
 	// çUåÇ	
 	if (_enemyAttackAI != EnemyAttackAI::NONE)
 	{
@@ -138,7 +147,7 @@ void Enemy::update(float delta)
 			auto e_Attack = E_Attack::createE_Attack(*this, _enemyAttackAI);
 			e_Attack->setPosition(this->getPosition());
 			e_Attack->setTag(static_cast<int>(objTag::E_ATTACK));
-			e_Attack->setCameraMask(static_cast<int>(CameraFlag::USER1));
+			
 			charLayer->addChild(e_Attack);
 		}
 	}
@@ -167,17 +176,21 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 		int hitTag = hitObj.getTag();
 		if (hitTag == static_cast<int>(objTag::ATTACK))
 		{
-			col = true;
-			_hp -= hitObj.GetPower();
-			hitObj.SetHP(hitObj.GetHP() - 1);	// ïêäÌÇÃëœãvÇçÌÇÈ
-			_knockF = true;
-			_knockDir = hitObj.GetDIR();
-			Vec2 distance = { this->getPositionX() - hitObj.getPositionX() , this->getPositionY() - hitObj.getPositionY() };
-			auto radian = atan2(distance.y, distance.x);
-			_move.x = cos(radian) * 8;
-			_move.y = sin(radian) * 8;
-			auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
-			scene.getChildByName("uiLayer")->addChild(damageT);
+			if (!_strongF)
+			{
+				col = true;
+				_strongF = true;
+				_hp -= hitObj.GetPower();
+				hitObj.SetHP(hitObj.GetHP() - 1);	// ïêäÌÇÃëœãvÇçÌÇÈ
+				_knockF = true;
+				_knockDir = hitObj.GetDIR();
+				Vec2 distance = { this->getPositionX() - hitObj.getPositionX() , this->getPositionY() - hitObj.getPositionY() };
+				auto radian = atan2(distance.y, distance.x);
+				_move.x = cos(radian) * 8;
+				_move.y = sin(radian) * 8;
+				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
+				scene.getChildByName("uiLayer")->addChild(damageT);
+			}
 		}
 		// âüÇµçáÇ¢îªíË
 		if (hitTag == static_cast<int>(objTag::ENEMY))
@@ -258,8 +271,6 @@ cocos2d::Animation * Enemy::SetAnim(DIR dir)
 void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 {
 	_enemyType = enemyType;
-	auto animCache = AnimationCache::getInstance();
-	Animation* anim = nullptr;
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
@@ -268,14 +279,14 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3 + floor;	
-		anim = animCache->getAnimation("slime-runF");
+		_hp = 3;	
+		
 		break;
 	case EnemyType::CANNON:
 		lpAnimMng.AnimCreate("orb", "idle", 5, 0.1);
 		_enemyMoveAI = EnemyMoveAI::IDLE;
 		_enemyAttackAI = EnemyAttackAI::AIMING;
-		_hp = 3 + floor;
+		_hp = 5;
 		_power = 2;
 		_attackIntarval = 2;
 		break;
@@ -286,10 +297,11 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
 		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
-		_hp = 5 + floor;
+		_hp = 5;
 		break;
 	default:
 		break;
 	}
-	lpAnimMng.runAnim(*this, *anim, *_oldAnim, 0);
+	_hp += floor / 2;
+	_power += floor / 5;
 }

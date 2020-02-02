@@ -42,8 +42,10 @@ protected:
 	DIR _dir;
 	cocos2d::Vec2 _move;	// ˆÚ“®—Ê
 	DIR _knockDir;
-	bool _knockF;
-	float _knockCnt;
+	bool _knockF;			// É¯¸ÊÞ¯¸’†‚©
+	float _knockCnt;		// É¯¸ÊÞ¯¸—p¶³ÝÀ
+	bool _strongF;			// –³“G
+	float _strongCnt;		// –³“GŽžŠÔ¶³ÝÀ
 
 	std::array<cocos2d::Vec2, static_cast<int>(DIR::MAX)> _speedTbl;
 

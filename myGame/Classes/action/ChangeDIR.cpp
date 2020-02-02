@@ -1,4 +1,4 @@
-#include "ChangeLR.h"
+#include "ChangeDIR.h"
 #include <obj/Player.h>
 
 bool ChangeDIR::operator()(cocos2d::Sprite & sp, actModule & module)

@@ -6,7 +6,10 @@ USING_NS_CC;
 cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackAI)
 {
 	auto e_attack = E_Attack::create();
+	int CameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1);
+	e_attack->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	e_attack->_dir = ((Obj&)sp).GetDIR();
+	e_attack->_power = ((Obj&)sp).GetPower();
 	e_attack->SetTargetMove(sp, enemyAttackAI);
 	if (enemyAttackAI == EnemyAttackAI::SHOT)
 	{

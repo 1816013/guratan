@@ -6,6 +6,7 @@ cocos2d::Sprite * DamageText::createDamageT(unsigned int value, Sprite& sp)
 {
 	auto damageText = DamageText::create();
 	damageText->InitText(value, sp);
+	int CameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1);
 	damageText->setCameraMask(static_cast<int>(CameraFlag::USER1));
 	return damageText;
 }

@@ -45,6 +45,12 @@ bool TitleScene::init()
 	camera1->setRotation3D({ 0, 0, 0 });
 	camera1->setDepth(0.0f);
 	camera1->setCameraFlag(CameraFlag::DEFAULT);
+	/*auto camera2 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
+	this->addChild(camera2);
+	camera2->setPosition3D({ 0, 0, 0 });
+	camera2->setRotation3D({ 0, 0, 0 });
+	camera2->setDepth(0.0f);
+	camera2->setCameraFlag(CameraFlag::USER1);*/
 
 	titleLayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 
@@ -85,5 +91,5 @@ bool TitleScene::init()
 void TitleScene::ChangeScene()
 {
 	Scene *scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
+	Director::getInstance()->replaceScene(TransitionFade::create(3.0f, scene, Color3B::WHITE));
 }

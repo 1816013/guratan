@@ -10,12 +10,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\action">
-      <UniqueIdentifier>{d3427ddc-f4f4-4fcc-8ec5-c5063ef808dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\action\check">
-      <UniqueIdentifier>{584d16a7-df8e-4583-a779-b7a19cabf8c8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\input">
       <UniqueIdentifier>{54c997b5-78ed-4b27-a2b3-ade315044363}</UniqueIdentifier>
     </Filter>
@@ -24,6 +18,15 @@
     </Filter>
     <Filter Include="src\obj">
       <UniqueIdentifier>{a545f225-08fb-4c0f-a91e-57a9d5198bfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\playerAction">
+      <UniqueIdentifier>{d3427ddc-f4f4-4fcc-8ec5-c5063ef808dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\playerAction\check">
+      <UniqueIdentifier>{584d16a7-df8e-4583-a779-b7a19cabf8c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{60650585-11e1-4c58-b23c-ed0a48a5bc44}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,40 +46,25 @@
     <ClCompile Include="..\Classes\input\OPRT_touch.cpp">
       <Filter>src\input</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\action\CheckList.cpp">
-      <Filter>src\action\check</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\action\Colision.cpp">
-      <Filter>src\action\check</Filter>
+      <Filter>src\playerAction\check</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\action\ActionMng.cpp">
-      <Filter>src\action</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\action\ChangeLR.cpp">
-      <Filter>src\action</Filter>
+      <Filter>src\playerAction</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\action\Move.cpp">
-      <Filter>src\action</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\action\Attack.cpp">
-      <Filter>src\action</Filter>
+      <Filter>src\playerAction</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\GameMap.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\action\CheckKey.cpp">
-      <Filter>src\action\check</Filter>
+      <Filter>src\playerAction\check</Filter>
     </ClCompile>
     <ClCompile Include="_debug\_DebugConOut.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\AnimMng.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\UI\Bar.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\UI\DamageText.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\obj\E_Attack.cpp">
@@ -112,6 +100,15 @@
     <ClCompile Include="..\Classes\scene\TitleScene.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\action\ChangeDIR.cpp">
+      <Filter>src\playerAction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\UI\Bar.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\UI\DamageText.cpp">
+      <Filter>src\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -130,40 +127,25 @@
     <ClInclude Include="..\Classes\input\OPRT_touch.h">
       <Filter>src\input</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\action\CheckList.h">
-      <Filter>src\action\check</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\action\ActionMng.h">
-      <Filter>src\action</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\action\ChangeLR.h">
-      <Filter>src\action</Filter>
+      <Filter>src\playerAction</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\Colision.h">
-      <Filter>src\action\check</Filter>
+      <Filter>src\playerAction\check</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\Move.h">
-      <Filter>src\action</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\action\Attack.h">
-      <Filter>src\action</Filter>
+      <Filter>src\playerAction</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\GameMap.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\action\CheckKey.h">
-      <Filter>src\action\check</Filter>
+      <Filter>src\playerAction\check</Filter>
     </ClInclude>
     <ClInclude Include="_debug\_DebugConOut.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\AnimMng.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\UI\Bar.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\UI\DamageText.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\obj\E_Attack.h">
@@ -198,6 +180,15 @@
     </ClInclude>
     <ClInclude Include="..\Classes\scene\TitleScene.h">
       <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\action\ChangeDIR.h">
+      <Filter>src\playerAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\UI\Bar.h">
+      <Filter>src\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\UI\DamageText.h">
+      <Filter>src\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

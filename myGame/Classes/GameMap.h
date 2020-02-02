@@ -14,8 +14,6 @@ public:
 	bool mapColision(cocos2d::Sprite & sp, cocos2d::Vec2 speed, std::array<cocos2d::Size, 2> colSize);
 
 private:
-	bool init();
-
 	cocos2d::Size _mapChipSize = cocos2d::Size(MAP_X, MAP_Y);
 	int _mapData[MAP_Y][MAP_X];
 };

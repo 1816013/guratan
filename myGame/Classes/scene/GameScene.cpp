@@ -75,29 +75,26 @@ bool GameScene::init()
 	// レイヤー設定
 	_zOrderMenu = static_cast<int>(Z_ORDER_TYPE::MENU);
 	_zOrderUI = static_cast<int>(Z_ORDER_TYPE::UI);
-	_zOrderFlont = static_cast<int>(Z_ORDER_TYPE::FLONT);
 	_zOrderChar = static_cast<int>(Z_ORDER_TYPE::CHAR);
 	_zOrderBack = static_cast<int>(Z_ORDER_TYPE::BACK);
 
 	MenuBglayer = Layer::create();
 	auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
+	_bg->setOpacity(122);
 	MenuBglayer->addChild(_bg);
 	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
 	uiBglayer->setName("uiLayer");
 	charBglayer = Layer::create();
 	charBglayer->setName("charLayer");
-	flontBglayer = Layer::create();
-	flontBglayer->setName("flontLayer");
 	backBglayer = Layer::create();
 	backBglayer->setName("backLayer");
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32	
 	_inputState = std::make_unique<OPRT_key>(this);
 	_gameMap = std::make_unique<GameMap>();
-	// 仮ｽﾌﾟﾗｲﾄ メニュー用
+	// 仮ｽﾌﾟﾗｲﾄ メニュー用 ※矢印予定
 	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
-
 	selectSp = Sprite::create();
 	selectSp->setPosition(500, 200);
 	selectSp->setColor({ 255, 255, 255 });
@@ -135,34 +132,25 @@ bool GameScene::init()
                                            "CloseNormal.png",
                                            "CloseSelected.png",
                                            CC_CALLBACK_1(GameScene::menuCloseCallback, this));
-    if (closeItem == nullptr ||
-        closeItem->getContentSize().width <= 0 ||
-        closeItem->getContentSize().height <= 0)
-    {
-        problemLoading("'CloseNormal.png' and 'CloseSelected.png'");
-    }
-    else
-    {
-        float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
-        float y = origin.y + closeItem->getContentSize().height/2;
-        closeItem->setPosition(Vec2(x,y));
-    }
+    float x = origin.x + visibleSize.width - closeItem->getContentSize().width/2;
+    float y = origin.y + closeItem->getContentSize().height/2;
+    closeItem->setPosition(Vec2(x,y));
 
-    // create menu, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
 	uiBglayer->addChild(menu, 0);
 	auto hpBar = Bar::createHpBar(10, BarType::HP, Size(288, 24));
 	hpBar->setName("playerHPBar");
-	hpBar->setPosition(300, 520);
+	hpBar->setPosition(330, 520);
 	uiBglayer->addChild(hpBar, 0);
 	auto expBar = Bar::createHpBar(10, BarType::EXP, Size(288, 12));
 	expBar->setName("playerExpBar");
-	expBar->setPosition(300, 500);
+	expBar->setPosition(330, 500);
 	uiBglayer->addChild(expBar, 0);
-	auto floor = Label::createWithTTF(StringUtils::toString(_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
-	floor->setPosition(80, 520);
-	uiBglayer->addChild(floor, 0);
+	_floorT = Label::createWithTTF(StringUtils::toString(_floorNum) + " F", "fonts/PixelMplus12-Regular.ttf", 24);
+	_floorT->setPosition(80, 520);
+	_floorT->setName("階数");
+	uiBglayer->addChild(_floorT, 0);
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));
@@ -178,43 +166,27 @@ bool GameScene::init()
 	_gameMap->createMap(*backBglayer);
 	mapObj = nullptr;
 
-
 	for (int i = 0; i < 3; i++)
 	{
 		selectButton[i] = ui::Button::create("image/select/selectFrame.png");
 		selectButton[i]->setPosition(Vec2(300 + 200 * i, 300));
 		selectButton[i]->setTitleFontName("fonts/PixelMplus12-Regular.ttf");
-		selectButton[i]->setTitleFontSize(20);
+		selectButton[i]->setTitleFontSize(16);
 		selectButton[i]->setTitleColor(Color3B::WHITE);
 		MenuBglayer->addChild(selectButton[i]);
 	}
 	// カメラ
-	auto camera = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
-	this->addChild(camera);
-	camera->setPosition3D({ 0, 0, 0 });
-	camera->setRotation3D({ 0, 0, 0 });
-	camera->setDepth(1.0f);
-	camera->setCameraFlag(CameraFlag::DEFAULT);
+	auto dCamera = SetCamera("default", CameraFlag::DEFAULT, 1);
+	auto pCamera = SetCamera("playerCamera", CameraFlag::USER1, 0);	
+	auto mCamera = SetCamera("menuCamera", CameraFlag::USER2, 2);
 
-	auto camera1 = Camera::createOrthographic(visibleSize.width, visibleSize.height, -768, 768);
-	camera1->setName("playerCamera");
-	this->addChild(camera1);
-	camera1->setPosition3D({ 0, 0, 0 });
-	camera1->setRotation3D({ 0, 0, 0 });
-	camera1->setDepth(0.0f);
-	camera1->setCameraFlag(CameraFlag::USER1);	
-	
-	auto camera2 = Camera::createOrthographic(1024, 576, -768, 768);
-	camera2->setName("menuCamera");
-	this->addChild(camera2);
-	camera2->setPosition3D({ -1024,-576, 0 });
-	camera2->setRotation3D({ 0, 0, 0 });
-	camera2->setDepth(3.0f);
-	camera2->setCameraFlag(CameraFlag::USER2);
-
+	// カメラマスク
+	int cameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1) | static_cast<int>(CameraFlag::USER2);
+	this->setCameraMask(cameraMask);
 	MenuBglayer->setCameraMask(static_cast<int>(CameraFlag::USER2));
-	this->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
+	uiBglayer->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	charBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
+	backBglayer->setCameraMask(static_cast<int>(CameraFlag::USER1));
 
 	// 変数
 	flag = false;
@@ -225,18 +197,23 @@ bool GameScene::init()
 	this->addChild(uiBglayer, _zOrderUI);
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
-	this->addChild(flontBglayer, _zOrderFlont);
 	this->scheduleUpdate();
 	return true;
 }
 
 void GameScene::update(float delta)
 {
+	
+	auto scene = Director::getInstance()->getRunningScene();
+	if (scene->getName() != "GameScene")
+	{
+		return;
+	}
 	_inputState->update();
-
+	_floorT->setString(StringUtils::toString(_floorNum) + " F");
 	if (_sceneType == SceneType::GAME)
 	{
-		ColTest();		
+		Colition();		
 		int pCount = 0;
 		int eCount = 0;
 		for (auto objItr : this->charBglayer->getChildren())
@@ -260,7 +237,7 @@ void GameScene::update(float delta)
 		if (pCount <= 0)
 		{
 			Scene *scene = GameOverScene::createScene();
-			Director::getInstance()->replaceScene(TransitionFade::create(0.3f, scene));
+			Director::getInstance()->replaceScene(TransitionRotoZoom::create(2.0f, scene));
 		}
 		else if (eCount <= 0 && mapObj == nullptr)
 		{
@@ -272,7 +249,8 @@ void GameScene::update(float delta)
 		
 		if (_nextFloor)
 		{
-			Director::getInstance()->pushScene(LoadingScene::createScene());
+			auto transition = TransitionTurnOffTiles::create(0.5f, LoadingScene::createScene());
+			Director::getInstance()->pushScene(transition);
 			ChangeFloor();
 		}
 	}
@@ -323,14 +301,7 @@ void GameScene::update(float delta)
 					switch (type)
 					{
 					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-						player2->SetAbility(retAbility[0]);
-						ChangeSceneType(SceneType::GAME);
+						SelectEnded(0);
 						break;
 					}
 				});
@@ -339,15 +310,7 @@ void GameScene::update(float delta)
 				midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
 					switch (type)
 					{
-					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-						player2->SetAbility(retAbility[1]);
-						ChangeSceneType(SceneType::GAME);
+						SelectEnded(1);
 						break;
 					}
 				});
@@ -357,16 +320,7 @@ void GameScene::update(float delta)
 					switch (type)
 					{
 					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-
-						player2->SetAbility(retAbility[2]);
-						ChangeSceneType(SceneType::GAME);
-						break;
+						SelectEnded(2);
 					}
 				});				
 			}
@@ -374,8 +328,7 @@ void GameScene::update(float delta)
 			{			
 				// メニュ－
 				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/PixelMplus12-Regular.ttf", 24);
-				ChargeSelect->setPosition(Vec2(1024 / 2,
-					576 / 4 * 3 - ChargeSelect->getContentSize().height));
+				ChargeSelect->setPosition(Vec2(1024 / 2, 576 / 4 * 3 - ChargeSelect->getContentSize().height));
 				ChargeSelect->setName("Text");
 				ChargeSelect->setCameraMask(static_cast<int>(CameraFlag::USER2));
 				MenuBglayer->addChild(ChargeSelect, 0);
@@ -385,15 +338,7 @@ void GameScene::update(float delta)
 					switch (type)
 					{
 					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-						player2->SetChargeType(ChargeType::SHOT);
-						_floorNum = 1;
-						ChangeSceneType(SceneType::GAME);	
+						SelectEnded(0);
 						break;
 					}
 				});
@@ -403,15 +348,7 @@ void GameScene::update(float delta)
 					switch (type)
 					{
 					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-						player2->SetChargeType(ChargeType::TWISTER);
-						_floorNum = 1;
-						ChangeSceneType(SceneType::GAME);					
+						SelectEnded(1);			
 						break;
 					}
 				});
@@ -421,15 +358,7 @@ void GameScene::update(float delta)
 					switch (type)
 					{
 					case ui::Widget::TouchEventType::ENDED:
-						auto gameScene2 = Director::getInstance()->getRunningScene();
-						if (gameScene2->getName() != "GameScene")
-						{
-							return;
-						}
-						auto player2 = (Player*)gameScene2->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-						player2->SetChargeType(ChargeType::FLONTAL);
-						_floorNum = 1;
-						ChangeSceneType(SceneType::GAME);						
+						SelectEnded(2);		
 						break;
 					}
 				});			
@@ -514,7 +443,7 @@ void GameScene::SetEnemy(EnemyType enemyType)
 	charBglayer->addChild(enemy);
 }
 
-void GameScene::ColTest()
+void GameScene::Colition()
 {
 	for (auto eRect : this->charBglayer->getChildren())
 	{
@@ -537,7 +466,8 @@ bool GameScene::ChangeFloor()
 	_nextFloor = false;
 	mapObj = nullptr;
 	_floorNum++;
-	for (int i = 0; i < 5; i++)
+	int randNum = rand() % 5 + 4;
+	for (int i = 0; i < randNum; i++)
 	{
 		int randAi = rand() % static_cast<int>(EnemyType::MAX);
 		SetEnemy(static_cast<EnemyType>(randAi));
@@ -559,5 +489,54 @@ void GameScene::ChangeSceneType(SceneType sceneType)
 	
 	MenuBglayer->getChildByName("Text")->removeFromParent();
 	this->getChildByName("menuCamera")->setPosition3D({ -1024, -576, 0 });
+}
+
+Camera* GameScene::SetCamera(std::string name, CameraFlag cameraF,float depth)
+{
+	auto camera = Camera::createOrthographic(1024, 576, -768, 768);
+	camera->setName(name);
+	this->addChild(camera);
+	camera->setPosition3D({ 0, 0, 0 });
+	camera->setRotation3D({ 0, 0, 0 });
+	camera->setDepth(depth);
+	camera->setCameraFlag(cameraF);
+	return camera;
+}
+
+void GameScene::SelectEnded(int select)
+{
+	auto gameScene = Director::getInstance()->getRunningScene();
+	if (gameScene->getName() != "GameScene")
+	{
+		return;
+	}
+	auto player = (Player*)gameScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+	// 階層が0だったらチャージ
+	if (_floorNum == 0)
+	{		
+		ChargeType chargeType;
+		switch (select)
+		{
+		case 0:
+			chargeType = ChargeType::SHOT;
+			break;
+		case 1:
+			chargeType = ChargeType::TWISTER;
+			break;
+		case 2:
+			chargeType = ChargeType::FLONTAL;
+			break;
+		default:
+			break;
+		}
+		player->SetChargeType(chargeType);
+		_floorNum = 1;
+		ChangeSceneType(SceneType::GAME);
+	}
+	else
+	{
+		player->SetAbility(retAbility[select]);
+		ChangeSceneType(SceneType::GAME);
+	}
 }
 
