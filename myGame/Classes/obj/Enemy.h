@@ -43,8 +43,7 @@ public:
 	CREATE_FUNC(Enemy);
 private:
 	cocos2d::Animation* SetAnim(DIR dir);	// 方向に応じたｱﾆﾒｰｼｮﾝの設定
-	cocos2d::Animation* _oldAnim;		// 前のｱﾆﾒｰｼｮﾝ※ｱﾆﾒｰｼｮﾝマネージャー更新でなくなる
-	cocos2d::Sprite* texSprite;
+	cocos2d::Animation* _oldAnim;			// 前のｱﾆﾒｰｼｮﾝ※ｱﾆﾒｰｼｮﾝマネージャー更新でなくなる
 	EnemyType _enemyType;
 	EnemyMoveAI _enemyMoveAI;
 	EnemyAttackAI _enemyAttackAI;
