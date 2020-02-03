@@ -12,6 +12,7 @@ public:
 
 	CREATE_FUNC(E_Attack);
 private:
+	cocos2d::Animation* _anim;
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;
 	float _remainCnt;

@@ -151,6 +151,30 @@ bool GameScene::init()
 	_floorT->setPosition(80, 520);
 	_floorT->setName("階数");
 	uiBglayer->addChild(_floorT, 0);
+
+	// 画像
+	lpAnimMng.AnimCreate("charge", "base", 8, 0.1);
+	lpAnimMng.AnimCreate("player", "attackF", 3, 0.05);
+	lpAnimMng.AnimCreate("player", "attackB", 3, 0.05);
+	lpAnimMng.AnimCreate("player", "attackR", 3, 0.05);
+	lpAnimMng.AnimCreate("player", "attackL", 3, 0.05);
+	lpAnimMng.AnimCreate("player", "runF", 6, 0.1);
+	lpAnimMng.AnimCreate("player", "runB", 6, 0.1);
+	lpAnimMng.AnimCreate("player", "runR", 6, 0.1);
+	lpAnimMng.AnimCreate("player", "runL", 6, 0.1);
+	lpAnimMng.AnimCreate("player", "idleF", 4, 0.4);
+	lpAnimMng.AnimCreate("player", "idleB", 4, 0.4);
+	lpAnimMng.AnimCreate("player", "idleR", 4, 0.4);
+	lpAnimMng.AnimCreate("player", "idleL", 4, 0.4);
+	lpAnimMng.AnimCreate("weapon", "twist", 2, 0.05);
+	lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.2);
+	lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.2);
+	lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.2);
+	lpAnimMng.AnimCreate("orb", "idle", 5, 0.1);
+	lpAnimMng.AnimCreate("slime", "runR", 3, 0.1);
+	lpAnimMng.AnimCreate("slime", "runB", 3, 0.1);
+	lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
+	lpAnimMng.AnimCreate("e_attack", "fire", 2, 0.1);
 	// キャラクター
 	auto player = Player::createPlayer();
 	player->setTag(static_cast<int>(objTag::PLAYER));

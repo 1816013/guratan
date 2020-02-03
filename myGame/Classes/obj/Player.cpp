@@ -62,8 +62,8 @@ void Player::SetAbility(AbilityPair abilityPair)
 		}
 		break;
 	case Ability::ChargeLevel:
-		_chargeLevel++;
-		if (_chargeLevel >= 3)
+		_chargeLevelMax++;
+		if (_chargeLevelMax >= 3)
 		{
 			_unacquiredAbility.erase(_unacquiredAbility.begin() + static_cast<int>(Ability::ChargeLevel));
 		}
@@ -104,6 +104,11 @@ void Player::SetChargeType(ChargeType chargeType)
 	_chargeType = chargeType;
 }
 
+void Player::SetPlayerAct(PlayerAct playerAct)
+{
+	_playerAct = playerAct;
+}
+
 ChargeType Player::GetChargeType()
 {
 	return _chargeType;
@@ -124,11 +129,7 @@ bool Player::init()
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();		// ｳｲﾝﾄﾞｳｻｲｽﾞ	
-	// 画像
-	lpAnimMng.AnimCreate("player", "idleF", 4, 0.5);
-	lpAnimMng.AnimCreate("player", "idleB", 4, 0.5);
-	lpAnimMng.AnimCreate("player", "idleR", 4, 0.5);
-	lpAnimMng.AnimCreate("player", "idleL", 4, 0.5);
+	
 	// 一番最初の絵
 	this->setPosition(visibleSize.width / 2, 64);
 	this->setContentSize({32, 32});
@@ -145,13 +146,13 @@ bool Player::init()
 	_oldAnim = anim;
 
 
-	// ﾌﾟﾚｲﾔｰｽﾃｰﾀｽ
+	// 変数初期化
 	_level = 1;
 	_power = 1;
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 10;
+	_hpMax = 1000000;
 	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
@@ -160,10 +161,11 @@ bool Player::init()
 	_charge = 0;
 	_chargeMax = 1.0f;
 	_chargeLevel = 0;
-	_chargeLevelMax = 3;
+	_chargeLevelMax = 1;
 	_knockCnt = 0.0f;
 	_knockF = false;
 	_knockDir = DIR::MAX;
+	_actTime = 0;
 
 	auto size = this->getContentSize() / 2;
 	_colSize[static_cast<int>(DIR::UP)] = { Size(-size.width, size.height), Size(size.width, size.height) };
@@ -183,7 +185,6 @@ bool Player::init()
 	// 左移動
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(-3.5, 0);
 		module.colSize = { Size(-16, 16), Size(-16, -16) };
 		module.inputID = INPUT_ID::LEFT;
@@ -194,7 +195,6 @@ bool Player::init()
 	// 右移動
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(3.5, 0);
 		module.colSize = { Size(16, 16), Size(16, -16) };
 		module.inputID = INPUT_ID::RIGHT;
@@ -205,7 +205,6 @@ bool Player::init()
 	// 上移動
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, 3.5);
 		module.colSize = { Size(-16, 16), Size(16, 16) };
 		module.inputID = INPUT_ID::UP;
@@ -216,7 +215,6 @@ bool Player::init()
 	// 下移動
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.speed = Vec2(0, -3.5);
 		module.colSize = { Size(-16, -16), Size(16, -16) };
 		module.inputID = INPUT_ID::DOWN;
@@ -227,7 +225,6 @@ bool Player::init()
 	// 左向き
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.inputID = INPUT_ID::LEFT;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::LEFT;
@@ -235,8 +232,7 @@ bool Player::init()
 	}
 	// 右向き
 	{
-		actModule module;
-		module.actID = ACT_STATE::RUN;		
+		actModule module;	
 		module.inputID = INPUT_ID::RIGHT;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::RIGHT;
@@ -245,7 +241,6 @@ bool Player::init()
 	// 上向き
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.inputID = INPUT_ID::UP;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::UP;
@@ -254,7 +249,6 @@ bool Player::init()
 	// 下向き
 	{
 		actModule module;
-		module.actID = ACT_STATE::RUN;
 		module.inputID = INPUT_ID::DOWN;
 		module.keyTiming = Timing::ON;
 		module.dir = DIR::DOWN;
@@ -292,6 +286,10 @@ void Player::update(float delta)
 	gameScene->getChildByName("uiLayer")->addChild(text4);
 	gameScene->getChildByName("uiLayer")->addChild(text5);
 	_inputState->update();
+	if (_actTime <= 0)
+	{
+		_playerAct = PlayerAct::IDLE;
+	}
 	_actMng->update(*this);
 
 	attack(delta, *gameScene);
@@ -333,6 +331,7 @@ void Player::update(float delta)
 	auto playerCam = gameScene->getChildByName("playerCamera");
 	playerCam->setPosition3D(Vec3(this->getPositionX() - 1024 / 2,this->getPositionY() - 576 / 2, 0 ));
 
+	_actTime -= delta;
 }
 
 void Player::attack(float delta, cocos2d::Scene& scene)
@@ -349,21 +348,38 @@ void Player::attack(float delta, cocos2d::Scene& scene)
 	{
 		SetWeapon(scene, *this, OptionType::NOMAL);
 	}
-	// チャージ中
+
 	if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::ATTACK))
 	{
+		// チャージ開始
+		if (_charge == 0)
+		{
+			_playerAct = PlayerAct::CHARGE;
+			auto chargeSp = Sprite::create();
+			chargeSp->setLocalZOrder(-1);
+			chargeSp->setAnchorPoint({ 0.3f, 0.25f });
+			chargeSp->setName("charge");
+			chargeSp->setCameraMask(static_cast<int>(CameraFlag::USER1));
+			this->addChild(chargeSp);
+			auto anim = AnimationCache::getInstance()->getAnimation("charge-base");
+			lpAnimMng.runAnim(*chargeSp, *anim, *_oldAnim, 0);
+		}
+		// チャージ中
 		_charge += delta;
 		if (_charge > _chargeMax)
 		{
 			_chargeLevel = 1;
+			this->getChildByName("charge")->setColor(Color3B::YELLOW);
 		}
 		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 2)
 		{
 			_chargeLevel = 2;
+			this->getChildByName("charge")->setColor(Color3B::MAGENTA);
 		}
-		if (_charge > _chargeMax * 2 && _chargeLevelMax >= 3)
+		if (_charge > _chargeMax * 3 && _chargeLevelMax >= 3)
 		{
 			_chargeLevel = 3;
+			this->getChildByName("charge")->setColor(Color3B::RED);
 		}
 	}
 	// チャージが最大だったらチャージ攻撃
@@ -375,6 +391,9 @@ void Player::attack(float delta, cocos2d::Scene& scene)
 			{
 				SetWeapon(scene, *this, OptionType::CHARGE, _chargeLevel);
 			}
+			_playerAct = PlayerAct::ATTACK;
+			_actTime = 0.15f;
+			this->getChildByName("charge")->removeFromParent();
 		}
 		_charge = 0.0f;
 		_chargeLevel = 0;
@@ -391,29 +410,97 @@ void Player::LevelUp(void)
 	_hp += 2;
 	_exp = 0;
 	_expMax *= 2;
+	if (this->getChildByName("charge"))
+	{
+		this->getChildByName("charge")->removeFromParent();
+	}
 }
 
 cocos2d::Animation * Player::SetAnim(DIR dir)
 {
 	auto animCache = AnimationCache::getInstance();
 	Animation* anim = nullptr;
-	switch (dir)
+	if (_playerAct == PlayerAct::IDLE)
 	{
-	case DIR::UP:
-		anim = animCache->getAnimation("player-idleB");
-		break;
-	case DIR::RIGHT:
-		anim = animCache->getAnimation("player-idleR");
-		break;
-	case DIR::DOWN:
-		anim = animCache->getAnimation("player-idleF");
-		break;
-	case DIR::LEFT:
-		anim = animCache->getAnimation("player-idleL");
-		break;
-	default:
-		break;
+		switch (dir)
+		{
+		case DIR::UP:
+			anim = animCache->getAnimation("player-idleB");
+			break;
+		case DIR::RIGHT:
+			anim = animCache->getAnimation("player-idleR");
+			break;
+		case DIR::DOWN:
+			anim = animCache->getAnimation("player-idleF");
+			break;
+		case DIR::LEFT:
+			anim = animCache->getAnimation("player-idleL");
+			break;
+		default:
+			break;
+		}
 	}
+	if (_playerAct == PlayerAct::MOVE)
+	{
+		switch (dir)
+		{
+		case DIR::UP:
+			anim = animCache->getAnimation("player-runB");
+			break;
+		case DIR::RIGHT:
+			anim = animCache->getAnimation("player-runR");
+			break;
+		case DIR::DOWN:
+			anim = animCache->getAnimation("player-runF");
+			break;
+		case DIR::LEFT:
+			anim = animCache->getAnimation("player-runL");
+			break;
+		default:
+			break;
+		}
+	}
+	if (_playerAct == PlayerAct::ATTACK)
+	{
+		switch (dir)
+		{
+		case DIR::UP:
+			anim = animCache->getAnimation("player-attackB");
+			break;
+		case DIR::RIGHT:
+			anim = animCache->getAnimation("player-attackR");
+			break;
+		case DIR::DOWN:
+			anim = animCache->getAnimation("player-attackF");
+			break;
+		case DIR::LEFT:
+			anim = animCache->getAnimation("player-attackL");
+			break;
+		default:
+			break;
+		}
+	}
+	if (_playerAct == PlayerAct::CHARGE)
+	{
+		switch (dir)
+		{
+		case DIR::UP:
+			texSprite->setTexture("image/player/attack/player-attackB-1.png");
+			break;
+		case DIR::RIGHT:
+			texSprite->setTexture("image/player/attack/player-attackR-1.png");
+			break;
+		case DIR::DOWN:
+			texSprite->setTexture("image/player/attack/player-attackF-1.png");
+			break;
+		case DIR::LEFT:
+			texSprite->setTexture("image/player/attack/player-attackL-1.png");
+			break;
+		default:
+			break;
+		}
+	}
+	
 	return anim;
 }
 

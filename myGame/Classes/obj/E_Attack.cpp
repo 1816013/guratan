@@ -1,5 +1,6 @@
 #include "E_Attack.h"
 #include "Player.h"
+#include "AnimMng.h"
 
 USING_NS_CC;
 
@@ -14,6 +15,12 @@ cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackA
 	if (enemyAttackAI == EnemyAttackAI::SHOT)
 	{
 		e_attack->setTexture("image/e_attack/spear.png");
+	}
+	if (enemyAttackAI == EnemyAttackAI::AIMING)
+	{
+		auto anim = AnimationCache::getInstance()->getAnimation("e_attack-fire");
+		Animation* oldanim = nullptr;
+		lpAnimMng.runAnim(*e_attack, *anim, *oldanim, 0);
 	}
 	return e_attack;
 }
@@ -36,15 +43,18 @@ void E_Attack::SetTargetMove(Sprite & sp, EnemyAttackAI enemyAttackAI)
 	if (player != nullptr)
 	{
 		// ˆÚ“®—ÊƒZƒbƒg
+
 		_targetPos = player->getPosition();
 		Vec2 distance = { _targetPos.x - this->getPositionX() , _targetPos.y - this->getPositionY() };
+		float a = 0.0f;
 		switch (enemyAttackAI)
 		{
 		case EnemyAttackAI::AIMING:
 			_radian = atan2(distance.y, distance.x);
 			_move.x = cos(_radian) * speed.x;
 			_move.y = sin(_radian) * speed.y;
-			break;
+			this->setRotation(abs(CC_RADIANS_TO_DEGREES(_radian) + 180.0f - 360.0f));
+			break; 
 		case EnemyAttackAI::SHOT:
 			switch (_dir)
 			{

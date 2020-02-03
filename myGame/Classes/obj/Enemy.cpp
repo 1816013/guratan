@@ -15,7 +15,6 @@ cocos2d::Sprite * Enemy::createEnemy(EnemyType enemyType, int floor)
 	enemy->setTag(static_cast<int>(objTag::ENEMY));
 	int CameraMask = static_cast<int>(CameraFlag::DEFAULT) | static_cast<int>(CameraFlag::USER1);
 	enemy->setCameraMask(static_cast<int>(CameraFlag::USER1));
-
 	return enemy;
 }
 
@@ -274,26 +273,18 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 	switch (enemyType)
 	{
 	case EnemyType::SLIME:
-		lpAnimMng.AnimCreate("slime", "runR", 3, 0.1);
-		lpAnimMng.AnimCreate("slime", "runB", 3, 0.1);
-		lpAnimMng.AnimCreate("slime", "runF", 3, 0.1);
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3;	
-		
+		_hp = 3;		
 		break;
-	case EnemyType::CANNON:
-		lpAnimMng.AnimCreate("orb", "idle", 5, 0.1);
+	case EnemyType::CANNON:	
 		_enemyMoveAI = EnemyMoveAI::IDLE;
 		_enemyAttackAI = EnemyAttackAI::AIMING;
 		_hp = 5;
 		_power = 2;
 		_attackIntarval = 2;
 		break;
-	case EnemyType::ARCHAR:
-		lpAnimMng.AnimCreate("skeleton", "runR", 3, 0.1);
-		lpAnimMng.AnimCreate("skeleton", "runB", 3, 0.1);
-		lpAnimMng.AnimCreate("skeleton", "runF", 3, 0.1);
+	case EnemyType::ARCHAR:	
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::SHOT;
 		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
@@ -302,6 +293,7 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 	default:
 		break;
 	}
+	_exp += floor / 3;
 	_hp += floor / 2;
 	_power += floor / 5;
 }

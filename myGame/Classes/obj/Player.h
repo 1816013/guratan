@@ -11,6 +11,15 @@ enum class Ability
 	MAX
 };
 
+enum class PlayerAct
+{
+	IDLE,
+	MOVE,
+	ATTACK,
+	CHARGE,
+	MAX
+};
+
 enum class ChargeType
 {
 	SHOT,
@@ -38,6 +47,7 @@ public:
 	bool IsCharged();
 	bool GetStrong();
 	void SetChargeType(ChargeType chargeType);
+	void SetPlayerAct(PlayerAct playerAct);
 	ChargeType GetChargeType();
 	std::vector<AbilityPair> GetUnacquiredAbility();
 
@@ -55,6 +65,8 @@ private:
 
 	// 変数
 	cocos2d::DrawNode* line;
+	PlayerAct _playerAct;
+	float _actTime;
 	int _hpMax;
 	int _expMax;			// これ以上になるとレベルアップ
 	int _level;				// レベル
@@ -63,7 +75,6 @@ private:
 	int _chargeLevel;		// チャージの強さ
 	int _chargeLevelMax;	// チャージの最大強さ
 	
-
 	float _powerRate;		// 攻撃力アビリティ用
 	float _movePower;		// 移動速度アビリティ補正用
 

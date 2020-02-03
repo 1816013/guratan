@@ -4,22 +4,12 @@
 #include <functional>
 #include <input/OPRT_state.h>
 #pragma execution_character_set("utf-8")
-enum class ACT_STATE
-{
-	RUN,
-	IDLE,
-	ATACK,
-	SHOT
-};
 
 struct actModule;
 using funcActModule = std::function<bool(cocos2d::Sprite&, actModule&)>;
 
 struct actModule
 {
-	ACT_STATE actID;							// ±¸¼®İID
-	std::list<ACT_STATE>white;					// ÎÜ²ÄØ½Ä
-	std::list<ACT_STATE>black;					// ÌŞ×¯¸Ø½Ä
 	std::list<funcActModule>act;				// Áª¯¸Œn‚Ì±¸¼®İ
 	funcActModule runAction;					// Às‚·‚é±¸¼®İ	
 	cocos2d::Vec2 speed;						// ˆÚ“®‘¬“x
@@ -40,7 +30,5 @@ public:
 
 	std::map<std::string, actModule>_moduleMap;
 
-	// •Ï”
-	ACT_STATE nowAct;	// Œ»İ‚Ì±¸¼®İ
 };
 

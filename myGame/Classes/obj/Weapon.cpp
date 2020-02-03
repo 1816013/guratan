@@ -1,5 +1,5 @@
 #include "Weapon.h"
-
+#include "AnimMng.h"
 
 USING_NS_CC;
 
@@ -12,57 +12,8 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower() * ((Player&)sp).GetPowerRate());
 	weapon->_chargeType = (((Player&)sp).GetChargeType());
-	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
-	auto offsetCreate = [&](Sprite& sp)
-	{
-		switch (((Obj&)sp).GetDIR())
-		{
-		case DIR::UP:
-			dirOffset.y = weapon->getContentSize().height / 2 + 16;
-			break;
-		case DIR::RIGHT:
-			dirOffset.x = weapon->getContentSize().height / 2 + 16;
-			break;
-		case DIR::DOWN:
-			dirOffset.y = -weapon->getContentSize().height / 2 - 16;
-			break;
-		case DIR::LEFT:
-			dirOffset.x = -weapon->getContentSize().height / 2 - 16;
-			break;
-		default:
-			break;
-		}
-	};
-	if (option == OptionType::NOMAL)
-	{
-		weapon->setContentSize({ 40, 40 });
-		offsetCreate(sp);
-	}
-	else
-	{
-		switch (weapon->_chargeType)
-		{
-		case ChargeType::SHOT:
-			weapon->setContentSize({ 16.0f + 16.0f * (chargeLevel - 1), 16.0f + 16.0f * (chargeLevel - 1) });
-			weapon->_hp = 1;
-			break;
-		case ChargeType::TWISTER:
-			weapon->setContentSize({ 96.0f + 16.0f * (chargeLevel - 1), 96.0f + 16.0f * (chargeLevel - 1) });
-			break;
-		case ChargeType::FLONTAL:
-			weapon->setContentSize({ 96.0f, 64.0f });
-			weapon->_power *= 1.5 + 0.5 * (chargeLevel - 1);
-			offsetCreate(sp);
-			break;
-		default:
-			break;
-		}
-	}
-	
-	weapon->SetColSize(sp);
-	weapon->setPosition(sp.getPosition() + dirOffset);
-
-	
+	weapon->setTexture("image/weapon/attackNomal.png");
+	weapon->SetWeaponType(sp, chargeLevel);
 	weapon->setTag(static_cast<int>(objTag::ATTACK));
 	return weapon;
 }
@@ -87,7 +38,7 @@ bool Weapon::init()
 	//_chargeType = ChargeType::FLONTAL;
 
 	cocos2d::Rect rect = cocos2d::Rect(0, 0, 32, 32);
-	this->setTextureRect(rect);
+	//this->setTextureRect(rect);
 	this->setColor(cocos2d::Color3B(0, 255, 0));
 	_hp = 1000000;
 	_power = 1;
@@ -100,11 +51,27 @@ bool Weapon::init()
 
 void Weapon::update(float delta)
 {
-	_remainCnt++;
+
+	if (_dir == DIR::UP)
+	{
+		this->setRotation(0.0f);
+	}
+	if (_dir == DIR::RIGHT)
+	{
+		this->setRotation(90.0f);
+	}
+	if (_dir == DIR::DOWN)
+	{
+		this->setRotation(180.0f);
+	}
+	if (_dir == DIR::LEFT)
+	{
+		this->setRotation(270.0f);
+	}
 	if (_optionType == OptionType::NOMAL)
 	{
-		if (_remainCnt > 1)
-		{
+		if (_remainCnt > 0.1f)
+		{	
 			this->removeFromParent();
 		}
 	}
@@ -123,29 +90,13 @@ void Weapon::update(float delta)
 			}
 			break;
 		case ChargeType::TWISTER:
-			if (_remainCnt > 1)
+			if (_remainCnt > 0.1f)
 			{
 				this->removeFromParent();
 			}
 			break;
 		case ChargeType::FLONTAL:
-			if (_dir == DIR::UP)
-			{
-				this->setRotation(0.0f);
-			}
-			if (_dir == DIR::RIGHT)
-			{
-				this->setRotation(90.0f);
-			}
-			if (_dir == DIR::DOWN)
-			{
-				this->setRotation(180.0f);
-			}
-			if (_dir == DIR::LEFT)
-			{
-				this->setRotation(270.0f);
-			}
-			if (_remainCnt > 1)
+			if (_remainCnt > 0.1f)
 			{
 				this->removeFromParent();
 			}
@@ -154,8 +105,81 @@ void Weapon::update(float delta)
 			break;
 		}
 	}
-	
+	_remainCnt += delta;
 
+}
+
+void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
+{
+	cocos2d::Vec2 dirOffset = cocos2d::Vec2(0, 0);
+	auto offsetCreate = [&](Sprite& sp)
+	{
+		switch (((Obj&)sp).GetDIR())
+		{
+		case DIR::UP:
+			dirOffset.y = this->getContentSize().height / 2 + 8;
+			break;
+		case DIR::RIGHT:
+			dirOffset.x = this->getContentSize().height / 2 + 8;
+			break;
+		case DIR::DOWN:
+			dirOffset.y = -this->getContentSize().height / 2 - 8;
+			break;
+		case DIR::LEFT:
+			dirOffset.x = -this->getContentSize().height / 2 - 8;
+			break;
+		default:
+			break;
+		}
+	};
+	if (_optionType == OptionType::NOMAL)
+	{
+		offsetCreate(sp);
+	}
+	else
+	{
+		auto anim = AnimationCache::getInstance()->getAnimation("weapon-twist");
+		Animation* _oldanim = nullptr;
+		switch (this->_chargeType)
+		{
+		case ChargeType::SHOT:
+			this->setContentSize({ 24.0f + 24.0f * (chargeLevel), 24.0f + 24.0f * (chargeLevel) });
+			this->_hp = 2;
+			break;
+		case ChargeType::TWISTER:
+			this->setContentSize({ 96.0f + 16.0f * (chargeLevel), 96.0f + 16.0f * (chargeLevel) });
+			this->_power += 0.5 * (chargeLevel);
+			lpAnimMng.runAnim(*this, *anim, *_oldanim);
+			break;
+		case ChargeType::FLONTAL:
+			this->setContentSize({ 128.0f, 128.0f });
+			this->_power *= 1.5 + 0.5 * (chargeLevel);
+			offsetCreate(sp);
+			break;
+		default:
+			break;
+		}
+	}
+	switch (chargeLevel)
+	{
+	case 0:
+		this->setColor(Color3B::GREEN);
+		break;
+	case 1:
+		this->setColor(Color3B::YELLOW);
+		break;
+	case 2:
+		this->setColor(Color3B::MAGENTA);
+		break;
+	case 3:
+		this->setColor(Color3B::RED);
+		break;
+	default:
+		break;
+	}
+
+	this->SetColSize(sp);
+	this->setPosition(sp.getPosition() + dirOffset);
 }
 
 void Weapon::SetColSize(Sprite & sp)

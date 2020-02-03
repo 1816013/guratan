@@ -19,12 +19,13 @@ public:
 private:
 	bool init()override;				// ‰Šú‰»@½Ìß×²Äì¬
 	void update(float delta)override;
+	void SetWeaponType(Sprite& sp, int chargeLevel);
 	void SetColSize(cocos2d::Sprite& sp);
 	void SetState();
 
 	OptionType _optionType;
 	ChargeType _chargeType;	// •Û‘¶—p
 	cocos2d::Vec2 _offset;
-	int _remainCnt;
+	float _remainCnt;
 };
 
