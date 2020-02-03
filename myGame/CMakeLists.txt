@@ -68,10 +68,8 @@ list(APPEND GAME_SOURCE
         Classes/CricketJni.cpp
         Classes/GameMap.cpp
         Classes/action/ActionMng.cpp
-        Classes/action/Attack.cpp
-        Classes/action/ChangeLR.cpp
+        Classes/action/ChangeDIR.cpp
         Classes/action/CheckKey.cpp
-        Classes/action/CheckList.cpp
         Classes/action/Colision.cpp
         Classes/action/Move.cpp
         Classes/input/OPRT_state.cpp
@@ -97,10 +95,8 @@ list(APPEND GAME_HEADER
         Classes/CricketJni.h
         Classes/GameMap.h
         Classes/action/ActionMng.h
-        Classes/action/Attack.h
-        Classes/action/ChangeLR.h
+        Classes/action/ChangeDIR.h
         Classes/action/CheckKey.h
-        Classes/action/CheckList.h
         Classes/action/Colision.h
         Classes/action/Move.h
         Classes/input/OPRT_state.h
