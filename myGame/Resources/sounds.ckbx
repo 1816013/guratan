@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bank name="samplesounds">
+    <sound name="titleBGM" source="sounds/bgm/title/se_click.wav" />
+    <sound name="se_cancel" source="se_cancel.wav" />
+</bank>
