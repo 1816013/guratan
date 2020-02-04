@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<bank name="samplesounds">
-    <sound name="titleBGM" source="sounds/bgm/title/se_click.wav" />
-    <sound name="se_cancel" source="se_cancel.wav" />
+<bank name="sounds">
+    <sound name="titleBGM" source="sounds/bgm/title/game_maoudamashii_3_theme01.wav" />
+    <sound name="gameSceneBGM" source="sounds/bgm/gameScene/bgm_maoudamashii_8bit19.wav" />
+    <sound name="gameSceneBGM2" source="sounds/bgm/gameScene/bgm_maoudamashii_8bit21.wav" />
+    <sound name="gameOverBGM" source="sounds/bgm/gameOver/bgm_maoudamashii_8bit20.wav" />
+    <sound name="gameOverBGM2" source="sounds/bgm/gameOver/game_maoudamashii_7_event21.wav" />
+    <sound name="uiCrick" source="sounds/UI/Magic Buff 03.wav" />
+    <sound name="damage" source="sounds/damage/se_maoudamashii_battle14.wav" />
+    <sound name="damage2" source="sounds/damage/se_maoudamashii_battle18.wav" />
+    <sound name="chargeAttack" source="sounds/attack/charge/se_maoudamashii_battle06.wav" />
+    <sound name="charge" source="sounds/attack/charge/se_maoudamashii_element_fire10.wav" />
+    <sound name="attack" source="sounds/attack/nomal/Sword Swing 1_1.wav" />
+    <sound name="range" source="sounds/attack/range/Magic Buff Attack 01.wav" />
+    <sound name="twist" source="sounds/attack/twist/Magic Buff Attack 02.wav" />
+    <sound name="orbAttack" source="sounds/e_attack/orb/Magic Element Fire 03.wav" />
+    <sound name="skeletonAttack" source="sounds/e_attack/skeleton/Arrow Fly 1_1.wav" />
 </bank>
