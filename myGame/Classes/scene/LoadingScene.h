@@ -13,7 +13,7 @@ public:
 
 	CREATE_FUNC(LoadingScene);
 private:
-
+	cocos2d::Scene* _scene;
 };
 
 

@@ -9,10 +9,9 @@ public:
 	~GameOverScene();
 
 	virtual bool init();
-	void ChangeScene(float delta);
-
+	void ChangeScene();
 	CREATE_FUNC(GameOverScene);
 private:
-
+	void StartBGM(float delta);
 };
 

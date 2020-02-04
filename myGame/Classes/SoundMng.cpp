@@ -20,19 +20,22 @@ void SoundMng::Init(void)
 	CkConfig config;
 	CkInit(&config);
 #endif
-	
+	_bank = nullptr;
 }
 
 bool SoundMng::AddSound(std::string bank_p, std::string soundName, SOUND_TYPE type)
 {
-#ifdef CK_PLATFORM_ANDROID
-	_bank = CkBank::newBank(bank_p.c_str());
-#else
-	_bank = CkBank::newBank(("Resources/" + bank_p + ".ckb").c_str(), kCkPathType_ExeDir);
-#endif // CK_PLATFORM_ANDROID
 	if (_bank == nullptr)
 	{
-		return false;
+	#ifdef CK_PLATFORM_ANDROID
+		_bank = CkBank::newBank(bank_p.c_str());
+	#else
+		_bank = CkBank::newBank(("Resources/" + bank_p).c_str(), kCkPathType_ExeDir);
+	#endif // CK_PLATFORM_ANDROID
+		if (_bank == nullptr)
+		{
+			return false;
+		}
 	}
 	if (_sound.find(soundName) == _sound.end())
 	{
@@ -77,13 +80,27 @@ void SoundMng::StopBySoundName(std::string soundName)
 	}
 }
 
+void SoundMng::SetVolumeBySoundName(std::string soundName, float volume)
+{
+	if (_sound.find(soundName) != _sound.end())
+	{
+		if (_sound[soundName]->isPlaying())
+		{
+			_sound[soundName]->setVolume(volume);
+		}
+	}
+}
+
 void SoundMng::ckEnd(void)
 {
 	for (auto sound : _sound)
 	{
 		sound.second->destroy();
 	}
-	_bank->destroy();
+	if (_bank != nullptr)
+	{
+		_bank->destroy();
+	}
 
 	CkShutdown();
 }

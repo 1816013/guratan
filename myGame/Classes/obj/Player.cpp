@@ -6,6 +6,7 @@
 #include "AnimMng.h"
 #include <UI/Bar.h>
 #include <UI/DamageText.h>
+#include "SoundMng.h"
 //#pragma execution_character_set("utf-8")
 USING_NS_CC;
 
@@ -152,7 +153,7 @@ bool Player::init()
 	_exp = 0;
 	_expMax = 3;
 	_dir = DIR::UP;
-	_hpMax = 1000000;
+	_hpMax = 10;
 	_hp = _hpMax;
 	_movePower = 1.0f;
 	_strongF = false;
@@ -275,16 +276,10 @@ void Player::update(float delta)
 	expBar->changeValue(_exp);
 
 	gameScene->getChildByName("uiLayer")->removeChildByTag(10);
-	gameScene->getChildByName("uiLayer")->removeChildByTag(11);
 	auto text4 = Label::createWithTTF("LV " + StringUtils::toString(_level), "fonts/PixelMplus12-Regular.ttf", 24);
 	text4->setTag(10);
 	text4->setPosition(Point(140, 520));
-	auto text5 = Label::createWithTTF("charge" + StringUtils::toString(_charge), "fonts/PixelMplus12-Regular.ttf", 24);
-	text5->setTag(11);
-	text5->setPosition(Point(100, 280));
-
 	gameScene->getChildByName("uiLayer")->addChild(text4);
-	gameScene->getChildByName("uiLayer")->addChild(text5);
 	_inputState->update();
 	if (_actTime <= 0)
 	{
@@ -363,6 +358,7 @@ void Player::attack(float delta, cocos2d::Scene& scene)
 			this->addChild(chargeSp);
 			auto anim = AnimationCache::getInstance()->getAnimation("charge-base");
 			lpAnimMng.runAnim(*chargeSp, *anim, *_oldAnim, 0);
+			lpSoundMng.PlayBySoundName("charge");
 		}
 		// チャージ中
 		_charge += delta;
@@ -393,6 +389,7 @@ void Player::attack(float delta, cocos2d::Scene& scene)
 			}
 			_playerAct = PlayerAct::ATTACK;
 			_actTime = 0.15f;
+			lpSoundMng.StopBySoundName("charge");
 			this->getChildByName("charge")->removeFromParent();
 		}
 		_charge = 0.0f;
@@ -412,6 +409,7 @@ void Player::LevelUp(void)
 	_expMax *= 2;
 	if (this->getChildByName("charge"))
 	{
+		lpSoundMng.StopBySoundName("charge");
 		this->getChildByName("charge")->removeFromParent();
 	}
 }
@@ -527,6 +525,7 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
 				scene.getChildByName("uiLayer")->addChild(damageT);
 				scene.runAction(Blink::create(0.1f, 1));
+				lpSoundMng.PlayBySoundName("damage");
 			}
 		}
 		// 両方ダメージ受けるもの
@@ -543,6 +542,7 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				_knockDir = hitObj.GetDIR();
 				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
 				scene.getChildByName("uiLayer")->addChild(damageT);
+				lpSoundMng.PlayBySoundName("damage");
 			}
 		}
 		if (hitTag == static_cast<int>(objTag::MAPOBJ))
@@ -556,6 +556,11 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			if (_hp > _hpMax)
 			{
 				_hp = _hpMax;
+			}
+			if (this->getChildByName("charge"))
+			{
+				lpSoundMng.StopBySoundName("charge");
+				this->getChildByName("charge")->removeFromParent();
 			}
 			_charge = 0;
 			_inputState->Init();

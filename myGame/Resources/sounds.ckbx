@@ -9,10 +9,12 @@
     <sound name="damage" source="sounds/damage/se_maoudamashii_battle14.wav" />
     <sound name="damage2" source="sounds/damage/se_maoudamashii_battle18.wav" />
     <sound name="chargeAttack" source="sounds/attack/charge/se_maoudamashii_battle06.wav" />
-    <sound name="charge" source="sounds/attack/charge/se_maoudamashii_element_fire10.wav" />
+    <sound name="charge" source="sounds/attack/charge/magic-charge1.wav" />
+    <sound name="charge2" source="sounds/attack/charge/se_maoudamashii_retro08.wav" />
     <sound name="attack" source="sounds/attack/nomal/Sword Swing 1_1.wav" />
     <sound name="range" source="sounds/attack/range/Magic Buff Attack 01.wav" />
     <sound name="twist" source="sounds/attack/twist/Magic Buff Attack 02.wav" />
     <sound name="orbAttack" source="sounds/e_attack/orb/Magic Element Fire 03.wav" />
     <sound name="skeletonAttack" source="sounds/e_attack/skeleton/Arrow Fly 1_1.wav" />
+    <sound name="warp" source="sounds/warp/magic-worp1.wav" />
 </bank>

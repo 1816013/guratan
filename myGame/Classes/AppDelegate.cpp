@@ -105,21 +105,22 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
 	lpSoundMng.Init();
-	lpSoundMng.AddSound("sounds", "titleBGM", SOUND_TYPE::BGM);
-	lpSoundMng.AddSound("sounds", "gameSceneBGM", SOUND_TYPE::BGM);
-	lpSoundMng.AddSound("sounds", "gameSceneBGM2", SOUND_TYPE::BGM);
-	lpSoundMng.AddSound("sounds", "gameOverBGM", SOUND_TYPE::BGM);
-	lpSoundMng.AddSound("sounds", "gameOverBGM2", SOUND_TYPE::BGM);
-	lpSoundMng.AddSound("sounds", "uiCrick", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "damage", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "damage2", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "chargeAttack", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "charge", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "attack", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "range", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "twist", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "orbAttack", SOUND_TYPE::SE);
-	lpSoundMng.AddSound("sounds", "skeletonAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "titleBGM", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds.ckb", "gameSceneBGM", SOUND_TYPE::BGM);
+	//lpSoundMng.AddSound("sounds", "gameSceneBGM2", SOUND_TYPE::BGM);
+	//lpSoundMng.AddSound("sounds", "gameOverBGM", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds.ckb", "gameOverBGM2", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds.ckb", "uiCrick", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "damage", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "damage2", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "chargeAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "charge", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds.ckb", "attack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "range", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "twist", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "orbAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "skeletonAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "warp", SOUND_TYPE::SE);
     // create a scene. it's an autorelease object
     auto scene = TitleScene::createScene();
 

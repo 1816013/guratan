@@ -1,5 +1,6 @@
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "LoadingScene.h"
 #include "input/OPRT_key.h"
 #include "SoundMng.h"
 
@@ -92,12 +93,11 @@ bool TitleScene::init()
 void TitleScene::ChangeScene()
 {
 	lpSoundMng.StopBySoundName("titleBGM");
-	Scene *scene = GameScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(3.0f, scene, Color3B::WHITE));
+	Scene *scene = LoadingScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(1.0f, scene, Color3B::WHITE));
 }
 
 void TitleScene::update(float delta)
 {
 	lpSoundMng.Update();
-	
 }

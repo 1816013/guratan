@@ -152,7 +152,7 @@ void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
 			lpAnimMng.runAnim(*this, *anim, *_oldanim);
 			break;
 		case ChargeType::FLONTAL:
-			this->setContentSize({ 128.0f, 128.0f });
+			this->setContentSize({ 96.0f, 96.0f });
 			this->_power *= 1.5 + 0.5 * (chargeLevel);
 			offsetCreate(sp);
 			break;

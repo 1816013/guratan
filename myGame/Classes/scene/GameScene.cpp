@@ -33,6 +33,7 @@
 #include "AnimMng.h"
 #include <UI/Bar.h>
 #include "LoadingScene.h"
+#include "SoundMng.h"
 
 USING_NS_CC;
 
@@ -222,6 +223,11 @@ bool GameScene::init()
 	this->addChild(charBglayer, _zOrderChar);
 	this->addChild(backBglayer, _zOrderBack);
 	this->scheduleUpdate();
+
+	// bgm
+	lpSoundMng.Init();
+	lpSoundMng.PlayBySoundName("gameSceneBGM");
+	lpSoundMng.SetVolumeBySoundName("gameSceneBGM", 0.5);
 	return true;
 }
 
@@ -260,6 +266,7 @@ void GameScene::update(float delta)
 		}
 		if (pCount <= 0)
 		{
+			lpSoundMng.StopBySoundName("gameSceneBGM");
 			Scene *scene = GameOverScene::createScene();
 			Director::getInstance()->replaceScene(TransitionRotoZoom::create(2.0f, scene));
 		}
@@ -286,9 +293,9 @@ void GameScene::update(float delta)
 			return;
 		}
 		auto player = (Player*)gameScene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
-		
 		if (!flag)	// ˆê‰ñ‚µ‚©‚â‚ç‚È‚¢ˆ—
 		{
+			
 			player->_inputState->Init();
 			flag = true;
 			// ƒ|[ƒYˆ—
@@ -385,7 +392,7 @@ void GameScene::update(float delta)
 						SelectEnded(2);		
 						break;
 					}
-				});			
+				});		
 			}
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
 		}

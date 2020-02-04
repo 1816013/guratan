@@ -67,6 +67,7 @@ list(APPEND GAME_SOURCE
         Classes/AppDelegate.cpp
         Classes/CricketJni.cpp
         Classes/GameMap.cpp
+        Classes/SoundMng.cpp
         Classes/action/ActionMng.cpp
         Classes/action/ChangeDIR.cpp
         Classes/action/CheckKey.cpp
@@ -94,6 +95,7 @@ list(APPEND GAME_HEADER
         Classes/AppDelegate.h
         Classes/CricketJni.h
         Classes/GameMap.h
+        Classes/SoundMng.h
         Classes/action/ActionMng.h
         Classes/action/ChangeDIR.h
         Classes/action/CheckKey.h

@@ -15,6 +15,7 @@ LoadingScene::LoadingScene()
 
 LoadingScene::~LoadingScene()
 {
+	_scene->release();
 }
 
 bool LoadingScene::init()
@@ -26,11 +27,22 @@ bool LoadingScene::init()
 	// シーン名前設定
 	this->setName("LoadingScene");
 	// ひとつ前のｼｰﾝが取れる
-	auto scene = (GameScene*)Director::getInstance()->getRunningScene();
+	_scene = Director::getInstance()->getRunningScene();
+	_scene->retain();
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	// 階数表示
-	auto label = Label::createWithTTF(StringUtils::toString(scene->_floorNum + 1) + " F", "fonts/PixelMplus12-Regular.ttf", 48);
+	Label* label;
+	if (_scene->getName() == "GameScene")
+	{
+		auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
+		int floorNum = gameScene->_floorNum;
+		label = Label::createWithTTF(StringUtils::toString(floorNum + 1) + " F", "fonts/PixelMplus12-Regular.ttf", 48);
+	}
+	else
+	{
+		label = Label::createWithTTF("1 F", "fonts/PixelMplus12-Regular.ttf", 48);
+	}
 	label->setPosition(Vec2( visibleSize.width / 2, visibleSize.height / 2));
 	label->setCameraMask(static_cast<int>(CameraFlag::DEFAULT));
 	this->addChild(label, 0);
@@ -41,5 +53,13 @@ bool LoadingScene::init()
 void LoadingScene::ChangeScene(float delta)
 {
 	//Scene *scene = LoadingScene::createScene();
-	Director::getInstance()->popScene();
+	if (_scene->getName() == "GameScene")
+	{
+		Director::getInstance()->popScene();
+	}
+	else
+	{
+		Director::getInstance()->replaceScene(GameScene::createScene());
+	}
+	
 }
