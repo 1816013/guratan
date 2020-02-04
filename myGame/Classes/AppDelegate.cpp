@@ -24,6 +24,7 @@
 
 #include "AppDelegate.h"
 #include "scene/TitleScene.h"
+#include "SoundMng.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -54,6 +55,7 @@ AppDelegate::AppDelegate()
 
 AppDelegate::~AppDelegate() 
 {
+	lpSoundMng.ckEnd();
 #if USE_AUDIO_ENGINE
     AudioEngine::end();
 #elif USE_SIMPLE_AUDIO_ENGINE
@@ -102,6 +104,22 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
+	lpSoundMng.Init();
+	lpSoundMng.AddSound("sounds", "titleBGM", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds", "gameSceneBGM", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds", "gameSceneBGM2", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds", "gameOverBGM", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds", "gameOverBGM2", SOUND_TYPE::BGM);
+	lpSoundMng.AddSound("sounds", "uiCrick", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "damage", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "damage2", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "chargeAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "charge", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "attack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "range", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "twist", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "orbAttack", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds", "skeletonAttack", SOUND_TYPE::SE);
     // create a scene. it's an autorelease object
     auto scene = TitleScene::createScene();
 
@@ -114,7 +132,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 // This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
 void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
-
+	lpSoundMng.SetPauseAll(true);
 #if USE_AUDIO_ENGINE
     AudioEngine::pauseAll();
 #elif USE_SIMPLE_AUDIO_ENGINE
@@ -126,7 +144,7 @@ void AppDelegate::applicationDidEnterBackground() {
 // this function will be called when the app is active again
 void AppDelegate::applicationWillEnterForeground() {
     Director::getInstance()->startAnimation();
-
+	lpSoundMng.SetPauseAll(false);
 #if USE_AUDIO_ENGINE
     AudioEngine::resumeAll();
 #elif USE_SIMPLE_AUDIO_ENGINE

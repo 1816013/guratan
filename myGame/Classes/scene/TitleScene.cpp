@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "input/OPRT_key.h"
+#include "SoundMng.h"
 
 USING_NS_CC;
 
@@ -81,15 +82,22 @@ bool TitleScene::init()
 	titleLayer->addChild(label, 0);
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-
+	lpSoundMng.PlayBySoundName("titleBGM");
 	count = 0;
 	this->addChild(titleLayer);
-	//this->scheduleOnce(schedule_selector(TitleScene::ChangeScene), 1.0f);
+	this->scheduleUpdate();
 	return true;
 }
 
 void TitleScene::ChangeScene()
 {
+	lpSoundMng.StopBySoundName("titleBGM");
 	Scene *scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(3.0f, scene, Color3B::WHITE));
+}
+
+void TitleScene::update(float delta)
+{
+	lpSoundMng.Update();
+	
 }

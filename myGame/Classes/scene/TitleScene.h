@@ -10,12 +10,13 @@ public:
 	~TitleScene();
 
 	virtual bool init();
+	
 	void ChangeScene();
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(TitleScene);
-
 private:
+	void update(float delta)override;
 	int count;
 	std::unique_ptr<OPRT_state>_inputState;
 };

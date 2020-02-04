@@ -28,7 +28,7 @@ bool SoundMng::AddSound(std::string bank_p, std::string soundName, SOUND_TYPE ty
 #ifdef CK_PLATFORM_ANDROID
 	_bank = CkBank::newBank(bank_p.c_str());
 #else
-	_bank = CkBank::newBank(("Resources/" + bank_p).c_str(), kCkPathType_ExeDir);
+	_bank = CkBank::newBank(("Resources/" + bank_p + ".ckb").c_str(), kCkPathType_ExeDir);
 #endif // CK_PLATFORM_ANDROID
 	if (_bank == nullptr)
 	{
@@ -43,6 +43,10 @@ bool SoundMng::AddSound(std::string bank_p, std::string soundName, SOUND_TYPE ty
 			_sound[soundName]->setLoopCount(-1);
 		}
 	}
+	else
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -55,7 +59,21 @@ void SoundMng::PlayBySoundName(std::string soundName)
 {
 	if (_sound.find(soundName) != _sound.end())
 	{
-		_sound[soundName]->play();
+		if (!_sound[soundName]->isPlaying())
+		{
+			_sound[soundName]->play();
+		}
+	}
+}
+
+void SoundMng::StopBySoundName(std::string soundName)
+{
+	if (_sound.find(soundName) != _sound.end())
+	{
+		if (_sound[soundName]->isPlaying())
+		{
+			_sound[soundName]->stop();
+		}
 	}
 }
 
