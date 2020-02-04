@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "AnimMng.h"
+#include "SoundMng.h"
 
 USING_NS_CC;
 
@@ -135,6 +136,8 @@ void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
 	if (_optionType == OptionType::NOMAL)
 	{
 		offsetCreate(sp);
+		lpSoundMng.StopBySoundName("attack");
+		lpSoundMng.PlayBySoundName("attack");
 	}
 	else
 	{
@@ -145,16 +148,19 @@ void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
 		case ChargeType::SHOT:
 			this->setContentSize({ 24.0f + 24.0f * (chargeLevel), 24.0f + 24.0f * (chargeLevel) });
 			this->_hp = 2;
+			lpSoundMng.PlayBySoundName("range");
 			break;
 		case ChargeType::TWISTER:
 			this->setContentSize({ 96.0f + 16.0f * (chargeLevel), 96.0f + 16.0f * (chargeLevel) });
 			this->_power += 0.5 * (chargeLevel);
+			lpSoundMng.PlayBySoundName("twist");
 			lpAnimMng.runAnim(*this, *anim, *_oldanim);
 			break;
 		case ChargeType::FLONTAL:
 			this->setContentSize({ 96.0f, 96.0f });
 			this->_power *= 1.5 + 0.5 * (chargeLevel);
 			offsetCreate(sp);
+			lpSoundMng.PlayBySoundName("chargeAttack");
 			break;
 		default:
 			break;

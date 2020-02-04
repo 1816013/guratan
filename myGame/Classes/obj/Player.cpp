@@ -73,7 +73,7 @@ void Player::SetAbility(AbilityPair abilityPair)
 		_chargeMax -= 0.2f;
 		if (_chargeMax <= 0.4f)
 		{
-			_unacquiredAbility.erase(_unacquiredAbility.begin() + static_cast<int>(Ability::ChargeSpeed));
+			_unacquiredAbility.erase(_unacquiredAbility.begin() + _unacquiredAbility.size() - 1);
 		}
 		break;
 	default:

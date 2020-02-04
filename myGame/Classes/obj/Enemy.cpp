@@ -5,6 +5,7 @@
 #include "action/Colision.h"
 #include "AnimMng.h"
 #include <UI/DamageText.h>
+#include "SoundMng.h"
 
 USING_NS_CC;
 
@@ -82,7 +83,7 @@ void Enemy::update(float delta)
 	if (_strongF)
 	{
 		_strongCnt += delta;
-		if (_strongCnt >= 0.1f)
+		if (_strongCnt >= 0.15f)
 		{
 			_strongF = false;
 			_strongCnt = 0;
@@ -189,6 +190,8 @@ bool Enemy::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 				_move.y = sin(radian) * 8;
 				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
 				scene.getChildByName("uiLayer")->addChild(damageT);
+				lpSoundMng.StopBySoundName("damage2");
+				lpSoundMng.PlayBySoundName("damage2");
 			}
 		}
 		// ‰Ÿ‚µ‡‚¢”»’è

@@ -1,6 +1,7 @@
 #include "E_Attack.h"
 #include "Player.h"
 #include "AnimMng.h"
+#include "SoundMng.h"
 
 USING_NS_CC;
 
@@ -15,12 +16,17 @@ cocos2d::Sprite* E_Attack::createE_Attack(Sprite& sp, EnemyAttackAI enemyAttackA
 	if (enemyAttackAI == EnemyAttackAI::SHOT)
 	{
 		e_attack->setTexture("image/e_attack/spear.png");
+		lpSoundMng.StopBySoundName("skeletonAttack");
+		lpSoundMng.PlayBySoundName("skeletonAttack");
 	}
 	if (enemyAttackAI == EnemyAttackAI::AIMING)
 	{
 		auto anim = AnimationCache::getInstance()->getAnimation("e_attack-fire");
 		Animation* oldanim = nullptr;
 		lpAnimMng.runAnim(*e_attack, *anim, *oldanim, 0);
+		lpSoundMng.StopBySoundName("orbAttack");
+		lpSoundMng.PlayBySoundName("orbAttack");
+		
 	}
 	return e_attack;
 }

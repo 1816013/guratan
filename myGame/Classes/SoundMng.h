@@ -26,7 +26,8 @@ public:
 	void Update(void);															// CkUpDate()
 	void PlayBySoundName(std::string soundName);								// “o˜^‚µ‚½»³İÄŞ‚ğ–¼‘O‚©‚çÄ¶‚·‚é
 	void StopBySoundName(std::string soundName);								// “o˜^‚µ‚½»³İÄŞ‚ğ–¼‘O‚©‚ç’â~‚·‚é
-	void SetVolumeBySoundName(std::string soundName, float volume);				// “o˜^‚µ‚½»³İÄŞ‚ğ–¼‘O‚©‚çÄ¶‚·‚é
+	void StopAllSound();														// “o˜^‚µ‚½»³İÄŞ‚ğ‚·‚×‚Ä’â~‚·‚é
+	void SetVolumeBySoundName(std::string soundName, float volume);				// “o˜^‚µ‚½»³İÄŞ‚Ìƒ{ƒŠƒ…[ƒ€•ÏX
 	void ckEnd(void);															// »³İÄŞI—¹—ƒQ[ƒ€I—¹
 	void SetPauseAll(bool pauseF);												// »³İÄŞ‚ğ‘S‚Äˆê’â~
 

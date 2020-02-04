@@ -80,6 +80,17 @@ void SoundMng::StopBySoundName(std::string soundName)
 	}
 }
 
+void SoundMng::StopAllSound()
+{
+	for (auto sound : _sound)
+	{
+		if (sound.second->isPlaying())
+		{
+			sound.second->stop();
+		}
+	}
+}
+
 void SoundMng::SetVolumeBySoundName(std::string soundName, float volume)
 {
 	if (_sound.find(soundName) != _sound.end())

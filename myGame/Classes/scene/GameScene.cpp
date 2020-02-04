@@ -81,7 +81,7 @@ bool GameScene::init()
 
 	MenuBglayer = Layer::create();
 	auto _bg = LayerColor::create(Color4B::BLACK, visibleSize.width, visibleSize.height);
-	_bg->setOpacity(122);
+	_bg->setOpacity(200);
 	MenuBglayer->addChild(_bg);
 	MenuBglayer->setName("menuLayer");
 	uiBglayer = Layer::create();
@@ -95,9 +95,9 @@ bool GameScene::init()
 	_inputState = std::make_unique<OPRT_key>(this);
 	_gameMap = std::make_unique<GameMap>();
 	// 仮ｽﾌﾟﾗｲﾄ メニュー用 ※矢印予定
-	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 20, 20);
+	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 32, 32);
 	selectSp = Sprite::create();
-	selectSp->setPosition(500, 200);
+	selectSp->setPosition(500, 150);
 	selectSp->setColor({ 255, 255, 255 });
 	selectSp->setTextureRect(selectRect);
 	selectSp->setName("select");
@@ -194,7 +194,8 @@ bool GameScene::init()
 	for (int i = 0; i < 3; i++)
 	{
 		selectButton[i] = ui::Button::create("image/select/selectFrame.png");
-		selectButton[i]->setPosition(Vec2(300 + 200 * i, 300));
+		selectButton[i]->setScale(1.5f);
+		selectButton[i]->setPosition(Vec2(250 + 250 * i, 300));
 		selectButton[i]->setTitleFontName("fonts/PixelMplus12-Regular.ttf");
 		selectButton[i]->setTitleFontSize(16);
 		selectButton[i]->setTitleColor(Color3B::WHITE);
@@ -266,7 +267,7 @@ void GameScene::update(float delta)
 		}
 		if (pCount <= 0)
 		{
-			lpSoundMng.StopBySoundName("gameSceneBGM");
+			lpSoundMng.StopAllSound();
 			Scene *scene = GameOverScene::createScene();
 			Director::getInstance()->replaceScene(TransitionRotoZoom::create(2.0f, scene));
 		}
@@ -280,6 +281,7 @@ void GameScene::update(float delta)
 		
 		if (_nextFloor)
 		{
+			lpSoundMng.PlayBySoundName("warp");
 			auto transition = TransitionTurnOffTiles::create(0.5f, LoadingScene::createScene());
 			Director::getInstance()->pushScene(transition);
 			ChangeFloor();
@@ -306,93 +308,70 @@ void GameScene::update(float delta)
 			{
 				_node->pause();
 			}	
+			auto left = selectButton[0];
+			left->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+				switch (type)
+				{
+				case ui::Widget::TouchEventType::ENDED:
+					SelectEnded(0);
+					lpSoundMng.PlayBySoundName("uiCrick");
+					break;
+				}
+			});
+			auto midle = selectButton[1];
+			midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+				switch (type)
+				{
+				case ui::Widget::TouchEventType::ENDED:
+					SelectEnded(1);
+					lpSoundMng.PlayBySoundName("uiCrick");
+					break;
+				}
+			});
+			auto right = selectButton[2];
+			right->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
+				switch (type)
+				{
+				case ui::Widget::TouchEventType::ENDED:
+					SelectEnded(2);
+					lpSoundMng.PlayBySoundName("uiCrick");
+					break;
+				}
+			});
 			// レベルアップ
 			if (_floorNum != 0)
 			{
 				auto unAbility = player->GetUnacquiredAbility();
 				std::random_device seed;
 				std::mt19937 engine(seed());
-				std::shuffle(unAbility.begin(), unAbility.end(), engine);
-
+				std::shuffle(unAbility.begin(), unAbility.end(), engine);		
 				for (int i = 0; i < 3; i++)
 				{
 					// メニュ－
 					auto levelupText = Label::createWithTTF("LEVELUP!!", "fonts/PixelMplus12-Regular.ttf", 24);
 					levelupText->setPosition(Vec2( 1024 / 2,
-						576 / 4 * 3 - levelupText->getContentSize().height));
+						576 / 5 * 4));
 					levelupText->setCameraMask(static_cast<int>(CameraFlag::USER2));
 					levelupText->setName("Text");
 					MenuBglayer->addChild(levelupText, 0);
 					retAbility[i] = unAbility.back();
 					unAbility.pop_back();
 				}
-				auto left = selectButton[0];
 				left->setTitleText(retAbility[0].first);
-				left->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case ui::Widget::TouchEventType::ENDED:
-						SelectEnded(0);
-						break;
-					}
-				});
-				auto midle = selectButton[1];
 				midle->setTitleText(retAbility[1].first);
-				midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-						SelectEnded(1);
-						break;
-					}
-				});
-				auto right = selectButton[2];
 				right->setTitleText(retAbility[2].first);
-				right->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case ui::Widget::TouchEventType::ENDED:
-						SelectEnded(2);
-					}
-				});				
 			}
 			else // 階層が一の時// チャージセレクト
 			{			
 				// メニュ－
-				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/PixelMplus12-Regular.ttf", 24);
-				ChargeSelect->setPosition(Vec2(1024 / 2, 576 / 4 * 3 - ChargeSelect->getContentSize().height));
+				auto ChargeSelect = Label::createWithTTF("ChargeSelect", "fonts/PixelMplus12-Regular.ttf", 32);
+				ChargeSelect->setPosition(Vec2(1024 / 2, 576 / 5 * 4 ));
 				ChargeSelect->setName("Text");
 				ChargeSelect->setCameraMask(static_cast<int>(CameraFlag::USER2));
 				MenuBglayer->addChild(ChargeSelect, 0);
-				auto left = selectButton[0];
 				left->setTitleText("shot");
-				left->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case ui::Widget::TouchEventType::ENDED:
-						SelectEnded(0);
-						break;
-					}
-				});
-				auto midle = selectButton[1];
 				midle->setTitleText("twist");
-				midle->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case ui::Widget::TouchEventType::ENDED:
-						SelectEnded(1);			
-						break;
-					}
-				});
-				auto right = selectButton[2];
-				right->setTitleText("flontal");
-				right->addTouchEventListener([&](Ref* sender, ui::Widget::TouchEventType type) {
-					switch (type)
-					{
-					case ui::Widget::TouchEventType::ENDED:
-						SelectEnded(2);		
-						break;
-					}
-				});		
+				right->setTitleText("flontal");		
 			}
 			this->getChildByName("menuCamera")->setPosition3D({ 0, 0, 0 });
 		}
@@ -417,13 +396,13 @@ void GameScene::update(float delta)
 		switch (selectCnt)
 		{
 		case 0:
-			selectRect->setPosition(300, 200);
+			selectRect->setPosition(250, 150);
 			break;
 		case 1:
-			selectRect->setPosition(500, 200);
+			selectRect->setPosition(500, 150);
 			break;
 		case 2:
-			selectRect->setPosition(700, 200);
+			selectRect->setPosition(750, 150);
 			break;
 		default:
 			break;
@@ -431,6 +410,7 @@ void GameScene::update(float delta)
 #endif
 		if (_inputState->GetInput(TRG_STATE::NOW, INPUT_ID::SELECT) &~_inputState->GetInput(TRG_STATE::OLD, INPUT_ID::SELECT))
 		{
+			lpSoundMng.PlayBySoundName("uiCrick");
 			if (_floorNum == 0)
 			{
 				player->SetChargeType(static_cast<ChargeType>(selectCnt));
@@ -470,7 +450,7 @@ void GameScene::menuCloseCallback(Ref* pSender)
 void GameScene::SetEnemy(EnemyType enemyType)
 {
 	auto enemy = Enemy::createEnemy(enemyType, _floorNum);
-	enemy->setPosition(Vec2(rand() % 800 + 48, rand() % 400 + 48 + 96));
+	enemy->setPosition(Vec2(cocos2d::random<int>(48, 900), cocos2d::random<int>(144, 500)));
 	charBglayer->addChild(enemy);
 }
 
@@ -497,10 +477,10 @@ bool GameScene::ChangeFloor()
 	_nextFloor = false;
 	mapObj = nullptr;
 	_floorNum++;
-	int randNum = rand() % 5 + 4;
+	int randNum = cocos2d::random<int>(4, 7);
 	for (int i = 0; i < randNum; i++)
 	{
-		int randAi = rand() % static_cast<int>(EnemyType::MAX);
+		int randAi = cocos2d::random<int>(0, static_cast<int>(EnemyType::MAX) - 1);
 		SetEnemy(static_cast<EnemyType>(randAi));
 	}
 	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
