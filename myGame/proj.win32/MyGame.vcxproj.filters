@@ -33,9 +33,6 @@
     <ClCompile Include="main.cpp">
       <Filter>win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\AppDelegate.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\CricketJni.cpp" />
     <ClCompile Include="..\Classes\input\OPRT_key.cpp">
       <Filter>src\input</Filter>
@@ -111,6 +108,9 @@
     </ClCompile>
     <ClCompile Include="..\Classes\SoundMng.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

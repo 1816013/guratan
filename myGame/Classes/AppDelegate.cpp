@@ -121,6 +121,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	lpSoundMng.AddSound("sounds.ckb", "orbAttack", SOUND_TYPE::SE);
 	lpSoundMng.AddSound("sounds.ckb", "skeletonAttack", SOUND_TYPE::SE);
 	lpSoundMng.AddSound("sounds.ckb", "warp", SOUND_TYPE::SE);
+	lpSoundMng.AddSound("sounds.ckb", "levelUp", SOUND_TYPE::SE);
     // create a scene. it's an autorelease object
     auto scene = TitleScene::createScene();
 

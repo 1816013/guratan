@@ -17,4 +17,5 @@
     <sound name="orbAttack" source="sounds/e_attack/orb/Magic Element Fire 03.wav" />
     <sound name="skeletonAttack" source="sounds/e_attack/skeleton/Arrow Fly 1_1.wav" />
     <sound name="warp" source="sounds/warp/magic-worp1.wav" />
+    <sound name="levelUp" source="sounds/levelUp/se_maoudamashii_onepoint16.wav" />
 </bank>

@@ -5,8 +5,8 @@
 enum class EnemyType
 {
 	SLIME,
-	CANNON,
 	ARCHAR,
+	CANNON,
 	MAX
 };
 

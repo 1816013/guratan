@@ -70,8 +70,8 @@ void Player::SetAbility(AbilityPair abilityPair)
 		}
 		break;
 	case Ability::ChargeSpeed:
-		_chargeMax -= 0.2f;
-		if (_chargeMax <= 0.4f)
+		_chargeMax -= 0.1f;
+		if (_chargeMax <= 0.2f)
 		{
 			_unacquiredAbility.erase(_unacquiredAbility.begin() + _unacquiredAbility.size() - 1);
 		}
@@ -160,7 +160,7 @@ bool Player::init()
 	_strongCnt = 0;
 	_powerRate = 1.0f;
 	_charge = 0;
-	_chargeMax = 1.0f;
+	_chargeMax = 0.5f;
 	_chargeLevel = 0;
 	_chargeLevelMax = 1;
 	_knockCnt = 0.0f;
@@ -399,12 +399,17 @@ void Player::attack(float delta, cocos2d::Scene& scene)
 
 void Player::LevelUp(void)
 {
+	lpSoundMng.PlayBySoundName("levelUp");
 	auto gameScene = (GameScene*)Director::getInstance()->getRunningScene();
 	gameScene->SetSceneType(SceneType::MENU);
 	_level++;
 	_power += 1;
 	_hpMax += 2;
-	_hp += 2;
+	_hp += _hpMax /	2;
+	if (_hp > _hpMax)
+	{
+		_hp = _hpMax;
+	}
 	_exp = 0;
 	_expMax *= 2;
 	if (this->getChildByName("charge"))
@@ -517,15 +522,18 @@ bool Player::ColisionObj(Obj& hitObj, cocos2d::Scene& scene)
 			if (!_strongF)
 			{
 				col = true;
-				_hp -= hitObj.GetPower();
-				_strongF = true;
-				_knockF = true;				
+				_knockF = true;
 				_move = _speedTbl[static_cast<int>(hitObj.GetDIR())] * 8;
 				_knockDir = hitObj.GetDIR();
-				auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
-				scene.getChildByName("uiLayer")->addChild(damageT);
-				scene.runAction(Blink::create(0.1f, 1));
-				lpSoundMng.PlayBySoundName("damage");
+				if (((Enemy&)hitObj).GetEnemyType() != EnemyType::CANNON)
+				{
+					_hp -= hitObj.GetPower();
+					_strongF = true;
+					auto damageT = DamageText::createDamageT(hitObj.GetPower(), *this);
+					scene.getChildByName("uiLayer")->addChild(damageT);
+					scene.runAction(Blink::create(0.1f, 1));
+					lpSoundMng.PlayBySoundName("damage");
+				}
 			}
 		}
 		// óºï˚É_ÉÅÅ[ÉWéÛÇØÇÈÇ‡ÇÃ

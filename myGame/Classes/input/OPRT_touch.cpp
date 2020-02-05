@@ -55,7 +55,7 @@ OPRT_touch::OPRT_touch(Node* sp)
 		auto line = (cocos2d::DrawNode*)gameScene->getChildByName("uiLayer")->getChildByName("line");
 		auto visibleSize = cocos2d::Director::getInstance()->getVisibleSize();
 	
-		float margin = 50.0f;
+		float margin = 30.0f;
 		for (auto touch : touches) {
 			auto nowPos = touch->getLocation();
 			if (touchVectors[touch->getID()].pos.x < visibleSize.width / 2)

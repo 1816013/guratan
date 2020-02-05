@@ -95,11 +95,10 @@ bool GameScene::init()
 	_inputState = std::make_unique<OPRT_key>(this);
 	_gameMap = std::make_unique<GameMap>();
 	// ‰¼½Ìß×²Ä ƒƒjƒ…[—p ¦–îˆó—\’è
-	cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 32, 32);
+	//cocos2d::Rect selectRect = cocos2d::Rect(0, 0, 32, 32);
 	selectSp = Sprite::create();
 	selectSp->setPosition(500, 150);
-	selectSp->setColor({ 255, 255, 255 });
-	selectSp->setTextureRect(selectRect);
+	selectSp->setTexture("image/select/arrow.png");
 	selectSp->setName("select");
 	MenuBglayer->addChild(selectSp);
 #else
@@ -478,9 +477,18 @@ bool GameScene::ChangeFloor()
 	mapObj = nullptr;
 	_floorNum++;
 	int randNum = cocos2d::random<int>(4, 7);
+	int type = 0;
+	if (_floorNum >= 2)
+	{
+		type = 1;
+	}
+	if (_floorNum >= 5)
+	{
+		type = 2;
+	}
 	for (int i = 0; i < randNum; i++)
 	{
-		int randAi = cocos2d::random<int>(0, static_cast<int>(EnemyType::MAX) - 1);
+		int randAi = cocos2d::random<int>(0, type);
 		SetEnemy(static_cast<EnemyType>(randAi));
 	}
 	charBglayer->getChildByTag(static_cast<int>(objTag::MAPOBJ))->removeFromParent();
