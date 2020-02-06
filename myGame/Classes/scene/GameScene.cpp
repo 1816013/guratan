@@ -182,7 +182,7 @@ bool GameScene::init()
 	
 	for (int i = 0; i < 5; i++)
 	{
-		int randAi = rand() % static_cast<int>(EnemyType::MAX);
+		int randAi = cocos2d::random(0, static_cast<int>(EnemyType::MAX) - 1);
 		SetEnemy(static_cast<EnemyType>(0));
 	}
 
@@ -244,17 +244,12 @@ void GameScene::update(float delta)
 	if (_sceneType == SceneType::GAME)
 	{
 		Colition();		
-		int pCount = 0;
 		int eCount = 0;
 		for (auto objItr : this->charBglayer->getChildren())
 		{
 			auto obj = (Obj*)objItr;
 			
 			int tag = obj->getTag();
-			if (static_cast<int>(objTag::PLAYER) == tag)
-			{
-				pCount++;
-			}
 			if (static_cast<int>(objTag::ENEMY) == tag)
 			{
 				eCount++;
