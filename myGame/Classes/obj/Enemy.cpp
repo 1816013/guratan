@@ -278,21 +278,22 @@ void Enemy::SetEnemyAI(EnemyType enemyType, int floor)
 	case EnemyType::SLIME:
 		_enemyMoveAI = EnemyMoveAI::FORROW;
 		_enemyAttackAI = EnemyAttackAI::NONE; 
-		_hp = 3;		
+		_hp = 2;		
+		break;
+	case EnemyType::ARCHAR:
+		_enemyMoveAI = EnemyMoveAI::FORROW;
+		_enemyAttackAI = EnemyAttackAI::SHOT;
+		_attackIntarval = cocos2d::random<float>(1.0f, 2.0f);
+		_hp = 4;
 		break;
 	case EnemyType::CANNON:	
 		_enemyMoveAI = EnemyMoveAI::IDLE;
 		_enemyAttackAI = EnemyAttackAI::AIMING;
 		_hp = 5;
-		_power = 2;
-		_attackIntarval = 2;
+		_attackIntarval = 2.0f;
+		this->setLocalZOrder(-1);
 		break;
-	case EnemyType::ARCHAR:	
-		_enemyMoveAI = EnemyMoveAI::FORROW;
-		_enemyAttackAI = EnemyAttackAI::SHOT;
-		_attackIntarval = ((float)(rand() % 10) / 10) + 2;
-		_hp = 5;
-		break;
+	
 	default:
 		break;
 	}

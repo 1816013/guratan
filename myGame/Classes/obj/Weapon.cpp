@@ -13,7 +13,7 @@ cocos2d::Sprite* Weapon::createWeapon(Sprite& sp, const OptionType option, int c
 	weapon->SetDIR(((Player&)sp).GetDIR());
 	weapon->_power = (((Player&)sp).GetPower() * ((Player&)sp).GetPowerRate());
 	weapon->_chargeType = (((Player&)sp).GetChargeType());
-	weapon->setTexture("image/weapon/attackNomal.png");
+
 	weapon->SetWeaponType(sp, chargeLevel);
 	weapon->setTag(static_cast<int>(objTag::ATTACK));
 	return weapon;
@@ -135,6 +135,7 @@ void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
 	};
 	if (_optionType == OptionType::NOMAL)
 	{
+		this->setTexture("image/weapon/attackNomal.png");
 		offsetCreate(sp);
 		lpSoundMng.StopBySoundName("attack");
 		lpSoundMng.PlayBySoundName("attack");
@@ -146,18 +147,21 @@ void Weapon::SetWeaponType(Sprite& sp, int chargeLevel)
 		switch (this->_chargeType)
 		{
 		case ChargeType::SHOT:
+			this->setTexture("image/weapon/attackNomal.png");
 			this->setContentSize({ 24.0f + 24.0f * (chargeLevel), 24.0f + 24.0f * (chargeLevel) });
-			this->_hp = 2;
+			this->_hp = 2 + chargeLevel - 1;
 			lpSoundMng.PlayBySoundName("range");
 			break;
 		case ChargeType::TWISTER:
-			this->setContentSize({ 96.0f + 16.0f * (chargeLevel), 96.0f + 16.0f * (chargeLevel) });
+			lpAnimMng.runAnim(*this, *anim, *_oldanim);
+			//this->setContentSize({ 96.0f + 16.0f * (chargeLevel), 196.0f + 16.0f * (chargeLevel) });
+			this->setScale(1.0f + 0.2 * chargeLevel);
 			this->_power += 0.5 * (chargeLevel);
 			lpSoundMng.PlayBySoundName("twist");
-			lpAnimMng.runAnim(*this, *anim, *_oldanim);
 			break;
 		case ChargeType::FLONTAL:
-			this->setContentSize({ 96.0f, 96.0f });
+			this->setTexture("image/weapon/attackNomal.png");
+			this->setContentSize({ 112.0f, 112.0f });
 			this->_power *= 1.5 + 0.5 * (chargeLevel);
 			offsetCreate(sp);
 			lpSoundMng.PlayBySoundName("chargeAttack");

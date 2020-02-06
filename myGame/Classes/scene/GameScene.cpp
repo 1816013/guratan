@@ -264,7 +264,8 @@ void GameScene::update(float delta)
 				break;
 			}
 		}
-		if (pCount <= 0)
+		auto player = (Player*)scene->getChildByName("charLayer")->getChildByTag(static_cast<int>(objTag::PLAYER));
+		if (player == nullptr)
 		{
 			lpSoundMng.StopAllSound();
 			Scene *scene = GameOverScene::createScene();
